@@ -1,1 +1,72 @@
-IyDrjJXrg6XsnbTsmYAg7ZWo6ruYIOKAlCDrsJjroKTrj5nrrLwg64+Z67CYIOyghOq1rSDsp4Drj4QKCuyghOq1rSAxLDQ0M+qzs+ydmCDrsJjroKTrj5nrrLwg64+Z67CYIOyepeyGjOulvCDri7TsnYAg7KeA64+EIOyEnOu5hOyKpC4KCiMjIOq1rOyEsQotIGBpbmRleC5odG1sYCDigJQg7IKs7J207Yq4IOyghOyytCAo64uo7J28IO2MjOydvCwgTGVhZmxldCDsnbjrnbzsnbgpCi0gYHBsYWNlcy5qc29uYCDigJQg7J6l7IaMIOuNsOydtO2EsCAxLDQ0M+qzsyAo7IiZ67CVIDQwNiDCtyDsnYzsi53soJAv7Lm07Y6YIDYwNCDCtyDrhoDsnbTthLAv7IKw7LGFIDE1MyDCtyAyNOyLnCDrj5nrrLzrs5Hsm5AgMjgwKQoKIyMg642w7J207YSwIOyXheuNsOydtO2KuApgcGxhY2VzLmpzb25g7J2EIOq1kOyytO2VmOuptCBgaW5kZXguaHRtbGDsl5Ag7J6Q64+ZIOuwmOyYgeuQqCAo7IOB7IS4IO2VhOuTnOuKlCBgfi93b3Jrc3BhY2UvcGV0bWFwLWRhdGEvYCDssLjsobApLgoKIyMg7Lac7LKYCi0g7ZWc6rWt6rSA6rSR6rO17IKsIFRvdXJBUEkgKOuwmOugpOuPmeusvCDrj5nrsJgg7Jes7ZaJIOygleuztCkKLSDtlZzqta3rrLjtmZTsoJXrs7Tsm5Ag6rO16rO1642w7J207YSwICjslaDqsqzrj5nrsJgg7Lm07Y6YKQotIOqzoOy6oO2VkSAo67CY66Ck6rKs64+Z67CYIOy6oO2VkeyepSkKLSBtYXJ1dmV0wrd2ZXQyNCAyNOyLnCDrj5nrrLzrs5Hsm5Ag66qp66GdICgyMDI2LTEwIO2ZleyduCkK
+# 댕냥이와 함께
+
+기존 지도 화면과 문구를 유지하면서, 공유·검색 엔진용 장소별 정적 HTML을 생성합니다. 저장소의 장소 데이터는 `data/places_part00.json`부터 `places_part11.json`까지 base64로 인코딩된 JSON 배열로 나뉘어 있습니다. 빌더가 배열을 합친 뒤 페이지를 만듭니다.
+
+## 빌드
+
+- Node.js 20 이상 필요 (npm 패키지는 설치하지 않습니다).
+- OG 썸네일 PNG를 텍스트까지 렌더링해 새로 만들려면 ImageMagick `convert`와 SVG 렌더러(`rsvg-convert` 등), 한글 글꼴이 필요합니다. SVG 임시 파일을 1200×630 PNG로 변환하고 임시 SVG는 삭제합니다.
+- 빌드 환경에 SVG 렌더러가 없으면 의존성 없는 PNG 발자국 배경을 생성해 빌드를 끝냅니다. 이 폴백 이미지에는 한글 문구가 그려지지 않으며, Open Graph 메타 태그의 제목·설명은 정상 제공됩니다. 이미지 안에도 문구가 필요한 경우 한글 글꼴이 설치된 SVG→PNG 변환기를 준비하세요.
+
+```sh
+node build.js
+```
+
+산출물은 기본으로 `dist/`에 생성됩니다. `--out=다른폴더`로 출력 위치를 지정할 수 있습니다. `places.json`에 `updatedAt`이 있으면 그 날짜를 사용하고, 없으면 빌드 날짜(한국 시간)를 기준일로 표시합니다. 빌드가 사용할 수 없는 개별 장소는 건너뛰고 ID·장소명·사유를 목록으로 출력합니다. 중복 ID와 경로에 사용할 수 없는 ID도 건너뜁니다.
+
+공개할 수정 제안 이메일은 환경변수로 전달합니다. 설정하지 않으면 메인 상세와 정적 장소 페이지에 이메일 링크를 만들지 않습니다.
+
+```sh
+REPORT_EMAIL=help@example.com node build.js
+```
+
+외부 스크립트/CSS에 대해 실제 파일을 가져와 SHA-384 SRI를 계산하고 출력 HTML에 주입하려면 다음 옵션을 사용합니다. 네트워크 요청에 실패한 리소스는 경고만 출력하고 `integrity` 없이 빌드를 계속합니다.
+
+```sh
+node build.js --sri
+```
+
+빌더는 생성된 모든 HTML의 `og:image` 절대 URL이 같은 도메인의 실제 PNG 파일을 가리키는지 확인하고, PNG 시그니처와 크기도 검사합니다.
+
+## 출력
+
+- `dist/index.html`: 기존 메인 페이지와 변경된 메타데이터
+- `dist/place/{id}.html`: 장소별 정적 상세 페이지
+- `dist/place/place.css`: 기존 지도 상세화면의 스타일 규칙을 추출한 공통 스타일
+- `dist/og/default.png`, `stay.png`, `food.png`, `park.png`, `hospital.png`: 1200×630 공유 이미지
+- `dist/sitemap.xml`: 메인 페이지와 모든 정상 장소 URL, 한국 날짜 기준 `lastmod`
+- `dist/robots.txt`: Sitemap 선언
+- `dist/places.json`: `updatedAt`과 정규화한 장소 데이터
+- `dist/data/`: 지도 앱이 읽는 원본 데이터 조각
+
+기존 `#/place/{id}` 주소도 계속 사용할 수 있고, 목록·주변 장소·지도 마커의 상세 이동은 크롤러가 읽을 수 있는 `/place/{id}.html`을 사용합니다. 해시 URL은 레거시 공유 주소 호환을 위해 남겨 두었습니다.
+
+## 로컬 미리보기 및 Vercel 배포
+
+```sh
+node build.js
+cd dist
+python3 -m http.server 8080
+```
+
+저장소의 `vercel.json`은 `node build.js`를 실행하고 `dist`를 정적 출력 디렉터리로 배포하도록 설정되어 있습니다. GitHub 기본 브랜치에 반영되면 Vercel이 새 빌드를 배포합니다. 배포 후 다음 주소를 확인합니다.
+
+- `https://petmap.kr/`
+- `https://petmap.kr/place/tour-2707444.html` (예시)
+- `https://petmap.kr/sitemap.xml`
+- `https://petmap.kr/robots.txt`
+
+## 공유 미리보기 확인
+
+- 카카오: [카카오 개발자센터 공유 디버거](https://developers.kakao.com/tool/debugger/sharing)에서 메인 또는 장소 URL을 입력합니다.
+- 페이스북: [Sharing Debugger](https://developers.facebook.com/tools/debug/)에서 URL을 입력하고 다시 스크래핑합니다.
+- 네이버: 네이버 앱/블로그 작성 화면에 URL을 실제로 붙여넣어 제목과 썸네일을 확인합니다.
+
+장소별 이미지는 장소 1,400개마다 생성하지 않고 카테고리별 이미지 4장을 공유합니다. 크롤러의 캐시 때문에 메타 태그 수정 직후 이전 썸네일이 잠시 보일 수 있습니다.
+
+## 유지할 항목
+
+- 메인 `<title>`은 `댕냥이와 함께 — 반려동물 동반 전국 지도`를 유지합니다.
+- Leaflet 지도 타일 주소·저작자 표시 상수와 타일 폴백 처리는 그대로 둡니다.
+- 24시 동물병원 필터는 기본으로 켜집니다.
+- API 키나 개인정보는 코드에 저장하지 않습니다.
