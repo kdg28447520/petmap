@@ -1,4 +1,4 @@
 {
-  "buildCommand": "node build.js",
+  "buildCommand": "node build.js && node guides.js",
   "outputDirectory": "dist"
 }
