@@ -7,7 +7,7 @@
 const fs=require("node:fs");
 const path=require("node:path");
 const ROOT=__dirname, OUT=path.join(ROOT,"dist");
-const BASE="https://petmap.kr";
+const BASE="https://www.petmap.kr";
 const updated="2026-10-14";
 const esc=(x)=>String(x==null?"":x).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const plain=x=>String(x||"").replace(/<[^>]+>/g,"").trim();
