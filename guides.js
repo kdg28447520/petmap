@@ -94,3 +94,24 @@ function build(){
  console.log("[petmap guides] published",data.length,"guides and 4 policy pages; sitemap +",urls.length,"URLs");
 }
 build();
+
+function connectAdsense(){
+ const publisher="ca-pub-4533404826925371";
+ function walk(dir){
+  for(const ent of fs.readdirSync(dir,{withFileTypes:true})){
+   const filename=path.join(dir,ent.name);
+   if(ent.isDirectory())walk(filename);
+   else if(ent.name.endsWith(".html")){
+    let html=fs.readFileSync(filename,"utf8");
+    if(!html.includes('name="google-adsense-account"')){
+      html=html.replace(/<\/head>/i,'<meta name="google-adsense-account" content="'+publisher+'"></head>');
+      fs.writeFileSync(filename,html,"utf8");
+    }
+   }
+  }
+ }
+ walk(OUT);
+ fs.writeFileSync(path.join(OUT,"ads.txt"),"google.com, "+publisher.replace("ca-","")+", DIRECT, f08c47fec0942fa0\n","utf8");
+ console.log("[petmap adsense] verification meta and ads.txt generated");
+}
+connectAdsense();
