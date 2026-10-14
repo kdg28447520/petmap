@@ -11,7 +11,7 @@ const zlib = require("node:zlib");
 const { execFileSync } = require("node:child_process");
 
 const ROOT = __dirname;
-const DOMAIN = process.env.SITE_DOMAIN || "petmap.kr";
+const DOMAIN = process.env.SITE_DOMAIN || "www.petmap.kr";
 const BASE_URL = "https://" + DOMAIN;
 const args = process.argv.slice(2);
 const outArg = args.find((arg) => arg.startsWith("--out="));
