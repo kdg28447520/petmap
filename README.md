@@ -20,6 +20,16 @@ node build.js
 REPORT_EMAIL=help@example.com node build.js
 ```
 
+장소 상세의 사진·개요·반려동물 동반 조건은 한국관광공사 TourAPI(국문 관광정보 서비스, KorService2)에서 빌드할 때만 받습니다. 브라우저가 이 API를 호출하지 않고, 결과는 `data/tourapi-cache.json`과 정적 HTML에 남습니다. 인증키가 없으면 그 세 항목을 지어 넣지 않으며, 사진·개요·동반 조건이 모두 있는 장소만 색인하고 사이트맵에 넣습니다. 모든 장소에는 상호와 주소로 만든 카카오맵·네이버 지도 검색 링크를 붙입니다.
+
+인증키 환경변수 이름은 `TOURAPI_SERVICE_KEY`입니다. [한국관광공사_국문 관광정보 서비스_GW](https://www.data.go.kr/data/15101578/openapi.do)에서 활용신청을 하면 개발계정은 자동승인됩니다. 마이페이지의 인증키 중 디코딩된 일반 인증키를 넣습니다.
+
+```sh
+TOURAPI_SERVICE_KEY='발급받은키' node build.js
+```
+
+이미 받아 둔 상세를 다시 받으려면 `node build.js --refresh-tourapi`를 사용합니다. 호출은 `detailCommon2`, `detailImage2`, `detailPetTour2`이고, contentid가 있는 TourAPI 장소만 대상입니다.
+
 외부 스크립트/CSS에 대해 실제 파일을 가져와 SHA-384 SRI를 계산하고 출력 HTML에 주입하려면 다음 옵션을 사용합니다. 네트워크 요청에 실패한 리소스는 경고만 출력하고 `integrity` 없이 빌드를 계속합니다.
 
 ```sh

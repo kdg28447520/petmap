@@ -9,6 +9,7 @@ const os = require("node:os");
 const crypto = require("node:crypto");
 const zlib = require("node:zlib");
 const { execFileSync } = require("node:child_process");
+const tourapi = require("./tourapi");
 
 const ROOT = __dirname;
 const DOMAIN = process.env.SITE_DOMAIN || "www.petmap.kr";
@@ -51,6 +52,12 @@ function displayValue(value) {
   return text;
 }
 function descriptionFor(place, category) {
+  const overview = place.tour && displayValue(place.tour.overview);
+  if (overview) {
+    let result = (place.name + " · " + overview).replace(/\s+/g, " ");
+    if (Array.from(result).length > 120) result = Array.from(result).slice(0, 119).join("") + "…";
+    return result;
+  }
   const pieces = [place.name, category.label];
   const addr = displayValue(place.addr);
   const hours = displayValue(place.hours);
@@ -100,6 +107,7 @@ function jsonLdFor(place) {
   if (place.tel) data.telephone = place.tel;
   if (place.homepage) data.url = place.homepage;
   if (place.hours) data.additionalProperty = { "@type": "PropertyValue", name: "진료시간", value: place.hours };
+  if (place.tour && tourapi.isSizedImage(place.tour.image)) data.image = place.tour.image.url;
   return safeJson(data);
 }
 function reportLink() {
@@ -118,6 +126,11 @@ function makePlacePage(place, css, updatedAt, thin) {
   const isHospital = place.category === "hospital";
   const officialUrl = place.homepage || "";
   const mapUrl = `https://map.kakao.com/link/to/${encodeURIComponent(place.name)},${place.lat},${place.lng}`;
+  const search = tourapi.mapLinks(place);
+  const detail = place.tour || null;
+  const overview = detail ? displayValue(detail.overview) : "";
+  const photo = detail && tourapi.isSizedImage(detail.image) ? detail.image : null;
+  const petRules = detail && Array.isArray(detail.petRules) ? detail.petRules.filter((rule) => displayValue(rule.value)) : [];
   const address = displayValue(place.addr);
   const phone = displayValue(place.tel);
   const hours = displayValue(place.hours);
@@ -132,6 +145,17 @@ function makePlacePage(place, css, updatedAt, thin) {
     `<a class="site-btn" href="${escapeHtml(mapUrl)}" target="_blank" rel="noopener">길찾기</a>`,
     officialUrl ? `<a class="site-btn" href="${escapeHtml(officialUrl)}" target="_blank" rel="noopener">${place.source === "gocamping" ? "고캠핑 상세 보기" : "공식 사이트"}</a>` : "",
   ].filter(Boolean).join("\n");
+  const mapSearch = [
+    `<a class="site-btn" href="${escapeHtml(search.kakao)}" target="_blank" rel="noopener">카카오맵에서 보기</a>`,
+    `<a class="site-btn" href="${escapeHtml(search.naver)}" target="_blank" rel="noopener">네이버 지도에서 보기</a>`,
+  ].join("\n");
+  const photoHtml = photo
+    ? `<figure class="pd-figure"><img src="${escapeHtml(photo.url)}" width="${Math.round(Number(photo.width))}" height="${Math.round(Number(photo.height))}" alt="${escapeHtml(photo.alt || place.name)}" loading="lazy" decoding="async"><figcaption class="pd-caption">${escapeHtml(tourapi.imageCaption(photo))}</figcaption></figure>`
+    : `<div class="pd-photo" aria-hidden="true"><svg class="pd-photo-paw" width="84" height="84" viewBox="0 0 24 24"><path d="M12 13.2c2.9 0 5.6 2.3 5.6 4.7 0 1.5-1.1 2.5-2.7 2.5-1 0-1.8-.4-2.9-.4s-1.9.4-2.9.4c-1.6 0-2.7-1-2.7-2.5 0-2.4 2.7-4.7 5.6-4.7ZM6.2 8.1c1 .3 1.5 1.7 1.1 3-.4 1.4-1.5 2.2-2.5 1.9-1-.3-1.5-1.7-1.1-3 .4-1.3 1.5-2.2 2.5-1.9Zm11.6 0c1-.3 2.1.6 2.5 1.9.4 1.3-.1 2.7-1.1 3-1 .3-2.1-.5-2.5-1.9-.4-1.3.1-2.7 1.1-3ZM9.3 3.6c1.1.1 1.9 1.4 1.8 2.9-.1 1.4-1 2.6-2.1 2.5C7.9 8.9 7.1 7.6 7.2 6.2c.1-1.5 1-2.7 2.1-2.6Zm5.4 0c1.1-.1 2 1.1 2.1 2.6.1 1.4-.7 2.7-1.8 2.8-1.1.1-2-1.1-2.1-2.5-.1-1.5.7-2.8 1.8-2.9Z"/></svg><span class="pd-photo-cap">${escapeHtml(cat.label)}</span></div>`;
+  const overviewHtml = overview ? `<p class="pd-overview">${escapeHtml(overview)}</p>` : "";
+  const petHtml = petRules.length
+    ? `<h2 class="pd-sec-title">반려동물 동반 조건</h2><div class="pd-card pd-pet"><dl style="margin:0">${petRules.map((rule) => `<div class="pd-row"><dt>${escapeHtml(rule.label)}</dt><dd>${escapeHtml(rule.value)}</dd></div>`).join("")}</dl></div><p class="pd-caption">동반 조건은 한국관광공사 TourAPI 반려동물 동반여행 정보(detailPetTour2)입니다. 방문 전 업체에 다시 확인하세요.</p>`
+    : "";
   const warning = isHospital
     ? `<p class="pd-warn"><strong>야간·응급 진료 가능 여부는 방문 전 전화로 확인하세요.</strong></p>`
     : `<p class="pd-warn">공공데이터에 등록된 정보 기준이라 실제 운영 현황과 다를 수 있어요. 방문 전 반려동물 동반 가능 여부를 해당 업체에 확인하세요.</p>`;
@@ -161,11 +185,14 @@ function makePlacePage(place, css, updatedAt, thin) {
   </header>
   <main class="page-detail" style="display:block;overflow:visible">
     <article class="pd-inner">
-      <div class="pd-photo" aria-hidden="true"><svg class="pd-photo-paw" width="84" height="84" viewBox="0 0 24 24"><path d="M12 13.2c2.9 0 5.6 2.3 5.6 4.7 0 1.5-1.1 2.5-2.7 2.5-1 0-1.8-.4-2.9-.4s-1.9.4-2.9.4c-1.6 0-2.7-1-2.7-2.5 0-2.4 2.7-4.7 5.6-4.7ZM6.2 8.1c1 .3 1.5 1.7 1.1 3-.4 1.4-1.5 2.2-2.5 1.9-1-.3-1.5-1.7-1.1-3 .4-1.3 1.5-2.2 2.5-1.9Zm11.6 0c1-.3 2.1.6 2.5 1.9.4 1.3-.1 2.7-1.1 3-1 .3-2.1-.5-2.5-1.9-.4-1.3.1-2.7 1.1-3ZM9.3 3.6c1.1.1 1.9 1.4 1.8 2.9-.1 1.4-1 2.6-2.1 2.5C7.9 8.9 7.1 7.6 7.2 6.2c.1-1.5 1-2.7 2.1-2.6Zm5.4 0c1.1-.1 2 1.1 2.1 2.6.1 1.4-.7 2.7-1.8 2.8-1.1.1-2-1.1-2.1-2.5-.1-1.5.7-2.8 1.8-2.9Z"/></svg><span class="pd-photo-cap">${escapeHtml(cat.label)}</span></div>
+      ${photoHtml}
       <h1 class="pd-title">${escapeHtml(place.name)}</h1>
       <span class="badge"><span class="dot dot--${place.category}"></span>${escapeHtml(cat.label)}</span>
+      ${overviewHtml}
       <div class="pd-card"><dl style="margin:0">${rows}</dl></div>
+      ${petHtml}
       <div class="pd-actions">${actions}</div>
+      <div class="pd-maps">${mapSearch}</div>
       ${warning}
       ${reportLink()}
       <p class="pd-source-date">데이터 기준일: ${escapeHtml(updatedAt)}</p>
@@ -196,8 +223,8 @@ const EDITORIAL_MIN_CHARS = 180;
 function editorialText(place) {
   const parts = [];
   for (const [key, value] of Object.entries(place)) {
-    if (PUBLIC_DATA_FIELDS.has(key) || value == null || typeof value === "number" || typeof value === "boolean") continue;
-    const text = String(value).replace(/\s+/g, " ").trim();
+    if (PUBLIC_DATA_FIELDS.has(key) || typeof value !== "string") continue;
+    const text = value.replace(/\s+/g, " ").trim();
     if (text) parts.push(text);
   }
   return parts.join(" ");
@@ -206,6 +233,7 @@ function editorialText(place) {
 // Hours are empty ("정보 없음") or the single token "24시간", and there is no original write-up.
 // Those pages stay on the site for visitors, but are noindex and left out of the sitemap.
 function isThinPlace(place) {
+  if (tourapi.isRich(place.tour)) return false;
   return Array.from(editorialText(place)).length < EDITORIAL_MIN_CHARS;
 }
 function makeMainMeta(html) {
@@ -394,12 +422,37 @@ async function build() {
     valid.push({ ...p, id, lat: Number(p.lat), lng: Number(p.lng) });
   }
   if (!valid.length) throw new Error("생성할 수 있는 장소가 없습니다.");
+  const tour = await tourapi.loadOrFetch({
+    places: valid,
+    cachePath: path.join(ROOT, "data", "tourapi-cache.json"),
+    serviceKey: process.env.TOURAPI_SERVICE_KEY || "",
+    refresh: args.includes("--refresh-tourapi"),
+    log,
+  });
+  for (const place of valid) {
+    const contentId = tourapi.contentIdOf(place);
+    const detail = contentId ? tour.byContentId[contentId] : null;
+    place.tour = detail && detail.complete ? detail : null;
+    if (place.tour && place.tour.homepage && !displayValue(place.homepage)) {
+      place.homepage = place.tour.homepage;
+      place.homepageFromTour = true;
+    }
+  }
+  const tourStats = tourapi.summarize(valid);
+  log(`TourAPI contentid ${tour.contentIds}곳, 이번 빌드에서 받은 상세 ${tour.fetched}곳`);
+  log(`이미지 ${tourStats.images} · 개요 ${tourStats.overviews} · TourAPI로 새로 채운 홈페이지 ${tourStats.apiHomepages} · 기존 홈페이지 ${tourStats.existingHomepages} · 동반 조건 ${tourStats.petRules} · 색인 가능 ${tourStats.rich}`);
   fs.rmSync(OUT, { recursive: true, force: true });
   copyAssets();
   let main = makeMainMeta(rawIndex).replace(/데이터 기준일: \d{4}-\d{2}-\d{2}/, "데이터 기준일: " + updatedAt);
   if (USE_SRI) main = await withSri(main);
   fs.writeFileSync(path.join(OUT, "index.html"), main, "utf8");
-  fs.writeFileSync(path.join(OUT, "places.json"), JSON.stringify({ updatedAt, places: valid }), "utf8");
+  const publishedPlaces = valid.map((place) => {
+    const copy = { ...place };
+    if (!copy.tour) delete copy.tour;
+    if (!copy.homepageFromTour) delete copy.homepageFromTour;
+    return copy;
+  });
+  fs.writeFileSync(path.join(OUT, "places.json"), JSON.stringify({ updatedAt, places: publishedPlaces }), "utf8");
   fs.mkdirSync(path.join(OUT, "place"), { recursive: true });
   fs.writeFileSync(path.join(OUT, "place", "place.css"), css, "utf8");
   const indexablePlaces = [];
@@ -422,6 +475,15 @@ async function build() {
   log(`데이터 기준일: ${updatedAt}`);
   log(`장소 정적 페이지 생성: ${builtPages}/${valid.length}`);
   log(`얇은 장소 noindex·사이트맵 제외: ${thinCount}곳, 색인을 유지하는 장소: ${indexablePlaces.length}곳`);
+  if (indexablePlaces.filter((place) => tourapi.isRich(place.tour)).length !== tourStats.rich) {
+    throw new Error("색인 장소 수가 TourAPI 상세(이미지·개요·동반 조건) 수와 다릅니다.");
+  }
+  const sampleHtml = fs.readFileSync(path.join(OUT, "place", "kbizin-212.html"), "utf8");
+  if (!sampleHtml.includes("카카오맵에서 보기") || !sampleHtml.includes("https://map.kakao.com/link/search/") || !sampleHtml.includes("네이버 지도에서 보기") || !sampleHtml.includes("https://map.naver.com/p/search/")) {
+    throw new Error("장소 페이지에 카카오맵·네이버 지도 검색 링크가 없습니다.");
+  }
+  if (sampleHtml.includes("pd-overview") || sampleHtml.includes("pd-figure")) throw new Error("contentid가 없는 장소에 관광 개요나 사진을 넣었습니다.");
+  if (!sampleHtml.includes('name="robots" content="noindex, follow"')) throw new Error("정보가 얇은 장소가 색인 대상이 되었습니다.");
   log(`전체 HTML: ${htmlCount}, OG PNG: 5, 장소 반영 전 sitemap URL: ${sitemapUrls.length}`);
   if (thinCount + indexablePlaces.length !== valid.length) throw new Error("얇은 장소 분류 수가 전체 장소 수와 다릅니다.");
   if (skipped.length) {
