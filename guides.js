@@ -67,7 +67,7 @@ function makeGuide(g,idx){
  const structured={"@context":"https://schema.org","@type":"Article",headline:g.title,description:g.summary,datePublished:updated,dateModified:updated,inLanguage:"ko-KR",author:{"@type":"Organization",name:"댕냥이와 함께"},publisher:{"@type":"Organization",name:"댕냥이와 함께"},mainEntityOfPage:BASE+url};
  return layout(g.title,g.description||g.summary,url,html,structured);
 }
-function legal(title,url,description,body){write(url.slice(1),layout(title,description,url,'<article class="article"><h1>'+esc(title)+'</h1><p class="meta">시행·갱신일: '+updated+'</p>'+body+'</article>',null));}
+function legal(title,url,description,body,date){const when=date||updated;write(url.slice(1),layout(title,description,url,'<article class="article"><h1>'+esc(title)+'</h1><p class="meta">시행·갱신일: '+when+'</p>'+body+'</article>',null));}
 function patchMap(){
  const file=path.join(OUT,"index.html");let html=fs.readFileSync(file,"utf8");
  if(!html.includes("href=\"/guides/\"")){
@@ -83,13 +83,13 @@ function build(){
  write("guides/index.html",layout("반려동물 동반 여행 가이드 20편","전국 반려견·반려묘 동반 여행을 준비하는 지역별·테마별·실용 가이드 20편.","/guides/",cover));
  for(let i=0;i<data.length;i++)write("guides/"+data[i].id+".html",makeGuide(data[i],i));
  legal("댕냥이와 함께 소개","/about.html","반려동물 동반 전국 지도 서비스의 데이터 출처, 운영 원칙과 정보 이용 방법 안내.",'<p>댕냥이와 함께(petmap.kr)는 반려동물 보호자가 전국의 동반 숙박·카페·음식점·산책 공간과 야간 동물병원을 탐색하도록 돕는 정보 지도입니다. 편집 목적은 장소를 쉽게 비교하고 방문 전에 확인할 사항을 분명하게 알려드리는 것입니다.</p><h2>데이터는 어떻게 마련하나요?</h2><p>장소 정보는 한국관광공사 TourAPI, 공공 관광·문화 데이터, 고캠핑 및 외부 병원 안내 목록을 바탕으로 정리합니다. 데이터 수록과 실제 동반 허용·예약 가능·24시간 응급진료 가능 여부는 동일하지 않습니다. 운영시간, 추가요금, 병원 당직 여부 등은 업체에 직접 확인해 주세요.</p><h2>편집 원칙</h2><p>광고·제휴 여부와 관계없이 실제 여행 준비에 도움이 되는 정보를 우선합니다. 확인되지 않은 가격이나 체중 제한을 사실처럼 표기하지 않고, 오류를 발견한 이용자의 정정 제안을 받습니다. 본 사이트는 수의학적 진단, 예약 대행 또는 현장 이용 허가를 제공하지 않습니다.</p><h2>자료·정정 요청</h2><p>오류·폐업·동반 조건 변경 등이 있다면 <a href="/contact.html">문의·정정 안내</a>를 이용해 주세요. 여행 참고 자료는 <a href="/guides/">여행 가이드</a>에서 확인할 수 있습니다.</p>');
- legal("개인정보처리방침","/privacy.html","petmap.kr의 위치정보·쿠키·외부 지도 서비스 및 개인정보 취급 안내.",'<p>댕냥이와 함께는 지도 검색 기능을 제공하는 웹사이트입니다. 아래 내용은 현재 공개된 웹사이트 코드 기반의 안내이며, 외부 서비스 정책과 사이트 기능 변경 시 수정될 수 있습니다.</p><h2>위치정보</h2><p>웹 브라우저에서 이용자가 위치 접근을 허용하면 주변 장소 표시를 위해 브라우저가 제공하는 위치정보를 이용할 수 있습니다. 사용자는 브라우저 권한 설정에서 접근을 거절하거나 철회할 수 있습니다. 위치 권한을 허용하지 않아도 지역명 검색을 이용할 수 있습니다.</p><h2>기술 서비스와 접속정보</h2><p>사이트는 지도 타일(OpenStreetMap 관련 타일 서비스) 및 화면 작동을 위한 외부 라이브러리 제공 서버와 통신할 수 있습니다. 외부 서버는 접속 과정에서 IP 주소 등 기술적 접속정보를 처리할 수 있으므로 각 제공자의 개인정보처리방침을 확인해 주세요. 웹 호스팅 제공자 또한 접속·오류 로그를 처리할 수 있습니다.</p><h2>광고·쿠키</h2><p>현재 애드센스 광고 송출이 확인된 상태는 아닙니다. 향후 Google 광고를 도입하면 광고 제공과 측정 과정에서 Google 및 광고 파트너가 쿠키, IP 주소 또는 유사 식별자를 이용할 수 있으며, 도입 전에 실제 사용 목적과 동의 수단을 추가 안내합니다. <a href="https://policies.google.com/technologies/partner-sites" target="_blank" rel="noopener">Google의 파트너 사이트 데이터 이용 안내</a>를 확인할 수 있습니다.</p><h2>문의 및 정책 변경</h2><p>장소 정보나 개인정보 관련 문의는 <a href="/contact.html">문의·정정 페이지</a>에 기재된 공식 안내 경로를 이용해 주세요. 실제 운영자 연락처가 확인되는 경우 별도로 고지하겠습니다. 시행일: '+updated+'.</p>');
+ legal("개인정보처리방침","/privacy.html","petmap.kr의 위치정보·쿠키·Google AdSense 및 개인정보 취급 안내.",'<p>댕냥이와 함께는 지도 검색 기능을 제공하는 웹사이트입니다. 아래 내용은 현재 공개된 웹사이트 코드 기반의 안내이며, 외부 서비스 정책과 사이트 기능 변경 시 수정될 수 있습니다.</p><h2>위치정보</h2><p>웹 브라우저에서 이용자가 위치 접근을 허용하면 주변 장소 표시를 위해 브라우저가 제공하는 위치정보를 이용할 수 있습니다. 사용자는 브라우저 권한 설정에서 접근을 거절하거나 철회할 수 있습니다. 위치 권한을 허용하지 않아도 지역명 검색을 이용할 수 있습니다.</p><h2>기술 서비스와 접속정보</h2><p>사이트는 지도 타일(OpenStreetMap 관련 타일 서비스) 및 화면 작동을 위한 외부 라이브러리 제공 서버와 통신할 수 있습니다. 외부 서버는 접속 과정에서 IP 주소 등 기술적 접속정보를 처리할 수 있으므로 각 제공자의 개인정보처리방침을 확인해 주세요. 웹 호스팅 제공자 또한 접속·오류 로그를 처리할 수 있습니다.</p><h2>광고·쿠키</h2><p>댕냥이와 함께는 Google AdSense 광고 스크립트를 사용합니다. 광고 심사가 끝나면 페이지에 Google 광고가 표시될 수 있습니다. 스크립트가 실행되는 동안 Google과 광고 파트너는 광고를 게재하고, 같은 광고가 너무 자주 나오지 않게 조정하고, 노출과 클릭을 측정하기 위해 쿠키와 유사한 기술(웹 비콘, 광고 식별자 등)을 기기에 저장하거나 읽을 수 있습니다.</p><p>이 과정에서 쿠키 식별자, IP 주소, 브라우저 종류, 방문한 페이지, 대략적인 위치, 광고를 보거나 클릭한 기록이 처리될 수 있습니다. 같은 정보를 바탕으로 이용자에게 맞춘 광고가 나올 수도 있습니다. 맞춤 광고는 <a href="https://adssettings.google.com/" target="_blank" rel="noopener">Google 광고 설정</a>에서 끄거나 조정할 수 있고, 브라우저 설정에서 서드파티 쿠키를 차단하거나 이미 저장된 쿠키를 삭제할 수도 있습니다.</p><p>이 사이트는 회원가입으로 이름이나 연락처를 수집하지 않으며, AdSense 쿠키를 자체 서버에 저장하거나 판매하지 않습니다. Google이 파트너 사이트에서 데이터를 어떻게 이용하는지는 <a href="https://policies.google.com/technologies/partner-sites" target="_blank" rel="noopener">Google의 파트너 사이트 데이터 이용 안내</a>에서 확인할 수 있습니다.</p><h2>문의 및 정책 변경</h2><p>장소 정보나 개인정보 관련 문의는 <a href="/contact.html">문의·정정 페이지</a>에 기재된 공식 안내 경로를 이용해 주세요. 실제 운영자 연락처가 확인되는 경우 별도로 고지하겠습니다. 이 방침은 2026년 10월 17일에 Google AdSense 쿠키 안내를 반영해 고쳤습니다.</p>',"2026-10-17");
  legal("문의·장소 정보 정정","/contact.html","petmap.kr 동반 시설 정보 오류, 운영시간 변경 및 개인정보 관련 문의 접수 안내.",'<p>반려동물 동반 규정·영업 여부·병원 진료시간 변경을 발견했다면 근거와 함께 알려 주세요. 정확한 정보를 제공하기 위해 업소 공식 공지 또는 전화 확인 등 검증 가능한 자료가 있으면 도움이 됩니다.</p><h2>정보 정정 제안</h2><p>현재 확인 가능한 공개 정정 창구는 프로젝트 GitHub 이슈입니다. GitHub 로그인이 필요할 수 있으며 문의가 공개될 수 있으므로 전화번호·주소 등 개인정보나 민감한 정보를 기재하지 마세요.</p><p><a href="https://github.com/kdg28447520/petmap/issues/new" target="_blank" rel="noopener">→ GitHub에서 장소 정보 정정 제안하기</a></p><h2>제안 시 유용한 정보</h2><ul><li>장소명과 지도 상세 페이지 URL</li><li>바뀐 항목(운영시간·동반 허용·폐업 등)</li><li>근거 자료의 공개 URL 또는 확인 일자</li></ul><h2>개인정보 관련 요청</h2><p>본 사이트는 별도 회원가입 화면을 제공하지 않습니다. 개인정보 요청과 관련해 GitHub 공개 이슈에 개인 정보를 올리지 마세요. 연락 수단은 운영자 확인 후 보완될 예정입니다.</p>');
  legal("이용 안내·면책","/terms.html","petmap.kr 지도 데이터와 반려동물 동반 장소 이용 시 주의사항.",'<p>댕냥이와 함께의 지도와 가이드는 여행·외출 참고용 정보입니다. 등록 여부가 반려동물의 입장 허가 또는 병원의 당일 진료 가능 여부를 뜻하지 않습니다.</p><h2>시설 정보 확인</h2><p>운영시간·예약·요금·반려동물 조건은 시설과 시기에 따라 달라질 수 있습니다. 숙박은 객실별 규정, 캠핑은 사이트별 규정, 음식점은 실내·야외 허용 범위를 별도 확인해 주세요. 의학적 응급상황은 지체하지 말고 병원에 먼저 전화하세요.</p><h2>자료 출처와 권리</h2><p>일부 장소 정보는 공공·민간 제공 자료에서 유래하며, 각 출처의 이용조건을 따릅니다. 본 웹사이트의 편집 설명과 가이드를 무단으로 대량 복제·재배포하지 마세요. 잘못된 정보는 <a href="/contact.html">정정 요청</a>할 수 있습니다.</p>');
  patchMap();
- const urls=["/guides/","/about.html","/privacy.html","/contact.html","/terms.html",...data.map(g=>"/guides/"+g.id+".html")];
+ const urls=[["/guides/",updated],["/about.html",updated],["/privacy.html","2026-10-17"],["/contact.html",updated],["/terms.html",updated],...data.map(g=>["/guides/"+g.id+".html",updated])];
  const site=path.join(OUT,"sitemap.xml");let xml=fs.readFileSync(site,"utf8");
- xml=xml.replace("</urlset>",urls.map(p=>'<url><loc>'+BASE+p+'</loc><lastmod>'+updated+'</lastmod></url>').join("\n")+"\n</urlset>");
+ xml=xml.replace("</urlset>",urls.map(([p,when])=>'<url><loc>'+BASE+p+'</loc><lastmod>'+when+'</lastmod></url>').join("\n")+"\n</urlset>");
  fs.writeFileSync(site,xml,"utf8");
  console.log("[petmap guides] published",data.length,"guides and 4 policy pages; sitemap +",urls.length,"URLs");
 }
@@ -97,21 +97,73 @@ build();
 
 function connectAdsense(){
  const publisher="ca-pub-4533404826925371";
+ const script='<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client='+publisher+'" crossorigin="anonymous"></script>';
+ const meta='<meta name="google-adsense-account" content="'+publisher+'">';
  function walk(dir){
   for(const ent of fs.readdirSync(dir,{withFileTypes:true})){
    const filename=path.join(dir,ent.name);
    if(ent.isDirectory())walk(filename);
    else if(ent.name.endsWith(".html")){
     let html=fs.readFileSync(filename,"utf8");
-    if(!html.includes('name="google-adsense-account"')){
-      html=html.replace(/<\/head>/i,'<meta name="google-adsense-account" content="'+publisher+'"></head>');
-      fs.writeFileSync(filename,html,"utf8");
+    let changed=false;
+    if(!html.includes("adsbygoogle.js")){
+      html=html.replace(/<\/head>/i,script+meta+"</head>");
+      changed=true;
+    }else if(!html.includes('name="google-adsense-account"')){
+      html=html.replace(/<\/head>/i,meta+"</head>");
+      changed=true;
     }
+    if(changed)fs.writeFileSync(filename,html,"utf8");
    }
   }
  }
  walk(OUT);
  fs.writeFileSync(path.join(OUT,"ads.txt"),"google.com, "+publisher.replace("ca-","")+", DIRECT, f08c47fec0942fa0\n","utf8");
- console.log("[petmap adsense] verification meta and ads.txt generated");
+ console.log("[petmap adsense] ad script, verification meta, and ads.txt generated");
 }
 connectAdsense();
+
+function assertPublished(){
+ const xml=fs.readFileSync(path.join(OUT,"sitemap.xml"),"utf8");
+ const locs=new Set([...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map(m=>m[1]));
+ const scriptSrc="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4533404826925371";
+ const problems=[];
+ let htmlCount=0, noindex=0, missingScript=0;
+ function pageUrl(filename){
+  const rel="/"+path.relative(OUT,filename).split(path.sep).join("/");
+  if(rel==="/index.html")return BASE+"/";
+  if(rel.endsWith("/index.html"))return BASE+rel.slice(0,-"index.html".length);
+  return BASE+rel;
+ }
+ function walk(dir){
+  for(const ent of fs.readdirSync(dir,{withFileTypes:true})){
+   const filename=path.join(dir,ent.name);
+   if(ent.isDirectory())walk(filename);
+   else if(ent.name.endsWith(".html")){
+    htmlCount++;
+    const html=fs.readFileSync(filename,"utf8");
+    const url=pageUrl(filename);
+    if(!html.includes(scriptSrc)||!html.includes('crossorigin="anonymous"')||!html.includes('name="google-adsense-account"'))missingScript++;
+    const blocked=html.includes('name="robots" content="noindex, follow"');
+    if(blocked){
+     noindex++;
+     if(locs.has(url))problems.push("noindex인데 사이트맵에 있음: "+url);
+    }else if(!locs.has(url))problems.push("색인 대상인데 사이트맵에 없음: "+url);
+    const rel="/"+path.relative(OUT,filename).split(path.sep).join("/");
+    if(blocked && !rel.startsWith("/place/"))problems.push("장소가 아닌 페이지가 noindex: "+rel);
+   }
+  }
+ }
+ walk(OUT);
+ const privacy=fs.readFileSync(path.join(OUT,"privacy.html"),"utf8");
+ if(!privacy.includes("Google AdSense")||!privacy.includes("쿠키"))problems.push("개인정보처리방침에 AdSense 쿠키 안내가 없습니다.");
+ if(privacy.includes("송출이 확인된 상태는 아닙니다"))problems.push("개인정보처리방침이 아직 광고 미사용으로 적혀 있습니다.");
+ const ads=fs.readFileSync(path.join(OUT,"ads.txt"),"utf8");
+ if(ads!=="google.com, pub-4533404826925371, DIRECT, f08c47fec0942fa0\n")problems.push("ads.txt 내용이 게시자 ID와 다릅니다.");
+ const placeLocs=[...locs].filter(u=>u.includes("/place/"));
+ if(problems.length||missingScript){
+  throw new Error("[petmap check] "+problems.slice(0,12).join(" | ")+(missingScript?(" missingScript="+missingScript):""));
+ }
+ console.log("[petmap check] html",htmlCount,"noindex",noindex,"sitemap",locs.size,"place in sitemap",placeLocs.length);
+}
+assertPublished();
