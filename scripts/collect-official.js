@@ -118,6 +118,13 @@ const BLOCKED_HOSTS = [
   "rescueanimal.kr",
   "findallplace.com",
   "wooatrail.wooahouse.com",
+  "wooacamp.wooahouse.com",
+  "camppick.com",
+  "campingdogam.com",
+  "campingfriend.co.kr",
+  "campinghub.kr",
+  "pickcare.co.kr",
+  "udanax.org",
 ];
 
 function loadPlaces() {
@@ -194,7 +201,8 @@ function directoryPath(raw) {
     if (/\/biz\/[A-Za-z]{2}\d{6,}/i.test(url.pathname)) return true;
     if (/\/travel\/(?:\d+|food\/)/i.test(url.pathname)) return true;
     if (/\/view\/\d+/i.test(url.pathname)) return true;
-    if (/\/franchise\/detail\/|\/facilities\/\d+|\/accommodations\/|\/nature\/n-eco_park|\/tour\/\d+\/\d+/i.test(url.pathname)) return true;
+    if (/\/franchise\/detail\/|\/facilities\/\d+|\/accommodations\/|\/nature\/n-eco_park|\/tour\/\d+\/\d+|\/camps\/|\/camp\/\d+|listing-camp-detail|\/camping\/\d+\.html|\/lounge\/pickspot\//i.test(url.pathname)) return true;
+    if (/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i.test(url.pathname)) return true;
     if (/\/vet\/[^/]+\/[^/]+\//i.test(url.pathname)) return true;
     let decoded = url.pathname;
     try { decoded = decodeURIComponent(url.pathname); } catch (_) { /* keep the raw path */ }
@@ -692,6 +700,8 @@ function selfCheck() {
   if (!directoryPath("https://open-maru.com/business/39058")) throw new Error("업체 디렉터리 경로");
   if (!directoryPath("https://tour.hansangsoo.com/place/sample-3537624.html")) throw new Error("관광 복제 경로");
   if (!directoryPath("https://114.ai.kr/franchise/detail/abc")) throw new Error("114 프랜차이즈 경로");
+  if (!directoryPath("https://www.camppick.com/camps/9b879fe7-eec8-4f40-b55c-87fea610e1ad")) throw new Error("캠핑 디렉터리 경로");
+  if (!blockedHost("https://campingdogam.com/camp/102354/")) throw new Error("캠핑 도감 차단");
   const hospital = { id: "h24-301000001020210001", name: "에스디동물영상센터", addr: "서울특별시 중구 세종대로 110", tel: "02-1111-2222" };
   const catalogPage = decide(hospital, { html: "<title>에스디동물영상센터</title><p>세종대로 110 02-1111-2222</p>", url: "https://example-directory.test/animal-hospital/301000001020210001", finalUrl: "https://example-directory.test/animal-hospital/301000001020210001" }, { fromSeed: true, channelTitle: "" });
   if (catalogPage.ok) throw new Error("등록번호가 들어간 복제 페이지");
