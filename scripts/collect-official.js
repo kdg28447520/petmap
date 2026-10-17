@@ -110,6 +110,14 @@ const BLOCKED_HOSTS = [
   "datacafe.kr",
   "animalcure.co.kr",
   "d9suk.com",
+  "hansangsoo.com",
+  "114.ai.kr",
+  "dayoff.co.kr",
+  "iamdubu.com",
+  "cylooks.co.kr",
+  "rescueanimal.kr",
+  "findallplace.com",
+  "wooatrail.wooahouse.com",
 ];
 
 function loadPlaces() {
@@ -186,6 +194,13 @@ function directoryPath(raw) {
     if (/\/biz\/[A-Za-z]{2}\d{6,}/i.test(url.pathname)) return true;
     if (/\/travel\/(?:\d+|food\/)/i.test(url.pathname)) return true;
     if (/\/view\/\d+/i.test(url.pathname)) return true;
+    if (/\/franchise\/detail\/|\/facilities\/\d+|\/accommodations\/|\/nature\/n-eco_park|\/tour\/\d+\/\d+/i.test(url.pathname)) return true;
+    if (/\/vet\/[^/]+\/[^/]+\//i.test(url.pathname)) return true;
+    let decoded = url.pathname;
+    try { decoded = decodeURIComponent(url.pathname); } catch (_) { /* keep the raw path */ }
+    if (/-\d{6,}\.html?$/i.test(decoded) || /MA\d{10,}/i.test(decoded)) return true;
+    const regionBits = decoded.split("/").filter((part) => part.length >= 2 && /(특별자치도|특별시|광역시|시|군|구|읍|면)$/.test(part));
+    if (regionBits.length >= 2) return true;
     if (/[?&](?:id|idx|no|seq|contentId)=\d+/i.test(url.search) && /view|store|detail|place|info|shop|read|spot/i.test(url.pathname)) return true;
     return false;
   } catch (_) {
@@ -675,6 +690,8 @@ function selfCheck() {
   if (!blockedHost("https://www.daangn.com/kr/local-profile/sample")) throw new Error("당근 지역 프로필 차단");
   if (!blockedHost("https://yakfact.kr/animal-hospital/seoul/1")) throw new Error("동물병원 디렉터리 차단");
   if (!directoryPath("https://open-maru.com/business/39058")) throw new Error("업체 디렉터리 경로");
+  if (!directoryPath("https://tour.hansangsoo.com/place/sample-3537624.html")) throw new Error("관광 복제 경로");
+  if (!directoryPath("https://114.ai.kr/franchise/detail/abc")) throw new Error("114 프랜차이즈 경로");
   const hospital = { id: "h24-301000001020210001", name: "에스디동물영상센터", addr: "서울특별시 중구 세종대로 110", tel: "02-1111-2222" };
   const catalogPage = decide(hospital, { html: "<title>에스디동물영상센터</title><p>세종대로 110 02-1111-2222</p>", url: "https://example-directory.test/animal-hospital/301000001020210001", finalUrl: "https://example-directory.test/animal-hospital/301000001020210001" }, { fromSeed: true, channelTitle: "" });
   if (catalogPage.ok) throw new Error("등록번호가 들어간 복제 페이지");
