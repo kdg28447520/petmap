@@ -976,15 +976,6 @@ svg.leaflet-image-layer.leaflet-interactive path {
       .dot--food { background: var(--food); }
       .dot--park { background: var(--park); }
       .dot--hospital { background: var(--hospital); }
-      .verify-badge {
-        display: inline-flex; align-items: center;
-        font-size: 13px; font-weight: 700;
-        color: var(--hospital-ink);
-        background: var(--hospital-soft);
-        border-radius: 999px;
-        padding: 2px 8px;
-        white-space: nowrap;
-      }
       .chip {
         font: inherit;
         font-size: 15px;
@@ -1151,6 +1142,13 @@ svg.leaflet-image-layer.leaflet-interactive path {
         padding: 11px 13px;
         font-size: 15px;
         font-weight: 700;
+        line-height: 1.55;
+      }
+      .pd-source-note {
+        margin: 22px 0 0;
+        color: var(--ink-3);
+        font-size: 15px;
+        font-weight: 500;
         line-height: 1.55;
       }
       .pd-map {
@@ -1439,8 +1437,6 @@ svg.leaflet-image-layer.leaflet-interactive path {
         white-space: nowrap;
       }
       .row-call:active { filter: brightness(0.9); }
-      .verify-badge--wide { white-space: normal; line-height: 1.45; text-align: left; }
-
       /* ---------- toast ---------- */
       .toast {
         position: fixed;
@@ -1618,7 +1614,6 @@ svg.leaflet-image-layer.leaflet-interactive path {
         var PAW_PATH = "M12 13.2c2.9 0 5.6 2.3 5.6 4.7 0 1.5-1.1 2.5-2.7 2.5-1 0-1.8-.4-2.9-.4s-1.9.4-2.9.4c-1.6 0-2.7-1-2.7-2.5 0-2.4 2.7-4.7 5.6-4.7ZM6.2 8.1c1 .3 1.5 1.7 1.1 3-.4 1.4-1.5 2.2-2.5 1.9-1-.3-1.5-1.7-1.1-3 .4-1.3 1.5-2.2 2.5-1.9Zm11.6 0c1-.3 2.1.6 2.5 1.9.4 1.3-.1 2.7-1.1 3-1 .3-2.1-.5-2.5-1.9-.4-1.3.1-2.7 1.1-3ZM9.3 3.6c1.1.1 1.9 1.4 1.8 2.9-.1 1.4-1 2.6-2.1 2.5C7.9 8.9 7.1 7.6 7.2 6.2c.1-1.5 1-2.7 2.1-2.6Zm5.4 0c1.1-.1 2 1.1 2.1 2.6.1 1.4-.7 2.7-1.8 2.8-1.1.1-2-1.1-2.1-2.5-.1-1.5.7-2.8 1.8-2.9Z";
         var SOURCE_LABEL = "한국관광공사 TourAPI · 반려동물 동반 여행 정보";
         var SOURCE_LABEL_HOSPITAL = "maruvet·vet24 24시 동물병원 목록 등재 · 2026-10 확인";
-        var VERIFY_BADGE_TEXT = "maruvet·vet24 24시 목록 등재 · 2026-10 확인";
         var SOURCE_LABELS = {
           kbizin: "한국관광공사·한국문화정보원 공공데이터 · 애견동반 카페",
           gocamping: "고캠핑(gocamping.or.kr) · 반려견동반 캠핑장"
@@ -1853,8 +1848,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
           if (p.phone) meta.push(esc(fmtPhone(p.phone)));
           return '<span class="row-body">' +
               '<span class="row-top"><span class="row-name">' + esc(p.name) + "</span>" +
-              '<span class="badge"><span class="dot dot--' + p.cat + '"></span>' + esc(CATS[p.cat].label) + "</span>" +
-              (p.verified24h ? '<span class="verify-badge verify-badge--wide">' + esc(VERIFY_BADGE_TEXT) + "</span>" : "") + "</span>" +
+              '<span class="badge"><span class="dot dot--' + p.cat + '"></span>' + esc(CATS[p.cat].label) + "</span></span>" +
               (p.address ? '<span class="row-addr" style="display:block">' + esc(p.address) + "</span>" : "") +
               (meta.length ? '<span class="row-meta"><span>' + meta.join("</span><span>") + "</span></span>" : "") +
             "</span>";
@@ -2084,12 +2078,11 @@ svg.leaflet-image-layer.leaflet-interactive path {
           var regionText = rowValue(p.region ? p.region + (p.locality ? " " + p.locality : "") : "");
           var rows =
             (rowValue(p.address) ? '<div class="pd-row"><dt>주소</dt><dd>' + esc(p.address) + '<button class="copy-btn pd-copy" type="button">주소 복사</button></dd></div>' : "") +
-            (rowValue(p.hours) ? '<div class="pd-row"><dt>' + (isHospital ? "진료시간" : "운영시간") + "</dt><dd>" + esc(p.hours) + (p.verified24h ? ' <span class="verify-badge verify-badge--wide">' + esc(VERIFY_BADGE_TEXT) + "</span>" : "") + "</dd></div>" : "") +
+            (rowValue(p.hours) ? '<div class="pd-row"><dt>' + (isHospital ? "진료시간" : "운영시간") + "</dt><dd>" + esc(p.hours) + "</dd></div>" : "") +
             (rowValue(p.phone) ? '<div class="pd-row"><dt>전화</dt><dd>' + (canCall ? '<a href="' + esc(telHref(p)) + '">' + esc(fmtPhone(p.phone)) + "</a>" : esc(fmtPhone(p.phone))) + "</dd></div>" : "") +
             (!isHospital ? '<div class="pd-row"><dt>동반 조건</dt><dd>조건 미확인 — 방문 전 업체에 확인하세요</dd></div>' : "") +
             (p.homepage ? '<div class="pd-row"><dt>' + (p.source === "gocamping" ? "상세 페이지" : "공식 사이트") + '</dt><dd><a href="' + esc(p.homepage) + '" target="_blank" rel="noopener">' + esc(p.homepage.replace(/^https?:\/\//, "")) + "</a></dd></div>" : "") +
-            (regionText ? '<div class="pd-row"><dt>지역</dt><dd>' + esc(regionText) + "</dd></div>" : "") +
-            (rowValue(sourceLabel(p)) ? '<div class="pd-row"><dt>출처</dt><dd>' + esc(sourceLabel(p)) + "</dd></div>" : "");
+            (regionText ? '<div class="pd-row"><dt>지역</dt><dd>' + esc(regionText) + "</dd></div>" : "");
           var btns = [];
           if (canCall) {
             btns.push(isHospital
@@ -2110,7 +2103,6 @@ svg.leaflet-image-layer.leaflet-interactive path {
               '<div class="pd-photo" aria-hidden="true"><svg class="pd-photo-paw" viewBox="0 0 24 24"><path d="' + PAW_PATH + '"/></svg><span class="pd-photo-cap">' + esc(CATS[p.cat].label) + "</span></div>" +
               '<h2 class="pd-title">' + esc(p.name) + "</h2>" +
               '<span class="badge"><span class="dot dot--' + p.cat + '"></span>' + esc(CATS[p.cat].label) + "</span>" +
-              (p.verified24h ? ' <span class="verify-badge verify-badge--wide">' + esc(VERIFY_BADGE_TEXT) + "</span>" : "") +
               '<div class="pd-card"><dl style="margin:0">' + rows + "</dl></div>" +
               actions +
               (isHospital
@@ -2130,6 +2122,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
                     '<span class="near-dist">' + fmtDist(n.d) + "</span></a>";
                 }).join("") +
               "</div>" +
+              (rowValue(sourceLabel(p)) ? '<p class="pd-source-note">' + esc(sourceLabel(p)) + "</p>" : "") +
             "</div>";
           document.getElementById("pdBack").addEventListener("click", function () {
             if (window.history.length > 1) window.history.back();

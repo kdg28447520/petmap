@@ -126,7 +126,6 @@ function makePlacePage(place, css, updatedAt, thin) {
     address ? `<div class="pd-row"><dt>주소</dt><dd>${escapeHtml(address)}</dd></div>` : "",
     phone ? `<div class="pd-row"><dt>전화</dt><dd><a href="${escapeHtml(tel || ("tel:" + String(phone).replace(/[^\d+]/g, "")))}">${escapeHtml(phone)}</a></dd></div>` : "",
     hours ? `<div class="pd-row"><dt>${isHospital ? "진료시간" : "운영시간"}</dt><dd>${escapeHtml(hours)}</dd></div>` : "",
-    source ? `<div class="pd-row"><dt>출처</dt><dd>${escapeHtml(source)}</dd></div>` : "",
   ].filter(Boolean).join("\n");
   const actions = [
     tel ? `<a class="call-btn${isHospital ? " call-btn--emg" : ""}" href="${escapeHtml(tel)}">${isHospital ? "지금 전화하기" : "전화 걸기"}</a>` : "",
@@ -170,6 +169,7 @@ function makePlacePage(place, css, updatedAt, thin) {
       ${warning}
       ${reportLink()}
       <p class="pd-source-date">데이터 기준일: ${escapeHtml(updatedAt)}</p>
+      ${source ? `<p class="pd-source-note">${escapeHtml(source)}</p>` : ""}
       <p><a class="pd-back" href="/">← 목록으로 돌아가기</a></p>
     </article>
   </main>
@@ -226,9 +226,10 @@ function makeMainMeta(html) {
   html = html.replace('mainLink.href = "#/place/" + encodeURIComponent(p.id);', 'mainLink.href = "/place/" + encodeURIComponent(p.id) + ".html";');
   html = html.replace('return \'<a class="near-card" href="#/place/\' + encodeURIComponent(q.id) + \'">\' +', 'return \'<a class="near-card" href="/place/\' + encodeURIComponent(q.id) + \'.html">\' +');
   html = html.replace('m.on("click", function () { window.location.hash = "#/place/" + encodeURIComponent(p.id); });', 'm.on("click", function () { window.location.href = "/place/" + encodeURIComponent(p.id) + ".html"; });');
-  const sourceRow = "'<div class=\"pd-row\"><dt>출처</dt><dd>' + esc(sourceLabel(p)) + \"</dd></div>\";";
+  const sourceNote = "(rowValue(sourceLabel(p)) ? '<p class=\"pd-source-note\">' + esc(sourceLabel(p)) + \"</p>\" : \"\") +";
+  if (!html.includes(sourceNote)) throw new Error("상세 페이지 출처 한 줄을 찾지 못했습니다.");
   if (REPORT_EMAIL && !html.includes("정보가 다르면 알려주세요")) {
-    html = html.replace(sourceRow, sourceRow + '\n            (REPORT_EMAIL ? \'<div class="pd-row"><dt>정보 수정</dt><dd><a href="mailto:\' + esc(REPORT_EMAIL) + \'?subject=댕냥이와%20함께%20장소%20정보%20수정%20제안">정보가 다르면 알려주세요</a></dd></div>\' : "") +');
+    html = html.replace(sourceNote, sourceNote + "\n              (REPORT_EMAIL ? '<p class=\"pd-report\"><a href=\"mailto:' + esc(REPORT_EMAIL) + '?subject=댕냥이와%20함께%20장소%20정보%20수정%20제안\">정보가 다르면 알려주세요</a></p>' : \"\") +");
   }
   return html;
 }
