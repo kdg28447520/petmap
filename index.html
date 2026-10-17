@@ -950,7 +950,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
       .search-box svg { width: 18px; height: 18px; fill: var(--ink-3); flex: none; }
       .search-box input {
         border: 0; outline: 0; background: transparent;
-        font: inherit; font-size: 15px;
+        font: inherit; font-size: 16px;
         color: var(--ink);
         width: 100%;
         min-width: 0;
@@ -962,11 +962,37 @@ svg.leaflet-image-layer.leaflet-interactive path {
         font-size: 14px; line-height: 1; cursor: pointer; flex: none;
         display: none;
       }
-      .chips {
+      .list-filters {
+        padding: 12px 20px 0;
         display: flex;
-        flex-wrap: wrap;
+        flex-direction: column;
         gap: 8px;
       }
+      .filter-row { display: flex; gap: 8px; }
+      .filter-select { flex: 1; min-width: 0; }
+      .filter-select select {
+        width: 100%;
+        min-height: 44px;
+        font: inherit;
+        font-size: 16px;
+        font-weight: 650;
+        color: var(--ink);
+        background: var(--surface);
+        border: 1px solid var(--line-strong);
+        border-radius: 10px;
+        padding: 0 10px;
+      }
+      .filter-select select:disabled { color: var(--ink-3); }
+      .chips {
+        display: flex;
+        flex-wrap: nowrap;
+        gap: 8px;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        padding-bottom: 2px;
+      }
+      .chips::-webkit-scrollbar { display: none; }
       .dot {
         width: 8px; height: 8px;
         border-radius: 50%;
@@ -981,7 +1007,8 @@ svg.leaflet-image-layer.leaflet-interactive path {
         font-size: 15px;
         font-weight: 600;
         border-radius: 999px;
-        padding: 8px 13px;
+        min-height: 44px;
+        padding: 0 14px;
         cursor: pointer;
         border: 1px solid var(--line-strong);
         background: var(--chip-off-bg);
@@ -989,6 +1016,8 @@ svg.leaflet-image-layer.leaflet-interactive path {
         display: inline-flex;
         align-items: center;
         gap: 7px;
+        flex: none;
+        white-space: nowrap;
         transition: background 0.15s, color 0.15s, border-color 0.15s;
       }
       .chip .cnt {
@@ -1280,8 +1309,11 @@ svg.leaflet-image-layer.leaflet-interactive path {
         display: flex;
         justify-content: space-between;
         align-items: baseline;
+        gap: 4px 12px;
+        flex-wrap: wrap;
       }
       .list-head b { color: var(--ink); font-size: 14.5px; }
+      #resultCount { margin-left: auto; }
       .list {
         overflow-y: auto;
         padding: 0 20px 16px;
@@ -1432,6 +1464,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
         header { padding: 18px 16px 16px; }
         .toolbar { padding: 12px 16px; }
         .list { padding: 0 16px 14px; }
+        .list-filters { padding: 12px 16px 0; }
         .list-head { padding: 12px 16px 4px; }
         .hero-title { font-size: 25px; margin-top: 16px; }
         .hero-sub { font-size: 16px; }
@@ -1575,10 +1608,9 @@ svg.leaflet-image-layer.leaflet-interactive path {
     <div class="toolbar">
       <label class="search-box">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 2a8 8 0 1 0 4.9 14.3l5 5 1.5-1.4-5-5A8 8 0 0 0 10 2Zm0 2a6 6 0 1 1 0 12 6 6 0 0 1 0-12Z"/></svg>
-        <input id="search" type="search" placeholder="이름·지역 검색 (예: 부산, 펜션, 공원)" autocomplete="off" />
+        <input id="search" type="search" placeholder="이름 검색 (예: 와인바, 펜션)" autocomplete="off" />
         <button class="search-clear" id="searchClear" type="button" aria-label="검색어 지우기">×</button>
       </label>
-      <div class="chips" id="chips" role="group" aria-label="카테고리 필터"></div>
     </div>
 
     <main>
@@ -1590,10 +1622,25 @@ svg.leaflet-image-layer.leaflet-interactive path {
       </section>
 
       <aside aria-label="장소 목록">
+        <div class="list-filters">
+          <div class="filter-row">
+            <label class="filter-select">
+              <select id="regionFilter" aria-label="시·도">
+                <option value="">전국</option>
+              </select>
+            </label>
+            <label class="filter-select">
+              <select id="localityFilter" aria-label="시·군·구" disabled>
+                <option value="">시·군·구 전체</option>
+              </select>
+            </label>
+          </div>
+          <div class="chips" id="chips" role="group" aria-label="장소 유형"></div>
+        </div>
         <div class="list-head"><b>장소 목록</b><span id="resultCount"></span></div>
         <div class="list" id="list"></div>
         <div class="empty" id="empty">
-          조건에 맞는 장소가 없어요.<br />검색어를 바꾸거나 카테고리 필터를 조정해 보세요.
+          조건에 맞는 장소가 없어요.<br />지역, 유형, 검색어를 바꿔 보세요.
         </div>
       </aside>
     </main>
@@ -1679,7 +1726,37 @@ svg.leaflet-image-layer.leaflet-interactive path {
 
         var PLACES = [];
         var REPORT_EMAIL = "__REPORT_EMAIL__";
-        var state = { cats: { stay: true, food: true, park: true, hospital: false }, q: "" };
+        /* 유형은 하나만 고른다. URL의 type 값은 짧은 슬러그(vet 등)로 둔다. */
+        var TYPE_ORDER = ["food", "hospital", "stay", "park"];
+        var TYPE_SLUG = { food: "food", hospital: "vet", stay: "stay", park: "park" };
+        var TYPE_FROM_SLUG = { food: "food", cafe: "food", hospital: "hospital", vet: "hospital", stay: "stay", park: "park" };
+        var TYPE_COUNT_LABEL = { food: "음식점·카페", hospital: "동물병원", stay: "숙박", park: "놀이터·산책" };
+        var REGION_SHORT = { "제주특별자치도": "제주" };
+        Object.keys(REGION_ALIAS).forEach(function (shortName) {
+          REGION_SHORT[REGION_ALIAS[shortName]] = shortName;
+        });
+        function shortRegion(full) { return REGION_SHORT[full] || full; }
+        function fullRegion(token) {
+          if (!token) return "";
+          if (REGION_ALIAS[token]) return REGION_ALIAS[token];
+          if (token === "제주") return "제주특별자치도";
+          if (REGION_ORDER.indexOf(token) !== -1) return token;
+          return "";
+        }
+        function isAdminLocality(name) { return /(시|군|구|읍|면)$/.test(name); }
+        function readUrlState() {
+          var params = new URLSearchParams(window.location.search);
+          var typeSlug = String(params.get("type") || "").toLowerCase();
+          return {
+            region: fullRegion(params.get("region") || ""),
+            locality: params.get("locality") || "",
+            type: TYPE_FROM_SLUG[typeSlug] || "",
+            q: (params.get("q") || "").trim()
+          };
+        }
+        var state = readUrlState();
+        var searchTimer = null;
+        var historySilent = false;
         var dataReady = false;
         var userLoc = null; /* 위치 권한 허용 시 채워짐 {lat, lng} */
         var distSortActive = false; /* 병원만 보기 + 위치 허용 시 가까운 순 정렬 */
@@ -1704,6 +1781,12 @@ svg.leaflet-image-layer.leaflet-interactive path {
         var searchEl = document.getElementById("search");
         var clearEl = document.getElementById("searchClear");
         var chipsEl = document.getElementById("chips");
+        var regionFilterEl = document.getElementById("regionFilter");
+        var localityFilterEl = document.getElementById("localityFilter");
+        if (state.q) {
+          searchEl.value = state.q;
+          clearEl.style.display = "block";
+        }
 
         function esc(s) {
           return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
@@ -1797,9 +1880,13 @@ svg.leaflet-image-layer.leaflet-interactive path {
               return true;
             });
             dataReady = true;
+            fillRegionSelect();
+            regionFilterEl.value = state.region;
+            if (regionFilterEl.value !== state.region) state.region = "";
+            syncLocalitySelect();
             buildChips();
             fillStats();
-            applyFilters();
+            applyFilters({ url: "replace", scrollChip: true, fitMap: true });
             route();
           })
           .catch(function () {
@@ -1822,47 +1909,154 @@ svg.leaflet-image-layer.leaflet-interactive path {
           document.getElementById("statHospital").textContent = "24시 동물병원 " + fmt(hospitalCount) + "곳";
         }
 
-        /* ---------- chips ---------- */
+        /* ---------- 지역·유형 필터 ---------- */
+        function localitiesFor(region) {
+          var seen = {};
+          PLACES.forEach(function (p) {
+            if (p.region !== region || !isAdminLocality(p.locality)) return;
+            seen[p.locality] = true;
+          });
+          return Object.keys(seen).sort(function (a, b) { return a.localeCompare(b, "ko"); });
+        }
+        function fillRegionSelect() {
+          var seen = {};
+          PLACES.forEach(function (p) { if (p.region) seen[p.region] = true; });
+          var regions = Object.keys(seen).sort(function (a, b) {
+            var d = regionRank(a) - regionRank(b);
+            return d !== 0 ? d : a.localeCompare(b, "ko");
+          });
+          var html = '<option value="">전국</option>';
+          regions.forEach(function (regionName) {
+            html += '<option value="' + esc(regionName) + '">' + esc(shortRegion(regionName)) + "</option>";
+          });
+          regionFilterEl.innerHTML = html;
+        }
+        function syncLocalitySelect() {
+          var locs = state.region ? localitiesFor(state.region) : [];
+          var html = '<option value="">시·군·구 전체</option>';
+          locs.forEach(function (loc) {
+            html += '<option value="' + esc(loc) + '">' + esc(loc) + "</option>";
+          });
+          localityFilterEl.innerHTML = html;
+          localityFilterEl.disabled = !state.region;
+          if (state.locality && locs.indexOf(state.locality) === -1) state.locality = "";
+          localityFilterEl.value = state.locality;
+        }
+        function countCat(key) {
+          var n = 0;
+          for (var i = 0; i < PLACES.length; i++) {
+            if (inScope(PLACES[i], key)) n++;
+          }
+          return n;
+        }
+        function syncChips(scroll) {
+          var buttons = chipsEl.querySelectorAll(".chip");
+          for (var i = 0; i < buttons.length; i++) {
+            var b = buttons[i];
+            var key = b.getAttribute("data-cat") || "";
+            var on = state.type === key;
+            b.setAttribute("aria-pressed", on ? "true" : "false");
+            var cnt = b.querySelector(".cnt");
+            if (cnt) cnt.textContent = fmt(countCat(key));
+            if (scroll && on) scrollChipIntoView(b);
+          }
+        }
+        function scrollChipIntoView(b) {
+          var edge = b.getBoundingClientRect();
+          var box = chipsEl.getBoundingClientRect();
+          if (edge.left < box.left) chipsEl.scrollLeft -= box.left - edge.left;
+          else if (edge.right > box.right) chipsEl.scrollLeft += edge.right - box.right;
+        }
         function buildChips() {
           chipsEl.innerHTML = "";
-          Object.keys(CATS).forEach(function (key) {
-            var n = PLACES.filter(function (p) { return p.cat === key; }).length;
+          var items = [{ key: "", label: "전체" }].concat(TYPE_ORDER.map(function (key) {
+            return { key: key, label: CATS[key].label };
+          }));
+          items.forEach(function (item) {
             var b = document.createElement("button");
             b.type = "button";
             b.className = "chip";
-            b.dataset.cat = key;
-            b.setAttribute("aria-pressed", String(!!state.cats[key]));
-            b.innerHTML = '<span class="dot dot--' + key + '"></span>' + esc(CATS[key].label) + ' <span class="cnt">' + fmt(n) + "</span>";
+            b.setAttribute("data-cat", item.key);
+            b.setAttribute("aria-pressed", "false");
+            b.innerHTML = (item.key ? '<span class="dot dot--' + item.key + '"></span>' : "") + esc(item.label) + ' <span class="cnt">0</span>';
             b.addEventListener("click", function () {
-              state.cats[key] = !state.cats[key];
-              b.setAttribute("aria-pressed", String(state.cats[key]));
-              applyFilters();
+              if (state.type === item.key) return;
+              state.type = item.key;
+              applyFilters({ url: "push", scrollChip: true, fitMap: true });
             });
             chipsEl.appendChild(b);
           });
+          syncChips(false);
         }
+        regionFilterEl.addEventListener("change", function () {
+          state.region = regionFilterEl.value;
+          state.locality = "";
+          syncLocalitySelect();
+          applyFilters({ url: "push", fitMap: true });
+        });
+        localityFilterEl.addEventListener("change", function () {
+          state.locality = localityFilterEl.value;
+          applyFilters({ url: "push", fitMap: true });
+        });
 
         /* ---------- search ---------- */
         searchEl.addEventListener("input", function () {
           state.q = searchEl.value.trim();
           clearEl.style.display = state.q ? "block" : "none";
           applyFilters();
+          if (searchTimer) clearTimeout(searchTimer);
+          searchTimer = setTimeout(function () {
+            searchTimer = null;
+            commitUrl("push");
+            fitFilteredMap();
+          }, 350);
         });
         clearEl.addEventListener("click", function () {
           searchEl.value = "";
           state.q = "";
           clearEl.style.display = "none";
-          applyFilters();
+          applyFilters({ url: "push", fitMap: true });
           searchEl.focus();
         });
 
-        function matches(p) {
-          if (!state.cats[p.cat]) return false;
+        /* catKey가 빈 문자열이면 유형을 가리지 않는다. 칩 숫자는 지역·검색만 반영한다. */
+        function inScope(p, catKey) {
+          if (catKey && p.cat !== catKey) return false;
+          if (state.region && p.region !== state.region) return false;
+          if (state.locality && p.locality !== state.locality) return false;
           if (!state.q) return true;
           var hay = normText(p.name + p.address + p.region + p.locality + CATS[p.cat].label);
           var toks = state.q.split(/\s+/).map(normText).filter(function (t) { return t.length > 0; });
           if (!toks.length) return true;
           return toks.every(function (tok) { return hay.indexOf(tok) !== -1; });
+        }
+        function resultPhrase() {
+          var place = "";
+          if (state.region && state.locality) place = shortRegion(state.region) + " " + state.locality;
+          else if (state.region) place = shortRegion(state.region);
+          var typeLabel = state.type ? (TYPE_COUNT_LABEL[state.type] || "") : "";
+          var head = place && typeLabel ? place + " · " + typeLabel : (place || typeLabel);
+          if (state.q) head = head ? head + " · ‘" + state.q + "’" : "‘" + state.q + "’";
+          var n = fmt(current.length) + "곳";
+          var base = head ? head + " " + n : "총 " + n;
+          if (distSortActive) base += " · 가까운 순";
+          return base;
+        }
+        function commitUrl(mode) {
+          if (searchTimer) { clearTimeout(searchTimer); searchTimer = null; }
+          if (historySilent || !dataReady) return;
+          var params = new URLSearchParams();
+          if (state.region) params.set("region", shortRegion(state.region));
+          if (state.locality) params.set("locality", state.locality);
+          if (state.type && TYPE_SLUG[state.type]) params.set("type", TYPE_SLUG[state.type]);
+          if (state.q) params.set("q", state.q);
+          var qs = params.toString();
+          var next = window.location.pathname + (qs ? "?" + qs : "") + window.location.hash;
+          var now = window.location.pathname + window.location.search + window.location.hash;
+          if (next === now) return;
+          var historyState = { petmapFilters: 1 };
+          if (mode === "replace") history.replaceState(historyState, "", next);
+          else history.pushState(historyState, "", next);
         }
 
         /* ---------- list (시·도 그룹 + 페이지 번호, 한 페이지 20곳) ---------- */
@@ -1930,7 +2124,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
           if (totalPages > 1) frag.appendChild(buildPager(totalPages));
           listEl.appendChild(frag);
           emptyEl.classList.toggle("show", dataReady && current.length === 0);
-          countEl.textContent = dataReady ? "총 " + fmt(current.length) + "곳" + (distSortActive ? " · 가까운 순" : "") : "";
+          countEl.textContent = dataReady ? resultPhrase() : "";
         }
 
         /* ---------- 페이지 번호 UI ---------- */
@@ -2308,11 +2502,21 @@ svg.leaflet-image-layer.leaflet-interactive path {
           if (leafletMap) setTimeout(function () { if (leafletMap) leafletMap.invalidateSize(); }, 0);
         }
 
-        function applyFilters() {
+        function fitFilteredMap() {
+          if (!leafletMap || typeof L === "undefined") return;
+          if (!state.region && !state.locality && !state.type && !state.q) {
+            leafletMap.setView([36.45, 127.95], 7, { animate: false });
+            return;
+          }
+          if (!current.length) return;
+          var bounds = L.latLngBounds(current.map(function (p) { return [p.lat, p.lng]; }));
+          if (bounds.isValid()) leafletMap.fitBounds(bounds.pad(0.25), { maxZoom: 14, animate: false });
+        }
+        function applyFilters(opts) {
+          opts = opts || {};
           if (!dataReady) return;
-          current = PLACES.filter(matches);
-          var onlyHospital = state.cats.hospital && !state.cats.stay && !state.cats.food && !state.cats.park;
-          distSortActive = !!(userLoc && onlyHospital && !state.q);
+          current = PLACES.filter(function (p) { return inScope(p, state.type); });
+          distSortActive = !!(userLoc && state.type === "hospital" && !state.q);
           if (distSortActive) {
             current.sort(function (a, b) { return distKm(userLoc, a) - distKm(userLoc, b); });
           } else {
@@ -2324,9 +2528,29 @@ svg.leaflet-image-layer.leaflet-interactive path {
             });
           }
           currentPage = 1; /* 필터·검색이 바뀌면 1페이지로 리셋 */
+          syncChips(!!opts.scrollChip);
           renderList();
           mountMap();
+          if (opts.fitMap) fitFilteredMap();
+          if (opts.url) commitUrl(opts.url);
         }
+        window.addEventListener("popstate", function () {
+          var next = readUrlState();
+          state.region = next.region;
+          state.locality = next.locality;
+          state.type = next.type;
+          state.q = next.q;
+          searchEl.value = state.q;
+          clearEl.style.display = state.q ? "block" : "none";
+          if (searchTimer) { clearTimeout(searchTimer); searchTimer = null; }
+          if (!dataReady) return;
+          historySilent = true;
+          regionFilterEl.value = state.region;
+          if (regionFilterEl.value !== state.region) state.region = "";
+          syncLocalitySelect();
+          applyFilters({ scrollChip: true, fitMap: true });
+          historySilent = false;
+        });
 
         mountMap();
         route();

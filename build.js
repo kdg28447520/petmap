@@ -249,7 +249,6 @@ function makeMainMeta(html) {
     if (match.includes("dataUpdatedAt")) return match;
     return match.replace("</footer>", ' <span id="dataUpdatedAt">데이터 기준일: ' + todayDate() + "</span></footer>");
   });
-  html = html.replace(/var state = \{ cats: \{ stay: true, food: true, park: true, hospital: false \}, q: "" \};/, 'var state = { cats: { stay: true, food: true, park: true, hospital: true }, q: "" };');
   html = html.replace('var REPORT_EMAIL = "__REPORT_EMAIL__";', "var REPORT_EMAIL = " + safeJson(REPORT_EMAIL) + ";");
   html = html.replace('mainLink.href = "#/place/" + encodeURIComponent(p.id);', 'mainLink.href = "/place/" + encodeURIComponent(p.id) + ".html";');
   html = html.replace('return \'<a class="near-card" href="#/place/\' + encodeURIComponent(q.id) + \'">\' +', 'return \'<a class="near-card" href="/place/\' + encodeURIComponent(q.id) + \'.html">\' +');
