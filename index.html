@@ -712,7 +712,8 @@ svg.leaflet-image-layer.leaflet-interactive path {
         --surface-2: #F3F1EC;
         --ink: #1A1A1A;
         --ink-2: #55524C;
-        --ink-3: #8F8B81;
+        --ink-3: #6B675F;
+        --brand-text: #C2410C;
         --line: #E7E3DA;
         --line-strong: #D6D1C5;
         --brand: #E4572E;
@@ -744,6 +745,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
           --line: #37332B;
           --line-strong: #4A463C;
           --brand: #EE6C3D;
+          --brand-text: #FFB089;
           --brand-hover: #F2825A;
           --brand-ink: #ffffff;
           --accent-soft: #33231B;
@@ -766,12 +768,91 @@ svg.leaflet-image-layer.leaflet-interactive path {
       body {
         margin: 0;
         font-family: "Pretendard Variable", Pretendard, -apple-system, "Noto Sans KR", "Malgun Gothic", sans-serif;
+        font-size: 16px;
         background: var(--bg);
         color: var(--ink);
         display: flex;
         flex-direction: column;
         min-height: 100dvh;
       }
+
+      /* ---------- shared site bar ---------- */
+      .site-bar {
+        position: sticky;
+        top: 0;
+        z-index: 40;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        height: 56px;
+        min-height: 56px;
+        padding: 0 16px;
+        background: var(--bg);
+        border-bottom: 1px solid var(--line);
+      }
+      header.site-bar { padding: 0 16px; }
+      .site-bar .brand {
+        font-size: 17px;
+        text-decoration: none;
+        color: inherit;
+      }
+      .site-bar .proto-badge { margin-left: 0; }
+      .site-nav {
+        display: flex;
+        gap: 2px;
+        margin-left: auto;
+        min-width: 0;
+        overflow-x: auto;
+        scrollbar-width: none;
+      }
+      .site-nav a {
+        font-size: 15px;
+        font-weight: 700;
+        color: var(--ink);
+        text-decoration: none;
+        padding: 8px 10px;
+        border-radius: 999px;
+        white-space: nowrap;
+      }
+      .site-nav a:hover,
+      .site-nav a[aria-current="page"] { background: var(--surface-2); }
+      .trust-nav {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 8px 14px;
+        margin: 0 0 8px;
+      }
+      .trust-nav a {
+        color: var(--ink-2);
+        font-size: 15px;
+        font-weight: 700;
+        text-decoration: none;
+      }
+      .trust-nav a:hover { color: var(--brand-text); }
+      .ad-slot {
+        min-height: 280px;
+        margin: 28px 0;
+        contain: layout;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        background: var(--surface-2);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        overflow: hidden;
+      }
+      .ad-slot-label {
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        color: var(--ink-3);
+      }
+      .ad-slot .adsbygoogle { display: block; width: 100%; min-height: 250px; }
+      body.place-doc { height: auto; overflow: visible; }
+      body.place-doc .page-detail { display: block; overflow: visible; flex: none; }
 
       /* ---------- hero header ---------- */
       header {
@@ -802,14 +883,14 @@ svg.leaflet-image-layer.leaflet-interactive path {
       .brand .paw svg { width: 23px; height: 23px; fill: var(--brand); }
       .brand small {
         display: block;
-        font-size: 11px;
+        font-size: 13px;
         font-weight: 500;
         color: var(--ink-3);
         letter-spacing: 0;
       }
       .proto-badge {
         margin-left: auto;
-        font-size: 11.5px;
+        font-size: 13px;
         font-weight: 600;
         color: var(--ink-3);
         white-space: nowrap;
@@ -823,7 +904,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
       }
       .hero-sub {
         margin: 0;
-        font-size: 14.5px;
+        font-size: 16px;
         line-height: 1.65;
         color: var(--ink-2);
         max-width: 600px;
@@ -834,7 +915,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
         flex-wrap: wrap;
         gap: 6px 8px;
         margin-top: 16px;
-        font-size: 12.5px;
+        font-size: 14px;
         font-weight: 600;
         color: var(--ink-2);
       }
@@ -897,7 +978,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
       .dot--hospital { background: var(--hospital); }
       .verify-badge {
         display: inline-flex; align-items: center;
-        font-size: 11.5px; font-weight: 700;
+        font-size: 13px; font-weight: 700;
         color: var(--hospital-ink);
         background: var(--hospital-soft);
         border-radius: 999px;
@@ -906,7 +987,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
       }
       .chip {
         font: inherit;
-        font-size: 13.5px;
+        font-size: 15px;
         font-weight: 600;
         border-radius: 999px;
         padding: 8px 13px;
@@ -920,7 +1001,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
         transition: background 0.15s, color 0.15s, border-color 0.15s;
       }
       .chip .cnt {
-        font-size: 12px;
+        font-size: 13px;
         font-weight: 600;
         color: var(--ink-3);
       }
@@ -952,7 +1033,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
         text-align: center;
         padding: 24px;
         color: var(--ink-2);
-        font-size: 14px;
+        font-size: 16px;
         line-height: 1.6;
       }
       body.no-map #map { display: none; }
@@ -975,8 +1056,8 @@ svg.leaflet-image-layer.leaflet-interactive path {
         display: grid; place-items: center; font-weight: 800; letter-spacing: -0.01em; cursor: pointer;
       }
       .mcluster--s { width: 34px; height: 34px; font-size: 12.5px; }
-      .mcluster--m { width: 42px; height: 42px; font-size: 13.5px; background: var(--brand); color: #fff; }
-      .mcluster--l { width: 50px; height: 50px; font-size: 14.5px; background: var(--brand); color: #fff; }
+      .mcluster--m { width: 42px; height: 42px; font-size: 13.5px; background: var(--brand); color: #1A1A1A; }
+      .mcluster--l { width: 50px; height: 50px; font-size: 14.5px; background: var(--brand); color: #1A1A1A; }
 
       /* ---------- detail page (#/place/{id}) ---------- */
       .page-detail {
@@ -1041,12 +1122,12 @@ svg.leaflet-image-layer.leaflet-interactive path {
         gap: 10px;
         align-items: flex-start;
         padding: 9px 0;
-        font-size: 14.5px;
+        font-size: 16px;
       }
       .pd-row + .pd-row { border-top: 1px solid var(--line); }
       .pd-row dt { color: var(--ink-3); font-weight: 700; flex: none; width: 72px; padding-top: 1px; }
       .pd-row dd { margin: 0; color: var(--ink); line-height: 1.5; flex: 1; min-width: 0; }
-      .pd-row dd a { color: var(--brand); font-weight: 700; text-decoration: none; }
+      .pd-row dd a { color: var(--brand-text); font-weight: 700; text-decoration: none; }
       .copy-btn {
         font: inherit;
         flex: none;
@@ -1068,7 +1149,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
         color: var(--warn-ink);
         border-radius: 12px;
         padding: 11px 13px;
-        font-size: 13px;
+        font-size: 15px;
         font-weight: 700;
         line-height: 1.55;
       }
@@ -1084,9 +1165,9 @@ svg.leaflet-image-layer.leaflet-interactive path {
         display: inline-block;
         margin-top: 10px;
         font: inherit;
-        font-size: 13.5px;
+        font-size: 15px;
         font-weight: 700;
-        color: var(--brand);
+        color: var(--brand-text);
         text-decoration: none;
         background: none;
         border: 0;
@@ -1129,16 +1210,16 @@ svg.leaflet-image-layer.leaflet-interactive path {
         display: block;
         margin-top: 12px;
         background: var(--brand);
-        color: #fff;
+        color: #1A1A1A;
         text-align: center;
-        font-size: 14.5px;
+        font-size: 16px;
         font-weight: 800;
         text-decoration: none;
         border-radius: 12px;
         padding: 12px 14px;
       }
       .call-btn:active { filter: brightness(0.92); }
-      .call-btn--emg { background: var(--emg); }
+      .call-btn--emg { background: var(--emg); color: #fff; }
       .pd-actions { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
       .pd-actions .site-btn { font: inherit; cursor: pointer; }
       .pd-actions .call-btn { margin-top: 0; flex: 1; }
@@ -1149,7 +1230,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
         color: var(--ink);
         border: 1.5px solid var(--line-strong);
         text-align: center;
-        font-size: 14.5px;
+        font-size: 16px;
         font-weight: 800;
         text-decoration: none;
         border-radius: 12px;
@@ -1226,16 +1307,16 @@ svg.leaflet-image-layer.leaflet-interactive path {
       .row-top {
         display: flex; align-items: center; gap: 7px; flex-wrap: wrap;
       }
-      .row-name { font-size: 15px; font-weight: 800; letter-spacing: -0.01em; }
+      .row-name { font-size: 16px; font-weight: 800; letter-spacing: -0.01em; }
       .row-addr {
         margin-top: 4px;
-        font-size: 12.5px;
+        font-size: 15px;
         color: var(--ink-2);
         line-height: 1.45;
       }
       .row-meta {
         margin-top: 5px;
-        font-size: 12.5px;
+        font-size: 14px;
         color: var(--ink-3);
         display: flex; gap: 10px; flex-wrap: wrap;
       }
@@ -1285,22 +1366,22 @@ svg.leaflet-image-layer.leaflet-interactive path {
         padding: 30px 18px;
         text-align: center;
         color: var(--ink-3);
-        font-size: 14px;
+        font-size: 16px;
         line-height: 1.7;
       }
       .empty {
         padding: 34px 18px;
         text-align: center;
         color: var(--ink-3);
-        font-size: 14px;
+        font-size: 16px;
         line-height: 1.7;
         display: none;
       }
       .empty.show { display: block; }
 
       footer {
-        padding: 8px 16px calc(8px + env(safe-area-inset-bottom));
-        font-size: 11.5px;
+        padding: 14px 16px calc(14px + env(safe-area-inset-bottom));
+        font-size: 14px;
         color: var(--ink-3);
         background: var(--bg);
         border-top: 1px solid var(--line);
@@ -1330,7 +1411,8 @@ svg.leaflet-image-layer.leaflet-interactive path {
         .list { padding: 0 16px 14px; }
         .list-head { padding: 12px 16px 4px; }
         .hero-title { font-size: 25px; margin-top: 16px; }
-        .hero-sub { font-size: 13px; }
+        .hero-sub { font-size: 16px; }
+        .proto-badge { display: none; }
         .page-detail { overflow-y: visible; }
         .pd-photo { height: 168px; }
         .pd-title { font-size: 23px; }
@@ -1444,16 +1526,21 @@ svg.leaflet-image-layer.leaflet-interactive path {
     </style>
   </head>
   <body>
-    <header>
-      <div class="hero-top">
-      <div class="brand">
+    <div class="site-bar">
+      <a class="brand" href="/">
         <span class="paw" aria-hidden="true">
-          <svg viewBox="0 0 24 24"><path d="M12 13.2c2.9 0 5.6 2.3 5.6 4.7 0 1.5-1.1 2.5-2.7 2.5-1 0-1.8-.4-2.9-.4s-1.9.4-2.9.4c-1.6 0-2.7-1-2.7-2.5 0-2.4 2.7-4.7 5.6-4.7ZM6.2 8.1c1 .3 1.5 1.7 1.1 3-.4 1.4-1.5 2.2-2.5 1.9-1-.3-1.5-1.7-1.1-3 .4-1.3 1.5-2.2 2.5-1.9Zm11.6 0c1-.3 2.1.6 2.5 1.9.4 1.3-.1 2.7-1.1 3-1 .3-2.1-.5-2.5-1.9-.4-1.3.1-2.7 1.1-3ZM9.3 3.6c1.1.1 1.9 1.4 1.8 2.9-.1 1.4-1 2.6-2.1 2.5C7.9 8.9 7.1 7.6 7.2 6.2c.1-1.5 1-2.7 2.1-2.6Zm5.4 0c1.1-.1 2 1.1 2.1 2.6.1 1.4-.7 2.7-1.8 2.8-1.1.1-2-1.1-2.1-2.5-.1-1.5.7-2.8 1.8-2.9Z"/></svg>
+          <svg width="23" height="23" viewBox="0 0 24 24"><path d="M12 13.2c2.9 0 5.6 2.3 5.6 4.7 0 1.5-1.1 2.5-2.7 2.5-1 0-1.8-.4-2.9-.4s-1.9.4-2.9.4c-1.6 0-2.7-1-2.7-2.5 0-2.4 2.7-4.7 5.6-4.7ZM6.2 8.1c1 .3 1.5 1.7 1.1 3-.4 1.4-1.5 2.2-2.5 1.9-1-.3-1.5-1.7-1.1-3 .4-1.3 1.5-2.2 2.5-1.9Zm11.6 0c1-.3 2.1.6 2.5 1.9.4 1.3-.1 2.7-1.1 3-1 .3-2.1-.5-2.5-1.9-.4-1.3.1-2.7 1.1-3ZM9.3 3.6c1.1.1 1.9 1.4 1.8 2.9-.1 1.4-1 2.6-2.1 2.5C7.9 8.9 7.1 7.6 7.2 6.2c.1-1.5 1-2.7 2.1-2.6Zm5.4 0c1.1-.1 2 1.1 2.1 2.6.1 1.4-.7 2.7-1.8 2.8-1.1.1-2-1.1-2.1-2.5-.1-1.5.7-2.8 1.8-2.9Z"/></svg>
         </span>
-        <span>댕냥이와 함께<small>반려동물 동반 전국 지도</small></span>
-      </div>
+        <span>댕냥이와 함께</span>
+      </a>
       <span class="proto-badge">공공데이터 기반</span>
-      </div>
+      <nav class="site-nav" aria-label="주요 메뉴">
+        <a href="/" aria-current="page">전국 지도</a>
+        <a href="/guides/">여행 가이드</a>
+        <a href="/about.html">소개</a>
+      </nav>
+    </div>
+    <header>
       <h1 class="hero-title">댕냥이와 함께, 전국의 댕댕 스폿을 한 지도에</h1>
       <p class="hero-sub">서울부터 제주까지 — <b>전국</b>의 애견 숙박 · 동반 음식점·카페 · 반려견 공원과 산책로, 그리고 밤에도 문 여는 <b>24시간 동물병원</b>까지 담았어요. 관광지만 모아둔 여행 지도가 아니라, 주말 나들이부터 동네 산책, 한밤중 응급 상황까지 <b>여행지 너머 매일의 일상</b>을 챙기는 생활 밀착형 지도예요.</p>
       <div class="hero-stats" aria-label="서비스 범위">
@@ -1492,7 +1579,15 @@ svg.leaflet-image-layer.leaflet-interactive path {
 
     <section class="page-detail" id="pageDetail" aria-label="장소 상세"></section>
 
-    <footer>장소 정보는 한국관광공사 TourAPI 공공데이터(반려동물 동반 여행 정보)와 한국문화정보원 공공데이터(애견동반 카페), 고캠핑 반려견동반 캠핑장 정보를 기반으로 하고, 24시간 동물병원은 maruvet·vet24 24시 목록 등재 정보를 2026년 10월에 확인해 반영했습니다. 실제 운영 정보와 다를 수 있으니 방문 전 해당 업체에 확인하세요. <span id="dataUpdatedAt">데이터 기준일: 2026-10-13</span></footer>
+    <footer>
+      <nav class="trust-nav" aria-label="안내">
+        <a href="/about.html">소개</a>
+        <a href="/privacy.html">개인정보처리방침</a>
+        <a href="/contact.html">문의</a>
+        <a href="/terms.html">이용안내</a>
+      </nav>
+      <p>장소 정보는 한국관광공사 TourAPI 공공데이터(반려동물 동반 여행 정보)와 한국문화정보원 공공데이터(애견동반 카페), 고캠핑 반려견동반 캠핑장 정보를 기반으로 하고, 24시간 동물병원은 maruvet·vet24 24시 목록 등재 정보를 2026년 10월에 확인해 반영했습니다. 실제 운영 정보와 다를 수 있으니 방문 전 해당 업체에 확인하세요. <span id="dataUpdatedAt">데이터 기준일: 2026-10-13</span></p>
+    </footer>
 
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
@@ -1760,7 +1855,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
               '<span class="row-top"><span class="row-name">' + esc(p.name) + "</span>" +
               '<span class="badge"><span class="dot dot--' + p.cat + '"></span>' + esc(CATS[p.cat].label) + "</span>" +
               (p.verified24h ? '<span class="verify-badge verify-badge--wide">' + esc(VERIFY_BADGE_TEXT) + "</span>" : "") + "</span>" +
-              '<span class="row-addr" style="display:block">' + (p.address ? esc(p.address) : "주소 정보 없음") + "</span>" +
+              (p.address ? '<span class="row-addr" style="display:block">' + esc(p.address) + "</span>" : "") +
               (meta.length ? '<span class="row-meta"><span>' + meta.join("</span><span>") + "</span></span>" : "") +
             "</span>";
         }
@@ -1981,15 +2076,20 @@ svg.leaflet-image-layer.leaflet-interactive path {
           var near = nearestPlaces(p, 3);
           var isHospital = p.cat === "hospital";
           var canCall = callablePhone(p);
+          function rowValue(value) {
+            var text = String(value || "").replace(/\s+/g, " ").trim();
+            if (!text || text === "확인 중" || text === "정보 없음" || /정보 없음$/.test(text) || text.indexOf("확인 중") !== -1) return "";
+            return text;
+          }
+          var regionText = rowValue(p.region ? p.region + (p.locality ? " " + p.locality : "") : "");
           var rows =
-            '<div class="pd-row"><dt>주소</dt><dd>' + (p.address ? esc(p.address) : "주소 정보 없음") + "</dd>" +
-              (p.address ? '<button class="copy-btn pd-copy" type="button">주소 복사</button>' : "") + "</div>" +
-            (p.hours ? '<div class="pd-row"><dt>진료시간</dt><dd>' + esc(p.hours) + (p.verified24h ? ' <span class="verify-badge verify-badge--wide">' + esc(VERIFY_BADGE_TEXT) + "</span>" : "") + "</dd></div>" : "") +
-            (p.phone ? '<div class="pd-row"><dt>전화</dt><dd>' + (canCall ? '<a href="' + esc(telHref(p)) + '">' + esc(fmtPhone(p.phone)) + "</a>" : esc(fmtPhone(p.phone))) + "</dd></div>" : "") +
+            (rowValue(p.address) ? '<div class="pd-row"><dt>주소</dt><dd>' + esc(p.address) + '<button class="copy-btn pd-copy" type="button">주소 복사</button></dd></div>' : "") +
+            (rowValue(p.hours) ? '<div class="pd-row"><dt>' + (isHospital ? "진료시간" : "운영시간") + "</dt><dd>" + esc(p.hours) + (p.verified24h ? ' <span class="verify-badge verify-badge--wide">' + esc(VERIFY_BADGE_TEXT) + "</span>" : "") + "</dd></div>" : "") +
+            (rowValue(p.phone) ? '<div class="pd-row"><dt>전화</dt><dd>' + (canCall ? '<a href="' + esc(telHref(p)) + '">' + esc(fmtPhone(p.phone)) + "</a>" : esc(fmtPhone(p.phone))) + "</dd></div>" : "") +
             (!isHospital ? '<div class="pd-row"><dt>동반 조건</dt><dd>조건 미확인 — 방문 전 업체에 확인하세요</dd></div>' : "") +
             (p.homepage ? '<div class="pd-row"><dt>' + (p.source === "gocamping" ? "상세 페이지" : "공식 사이트") + '</dt><dd><a href="' + esc(p.homepage) + '" target="_blank" rel="noopener">' + esc(p.homepage.replace(/^https?:\/\//, "")) + "</a></dd></div>" : "") +
-            '<div class="pd-row"><dt>지역</dt><dd>' + (p.region ? esc(p.region) + (p.locality ? " " + esc(p.locality) : "") : "정보 없음") + "</dd></div>" +
-            '<div class="pd-row"><dt>출처</dt><dd>' + esc(sourceLabel(p)) + "</dd></div>";
+            (regionText ? '<div class="pd-row"><dt>지역</dt><dd>' + esc(regionText) + "</dd></div>" : "") +
+            (rowValue(sourceLabel(p)) ? '<div class="pd-row"><dt>출처</dt><dd>' + esc(sourceLabel(p)) + "</dd></div>" : "");
           var btns = [];
           if (canCall) {
             btns.push(isHospital

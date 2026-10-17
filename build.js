@@ -45,9 +45,17 @@ function normalizeData(text, sourceName) {
 function regionOf(address) {
   return String(address || "").trim().split(/\s+/)[0] || "전국";
 }
+function displayValue(value) {
+  const text = String(value == null ? "" : value).replace(/\s+/g, " ").trim();
+  if (!text || text === "확인 중" || text === "정보 없음" || /정보 없음$/.test(text) || text.includes("확인 중")) return "";
+  return text;
+}
 function descriptionFor(place, category) {
-  const pieces = [place.name, category.label, place.addr || "주소 정보 없음"];
-  if (place.category === "hospital") pieces.push("진료시간 " + (place.hours || "정보 없음"));
+  const pieces = [place.name, category.label];
+  const addr = displayValue(place.addr);
+  const hours = displayValue(place.hours);
+  if (addr) pieces.push(addr);
+  if (place.category === "hospital" && hours) pieces.push("진료시간 " + hours);
   let result = pieces.join(" · ").replace(/\s+/g, " ");
   if (Array.from(result).length > 120) result = Array.from(result).slice(0, 119).join("") + "…";
   return result;
@@ -110,11 +118,15 @@ function makePlacePage(place, css, updatedAt, thin) {
   const isHospital = place.category === "hospital";
   const officialUrl = place.homepage || "";
   const mapUrl = `https://map.kakao.com/link/to/${encodeURIComponent(place.name)},${place.lat},${place.lng}`;
+  const address = displayValue(place.addr);
+  const phone = displayValue(place.tel);
+  const hours = displayValue(place.hours);
+  const source = displayValue(sourceFor(place));
   const rows = [
-    `<div class="pd-row"><dt>주소</dt><dd>${escapeHtml(place.addr || "주소 정보 없음")}</dd></div>`,
-    place.tel ? `<div class="pd-row"><dt>전화</dt><dd><a href="${escapeHtml(tel || ("tel:" + String(place.tel).replace(/[^\d+]/g, "")))}">${escapeHtml(place.tel)}</a></dd></div>` : "",
-    `<div class="pd-row"><dt>${isHospital ? "진료시간" : "운영시간"}</dt><dd>${escapeHtml(place.hours || "정보 없음")}</dd></div>`,
-    `<div class="pd-row"><dt>출처</dt><dd>${escapeHtml(sourceFor(place))}</dd></div>`,
+    address ? `<div class="pd-row"><dt>주소</dt><dd>${escapeHtml(address)}</dd></div>` : "",
+    phone ? `<div class="pd-row"><dt>전화</dt><dd><a href="${escapeHtml(tel || ("tel:" + String(phone).replace(/[^\d+]/g, "")))}">${escapeHtml(phone)}</a></dd></div>` : "",
+    hours ? `<div class="pd-row"><dt>${isHospital ? "진료시간" : "운영시간"}</dt><dd>${escapeHtml(hours)}</dd></div>` : "",
+    source ? `<div class="pd-row"><dt>출처</dt><dd>${escapeHtml(source)}</dd></div>` : "",
   ].filter(Boolean).join("\n");
   const actions = [
     tel ? `<a class="call-btn${isHospital ? " call-btn--emg" : ""}" href="${escapeHtml(tel)}">${isHospital ? "지금 전화하기" : "전화 걸기"}</a>` : "",
@@ -136,10 +148,21 @@ function makePlacePage(place, css, updatedAt, thin) {
   <link rel="stylesheet" href="/place/place.css">
   <script type="application/ld+json">${jsonLdFor(place)}</script>
 </head>
-<body>
+<body class="place-doc">
+  <header class="site-bar">
+    <a class="brand" href="/">
+      <span class="paw" aria-hidden="true"><svg width="23" height="23" viewBox="0 0 24 24"><path d="M12 13.2c2.9 0 5.6 2.3 5.6 4.7 0 1.5-1.1 2.5-2.7 2.5-1 0-1.8-.4-2.9-.4s-1.9.4-2.9.4c-1.6 0-2.7-1-2.7-2.5 0-2.4 2.7-4.7 5.6-4.7ZM6.2 8.1c1 .3 1.5 1.7 1.1 3-.4 1.4-1.5 2.2-2.5 1.9-1-.3-1.5-1.7-1.1-3 .4-1.3 1.5-2.2 2.5-1.9Zm11.6 0c1-.3 2.1.6 2.5 1.9.4 1.3-.1 2.7-1.1 3-1 .3-2.1-.5-2.5-1.9-.4-1.3.1-2.7 1.1-3ZM9.3 3.6c1.1.1 1.9 1.4 1.8 2.9-.1 1.4-1 2.6-2.1 2.5C7.9 8.9 7.1 7.6 7.2 6.2c.1-1.5 1-2.7 2.1-2.6Zm5.4 0c1.1-.1 2 1.1 2.1 2.6.1 1.4-.7 2.7-1.8 2.8-1.1.1-2-1.1-2.1-2.5-.1-1.5.7-2.8 1.8-2.9Z"/></svg></span>
+      <span>댕냥이와 함께</span>
+    </a>
+    <nav class="site-nav" aria-label="주요 메뉴">
+      <a href="/">전국 지도</a>
+      <a href="/guides/">여행 가이드</a>
+      <a href="/about.html">소개</a>
+    </nav>
+  </header>
   <main class="page-detail" style="display:block;overflow:visible">
     <article class="pd-inner">
-      <div class="pd-photo" aria-hidden="true"><svg class="pd-photo-paw" viewBox="0 0 24 24"><path d="M12 13.2c2.9 0 5.6 2.3 5.6 4.7 0 1.5-1.1 2.5-2.7 2.5-1 0-1.8-.4-2.9-.4s-1.9.4-2.9.4c-1.6 0-2.7-1-2.7-2.5 0-2.4 2.7-4.7 5.6-4.7ZM6.2 8.1c1 .3 1.5 1.7 1.1 3-.4 1.4-1.5 2.2-2.5 1.9-1-.3-1.5-1.7-1.1-3 .4-1.3 1.5-2.2 2.5-1.9Zm11.6 0c1-.3 2.1.6 2.5 1.9.4 1.3-.1 2.7-1.1 3-1 .3-2.1-.5-2.5-1.9-.4-1.3.1-2.7 1.1-3ZM9.3 3.6c1.1.1 1.9 1.4 1.8 2.9-.1 1.4-1 2.6-2.1 2.5C7.9 8.9 7.1 7.6 7.2 6.2c.1-1.5 1-2.7 2.1-2.6Zm5.4 0c1.1-.1 2 1.1 2.1 2.6.1 1.4-.7 2.7-1.8 2.8-1.1.1-2-1.1-2.1-2.5-.1-1.5.7-2.8 1.8-2.9Z"/></svg><span class="pd-photo-cap">${escapeHtml(cat.label)}</span></div>
+      <div class="pd-photo" aria-hidden="true"><svg class="pd-photo-paw" width="84" height="84" viewBox="0 0 24 24"><path d="M12 13.2c2.9 0 5.6 2.3 5.6 4.7 0 1.5-1.1 2.5-2.7 2.5-1 0-1.8-.4-2.9-.4s-1.9.4-2.9.4c-1.6 0-2.7-1-2.7-2.5 0-2.4 2.7-4.7 5.6-4.7ZM6.2 8.1c1 .3 1.5 1.7 1.1 3-.4 1.4-1.5 2.2-2.5 1.9-1-.3-1.5-1.7-1.1-3 .4-1.3 1.5-2.2 2.5-1.9Zm11.6 0c1-.3 2.1.6 2.5 1.9.4 1.3-.1 2.7-1.1 3-1 .3-2.1-.5-2.5-1.9-.4-1.3.1-2.7 1.1-3ZM9.3 3.6c1.1.1 1.9 1.4 1.8 2.9-.1 1.4-1 2.6-2.1 2.5C7.9 8.9 7.1 7.6 7.2 6.2c.1-1.5 1-2.7 2.1-2.6Zm5.4 0c1.1-.1 2 1.1 2.1 2.6.1 1.4-.7 2.7-1.8 2.8-1.1.1-2-1.1-2.1-2.5-.1-1.5.7-2.8 1.8-2.9Z"/></svg><span class="pd-photo-cap">${escapeHtml(cat.label)}</span></div>
       <h1 class="pd-title">${escapeHtml(place.name)}</h1>
       <span class="badge"><span class="dot dot--${place.category}"></span>${escapeHtml(cat.label)}</span>
       <div class="pd-card"><dl style="margin:0">${rows}</dl></div>
@@ -150,6 +173,14 @@ function makePlacePage(place, css, updatedAt, thin) {
       <p><a class="pd-back" href="/">← 목록으로 돌아가기</a></p>
     </article>
   </main>
+  <footer class="site-footer">
+    <nav class="trust-nav" aria-label="안내">
+      <a href="/about.html">소개</a>
+      <a href="/privacy.html">개인정보처리방침</a>
+      <a href="/contact.html">문의</a>
+      <a href="/terms.html">이용안내</a>
+    </nav>
+  </footer>
 </body>
 </html>`;
 }
