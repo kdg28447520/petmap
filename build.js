@@ -54,6 +54,12 @@ function displayValue(value) {
   return text;
 }
 function descriptionFor(place, category) {
+  const notice = accessNotice(place.name);
+  if (notice && notice.tone === "limit") {
+    let result = (place.name + " · 반려동물 출입 제한 · " + notice.label).replace(/\s+/g, " ");
+    if (Array.from(result).length > 120) result = Array.from(result).slice(0, 119).join("") + "…";
+    return result;
+  }
   const overview = place.tour && displayValue(place.tour.overview);
   if (overview) {
     let result = (place.name + " · " + overview).replace(/\s+/g, " ");
@@ -136,6 +142,8 @@ function reportLink() {
   return `<p class="pd-report"><a href="mailto:${escapeHtml(REPORT_EMAIL)}?subject=${subject}">정보가 다르면 알려주세요</a></p>`;
 }
 function verifiedEnrichment(place) {
+  const notice = accessNotice(place && place.name);
+  if (notice && notice.tone === "limit") return false;
   const row = place && place.enrichment;
   if (!row || !/^https:\/\//.test(String(row.source || ""))) return false;
   return [row.indoorOutdoor, row.weightLimit, row.extraFee].some((value) => {
@@ -215,7 +223,11 @@ function staticDirectoryHtml(places) {
 function makePlacePage(place, css, updatedAt, thin) {
   const cat = CATEGORIES[place.category];
   const region = regionOf(place.addr);
-  const title = `${place.name} — ${region} 반려동물 동반 · 댕냥이와 함께`;
+  const notice = accessNotice(place.name);
+  const limited = Boolean(notice && notice.tone === "limit");
+  const title = limited
+    ? `${place.name} — 반려동물 출입 제한 · 댕냥이와 함께`
+    : `${place.name} — ${region} 반려동물 동반 · 댕냥이와 함께`;
   const description = descriptionFor(place, cat);
   const url = `${BASE_URL}/place/${encodeURIComponent(place.id)}.html`;
   const image = `${BASE_URL}/og/${cat.image}`;
@@ -263,9 +275,8 @@ function makePlacePage(place, css, updatedAt, thin) {
   const warning = isHospital
     ? `<p class="pd-warn"><strong>야간·응급 진료 가능 여부는 방문 전 전화로 확인하세요.</strong></p>`
     : `<p class="pd-warn">공공데이터에 등록된 정보 기준이라 실제 운영 현황과 다를 수 있어요. 방문 전 반려동물 동반 가능 여부를 해당 업체에 확인하세요.</p>`;
-  const notice = accessNotice(place.name);
   const noticeHtml = notice
-    ? `<div class="pd-warn"><strong>${escapeHtml(notice.label)}</strong><p>${escapeHtml(notice.detail)}</p>${notice.sources && notice.sources.length ? `<ul>${notice.sources.map((href) => `<li><a href="${escapeHtml(href)}" target="_blank" rel="noopener">${escapeHtml(href)}</a></li>`).join("")}</ul>` : ""}</div>`
+    ? `<div class="pd-warn"><strong>반려동물 출입 제한</strong><p>${escapeHtml(notice.label)}</p><p>${escapeHtml(notice.detail)}</p>${notice.sources && notice.sources.length ? `<ul>${notice.sources.map((href) => `<li><a href="${escapeHtml(href)}" target="_blank" rel="noopener">${escapeHtml(href)}</a></li>`).join("")}</ul>` : ""}</div>`
     : "";
   const enrich = place.enrichment || null;
   const enrichHtml = enrich
@@ -351,6 +362,8 @@ function editorialText(place) {
 // Hours are empty ("정보 없음") or the single token "24시간", and there is no original write-up.
 // Those pages stay on the site for visitors, but are noindex and left out of the sitemap.
 function isThinPlace(place) {
+  const notice = accessNotice(place.name);
+  if (notice && notice.tone === "limit") return true;
   if (tourapi.isRich(place.tour)) return false;
   if (verifiedEnrichment(place)) return false;
   return Array.from(editorialText(place)).length < EDITORIAL_MIN_CHARS;
@@ -600,7 +613,8 @@ async function build() {
   log(`데이터 기준일: ${updatedAt}`);
   log(`장소 정적 페이지 생성: ${builtPages}/${valid.length}`);
   log(`얇은 장소 noindex·사이트맵 제외: ${thinCount}곳, 색인을 유지하는 장소: ${indexablePlaces.length}곳`);
-  if (indexablePlaces.filter((place) => tourapi.isRich(place.tour)).length !== tourStats.rich) {
+  const limitedRich = valid.filter((place) => tourapi.isRich(place.tour) && accessNotice(place.name) && accessNotice(place.name).tone === "limit").length;
+  if (indexablePlaces.filter((place) => tourapi.isRich(place.tour)).length + limitedRich !== tourStats.rich) {
     throw new Error("색인 장소 수가 TourAPI 상세(이미지·개요·동반 조건) 수와 다릅니다.");
   }
   const sampleHtml = fs.readFileSync(path.join(OUT, "place", "kbizin-212.html"), "utf8");
@@ -634,8 +648,13 @@ async function build() {
     if (!homeHtml.includes("/guides/" + guideId + ".html")) throw new Error("홈 가이드 링크가 없습니다: " + guideId);
   }
   const bukhanHtml = fs.readFileSync(path.join(OUT, "place", "tour-127220.html"), "utf8");
-  if (!bukhanHtml.includes("반려동물 출입 제한(시범 탐방로 2구간만 예약제 허용)") || bukhanHtml.includes('name="robots" content="noindex, follow"')) throw new Error("북한산 출입 제한 표시 또는 색인 상태가 잘못되었습니다.");
-  if (!/<ins\b[^>]*\badsbygoogle/.test(bukhanHtml)) throw new Error("색인되는 북한산 페이지에 광고 단위가 없습니다.");
+  if (!bukhanHtml.includes("반려동물 출입 제한") || !bukhanHtml.includes("북한산초등학교~백화사") || !bukhanHtml.includes("수구정 화장실") || !bukhanHtml.includes("https://knps.or.kr/portal/main/contents.do?menuNo=8000377")) throw new Error("북한산 출입 제한 안내가 없습니다.");
+  if (!bukhanHtml.includes('name="robots" content="noindex, follow"') || /<ins\b[^>]*\badsbygoogle/.test(bukhanHtml)) throw new Error("북한산 페이지가 색인되거나 광고 단위가 있습니다.");
+  const gyeryongHtml = fs.readFileSync(path.join(OUT, "place", "tour-125817.html"), "utf8");
+  if (!gyeryongHtml.includes("반려동물 출입 제한") || !gyeryongHtml.includes("https://knps.or.kr/portal/main/contents.do?menuNo=8000377")) throw new Error("계룡산 출입 제한 안내가 없습니다.");
+  if (!gyeryongHtml.includes('name="robots" content="noindex, follow"') || /<ins\b[^>]*\badsbygoogle/.test(gyeryongHtml)) throw new Error("계룡산 페이지가 색인되거나 광고 단위가 있습니다.");
+  const sitemapXml = fs.readFileSync(path.join(OUT, "sitemap.xml"), "utf8");
+  if (sitemapXml.includes("tour-127220") || sitemapXml.includes("tour-125817")) throw new Error("국립공원 장소가 사이트맵에 있습니다.");
   const gajiHtml = fs.readFileSync(path.join(OUT, "place", "tour-126027.html"), "utf8");
   if (!gajiHtml.includes("반려동물 출입 여부 미확인(관리사무소 확인 필요)") || !gajiHtml.includes('name="robots" content="noindex, follow"')) throw new Error("가지산 미확인 표시 또는 noindex가 없습니다.");
   if (/<ins\b[^>]*\badsbygoogle/.test(gajiHtml)) throw new Error("noindex인 가지산 페이지에 광고 단위가 있습니다.");

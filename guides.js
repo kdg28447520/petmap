@@ -318,7 +318,8 @@ function assertPublished(){
  }
  if(!tableRows||tableLinks/tableRows<0.9)problems.push("가이드 표 장소 링크 "+tableLinks+"/"+tableRows);
  const bukhanPage=fs.readFileSync(path.join(OUT,"place","tour-127220.html"),"utf8");
- if(!bukhanPage.includes("관련 가이드")||bukhanPage.includes('name="robots" content="noindex, follow"'))problems.push("북한산 상세의 관련 가이드 또는 색인 상태가 잘못되었습니다.");
+ if(!bukhanPage.includes("관련 가이드")||!bukhanPage.includes("반려동물 출입 제한")||!bukhanPage.includes('name="robots" content="noindex, follow"')||/<ins\b[^>]*\badsbygoogle/.test(bukhanPage))problems.push("북한산 상세의 제한 안내·noindex·광고 단위를 확인하세요.");
+ if(locs.has(BASE+"/place/tour-127220.html")||locs.has(BASE+"/place/tour-125817.html"))problems.push("국립공원이 사이트맵에 남아 있습니다.");
  const gajiPage=fs.readFileSync(path.join(OUT,"place","tour-126027.html"),"utf8");
  if(!gajiPage.includes("관련 가이드")||!gajiPage.includes('name="robots" content="noindex, follow"')||/<ins\b[^>]*\badsbygoogle/.test(gajiPage))problems.push("가지산 상세의 관련 가이드·noindex·광고 단위를 확인하세요.");
  if(problems.length||missingScript){

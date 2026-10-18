@@ -2133,6 +2133,15 @@ svg.leaflet-image-layer.leaflet-interactive path {
           if (text.indexOf("해수욕장") !== -1) return "반려동물 출입 여부 미확인(관리기관 확인 필요)";
           return "";
         }
+        function accessNoticeHtml(name) {
+          var text = String(name || "");
+          if (text.indexOf("국립공원") === -1) return "";
+          var bukhan = text.indexOf("북한산국립공원") !== -1;
+          var lead = bukhan
+            ? "시범 탐방로는 북한산초등학교~백화사, 북한산성 제2주차장 입구~수구정 화장실 2구간뿐입니다. 사전 예약, 1인 1마리, 동물등록, 최근 1년 이내 광견병 접종 증빙이 필요하고 맹견은 입장할 수 없습니다."
+            : "국립공원공단은 장애인 보조견을 제외하고 개·고양이의 입장을 제한합니다. 예약 예외로 안내된 곳은 북한산 탐방로 2구간, 계룡산 동학사야영장 하우스 2동, 가야산생태탐방원 2동이며, 이 장소 이름이 그 예외와 같다는 뜻은 아닙니다.";
+          return '<div class="pd-warn"><strong>반려동물 출입 제한</strong><p>' + esc(accessLabel(name)) + "</p><p>" + esc(lead) + '</p><ul><li><a href="https://knps.or.kr/portal/main/contents.do?menuNo=8000377" target="_blank" rel="noopener">국립공원공단 금지행위 안내</a></li><li><a href="https://reservation.knps.or.kr/contents/withPet.do" target="_blank" rel="noopener">국립공원공단 반려견 동행 예약</a></li></ul></div>';
+        }
         function rowHtml(p) {
           var meta = [];
           var access = accessLabel(p.name);
@@ -2376,11 +2385,12 @@ svg.leaflet-image-layer.leaflet-interactive path {
             return text;
           }
           var regionText = rowValue(p.region ? p.region + (p.locality ? " " + p.locality : "") : "");
+          var access = accessLabel(p.name);
           var rows =
             (rowValue(p.address) ? '<div class="pd-row"><dt>주소</dt><dd>' + esc(p.address) + '<button class="copy-btn pd-copy" type="button">주소 복사</button></dd></div>' : "") +
             (rowValue(p.hours) ? '<div class="pd-row"><dt>' + (isHospital ? "진료시간" : "운영시간") + "</dt><dd>" + esc(p.hours) + "</dd></div>" : "") +
             (rowValue(p.phone) ? '<div class="pd-row"><dt>전화</dt><dd>' + (canCall ? '<a href="' + esc(telHref(p)) + '">' + esc(fmtPhone(p.phone)) + "</a>" : esc(fmtPhone(p.phone))) + "</dd></div>" : "") +
-            (!isHospital ? '<div class="pd-row"><dt>동반 조건</dt><dd>조건 미확인 — 방문 전 업체에 확인하세요</dd></div>' : "") +
+            (access ? '<div class="pd-row"><dt>동반 조건</dt><dd>' + esc(access) + "</dd></div>" : (!isHospital ? '<div class="pd-row"><dt>동반 조건</dt><dd>조건 미확인 — 방문 전 업체에 확인하세요</dd></div>' : "")) +
             (p.homepage ? '<div class="pd-row"><dt>' + (p.source === "gocamping" ? "상세 페이지" : "공식 사이트") + '</dt><dd><a href="' + esc(p.homepage) + '" target="_blank" rel="noopener">' + esc(p.homepage.replace(/^https?:\/\//, "")) + "</a></dd></div>" : "") +
             (regionText ? '<div class="pd-row"><dt>지역</dt><dd>' + esc(regionText) + "</dd></div>" : "");
           var btns = [];
@@ -2412,7 +2422,8 @@ svg.leaflet-image-layer.leaflet-interactive path {
               '<span class="badge"><span class="dot dot--' + p.cat + '"></span>' + esc(CATS[p.cat].label) + "</span>" +
               '<div class="pd-card"><dl style="margin:0">' + rows + "</dl></div>" +
               actions +
-              (isHospital
+              accessNoticeHtml(p.name) +
+              (access ? "" : isHospital
                 ? '<p class="pd-warn">야간·응급 진료 가능 여부는 방문 전 반드시 전화로 확인하세요. 응급 상황이면 출발 전에 전화로 증상을 알리고 안내를 받으세요.</p>'
                 : '<p class="pd-warn">공공데이터에 등록된 정보 기준이라 실제 운영 현황과 다를 수 있어요. 방문 전 반려동물 동반 가능 여부를 해당 업체에 꼭 확인하세요.</p>') +
               '<h3 class="pd-sec-title">위치</h3>' +
@@ -2422,10 +2433,13 @@ svg.leaflet-image-layer.leaflet-interactive path {
               '<div class="pd-nearby">' +
                 near.map(function (n) {
                   var q = n.place;
+                  var nearAccess = accessLabel(q.name);
                   return '<a class="near-card" href="#/place/' + encodeURIComponent(q.id) + '">' +
                     '<span class="dot dot--' + q.cat + '"></span>' +
                     '<span class="row-body"><span class="row-top"><span class="row-name">' + esc(q.name) + "</span></span>" +
-                    '<span class="row-addr" style="display:block">' + esc(q.address) + "</span></span>" +
+                    '<span class="row-addr" style="display:block">' + esc(q.address) + "</span>" +
+                    (nearAccess ? '<span class="row-addr" style="display:block">' + esc(nearAccess) + "</span>" : "") +
+                    "</span>" +
                     '<span class="near-dist">' + fmtDist(n.d) + "</span></a>";
                 }).join("") +
               "</div>" +
@@ -2533,7 +2547,9 @@ svg.leaflet-image-layer.leaflet-interactive path {
             list = current.filter(function (p) { return bounds.contains([p.lat, p.lng]); }).slice(0, 50);
           }
           var markers = list.map(function (p) {
-            var m = L.marker([p.lat, p.lng], { icon: pinIcon(p) });
+            var access = accessLabel(p.name);
+            var m = L.marker([p.lat, p.lng], { icon: pinIcon(p), title: access || p.name });
+            if (access && access.indexOf("반려동물 출입 제한") === 0) m.bindTooltip(access, { direction: "top", opacity: 1 });
             m.on("click", function () { window.location.hash = "#/place/" + encodeURIComponent(p.id); });
             return m;
           });
