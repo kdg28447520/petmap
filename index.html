@@ -1729,6 +1729,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
       </div>
     </div>
 
+    <script src="/index-rule.js"></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
     <script>
@@ -2130,22 +2131,11 @@ svg.leaflet-image-layer.leaflet-interactive path {
 
         /* ---------- list (시·도 그룹 + 페이지 번호, 한 페이지 20곳) ---------- */
         function accessLabel(name) {
-          var text = String(name || "");
-          if (text.indexOf("북한산국립공원") !== -1) return "반려동물 출입 제한(시범 탐방로 2구간만 예약제 허용)";
-          if (text.indexOf("국립공원") !== -1) return "반려동물 출입 제한(장애인 보조견 제외, 공단 시범 장소만 예외)";
-          if (text.indexOf("도립공원") !== -1 || text.indexOf("군립공원") !== -1) return "반려동물 출입 여부 미확인(관리사무소 확인 필요)";
-          if (text.indexOf("자연휴양림") !== -1) return "반려동물 출입 여부 미확인(휴양림 관리소 확인 필요)";
-          if (text.indexOf("해수욕장") !== -1) return "반려동물 출입 여부 미확인(관리기관 확인 필요)";
-          return "";
+          var notice = globalThis.PetmapIndexRule.accessNotice({ name: name });
+          return notice ? notice.label : "";
         }
         function accessNoticeHtml(name) {
-          var text = String(name || "");
-          if (text.indexOf("국립공원") === -1) return "";
-          var bukhan = text.indexOf("북한산국립공원") !== -1;
-          var lead = bukhan
-            ? "시범 탐방로는 북한산초등학교~백화사, 북한산성 제2주차장 입구~수구정 화장실 2구간뿐입니다. 사전 예약, 1인 1마리, 동물등록, 최근 1년 이내 광견병 접종 증빙이 필요하고 맹견은 입장할 수 없습니다."
-            : "국립공원공단은 장애인 보조견을 제외하고 개·고양이의 입장을 제한합니다. 예약 예외로 안내된 곳은 북한산 탐방로 2구간, 계룡산 동학사야영장 하우스 2동, 가야산생태탐방원 2동이며, 이 장소 이름이 그 예외와 같다는 뜻은 아닙니다.";
-          return '<div class="pd-warn"><strong>반려동물 출입 제한</strong><p>' + esc(accessLabel(name)) + "</p><p>" + esc(lead) + '</p><ul><li><a href="https://knps.or.kr/portal/main/contents.do?menuNo=8000377" target="_blank" rel="noopener">국립공원공단 금지행위 안내</a></li><li><a href="https://reservation.knps.or.kr/contents/withPet.do" target="_blank" rel="noopener">국립공원공단 반려견 동행 예약</a></li></ul></div>';
+          return globalThis.PetmapIndexRule.noticeHtml({ name: name });
         }
         function rowHtml(p) {
           var meta = [];

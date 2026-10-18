@@ -10,7 +10,7 @@ const crypto = require("node:crypto");
 const zlib = require("node:zlib");
 const { execFileSync } = require("node:child_process");
 const tourapi = require("./tourapi");
-const { accessNotice } = require("./access-rules");
+const indexRule = require("./index-rule");
 const AD_UNIT = '<aside class="ad-slot" aria-label="광고"><p class="ad-slot-label">광고</p><ins class="adsbygoogle" style="display:block;width:100%;min-height:250px" data-ad-client="ca-pub-4533404826925371" data-ad-format="auto" data-full-width-responsive="true"></ins></aside>';
 
 const ROOT = __dirname;
@@ -54,8 +54,8 @@ function displayValue(value) {
   return text;
 }
 function descriptionFor(place, category) {
-  const notice = accessNotice(place.name);
-  if (notice && notice.tone === "limit") {
+  const notice = indexRule.accessNotice(place);
+  if (notice && notice.status === "restricted") {
     let result = (place.name + " · 반려동물 출입 제한 · " + notice.label).replace(/\s+/g, " ");
     if (Array.from(result).length > 120) result = Array.from(result).slice(0, 119).join("") + "…";
     return result;
@@ -141,75 +141,82 @@ function reportLink() {
   const subject = encodeURIComponent("댕냥이와 함께 장소 정보 수정 제안");
   return `<p class="pd-report"><a href="mailto:${escapeHtml(REPORT_EMAIL)}?subject=${subject}">정보가 다르면 알려주세요</a></p>`;
 }
-function verifiedEnrichment(place) {
-  const notice = accessNotice(place && place.name);
-  if (notice && notice.tone === "limit") return false;
-  const row = place && place.enrichment;
-  if (!row || !/^https:\/\//.test(String(row.source || ""))) return false;
-  return [row.indoorOutdoor, row.weightLimit, row.extraFee].some((value) => {
-    const text = String(value || "").trim();
-    return text && text !== "미확인" && !text.includes("미확인");
-  });
+const ENRICHMENT_FILE = path.join(ROOT, "data", "enrichment", "places.json");
+const ENRICHMENT_FIELDS = [
+  { id: "indoorOutdoor", keys: ["indoorOutdoor", "실내실외", "실내/실외"], label: "실내/실외" },
+  { id: "sizeLimit", keys: ["sizeLimit", "weightLimit", "무게제한", "무게·크기 제한"], label: "무게·크기 제한" },
+  { id: "extraFee", keys: ["extraFee", "추가 요금", "추가요금"], label: "추가 요금" },
+  { id: "checkedOn", keys: ["checkedOn", "확인일"], label: "확인일" },
+  { id: "checkedSource", keys: ["checkedSource", "sourceNote", "확인 출처", "출처", "source"], label: "확인 출처" },
+];
+const OPTIONAL_ENRICHMENT_KEYS = [
+  ["leash", "목줄"],
+  ["cat", "고양이"],
+  ["petCount", "마릿수", "동반 마릿수"],
+  ["cage", "케이지", "이동장"],
+  ["petMenu", "펫메뉴", "펫 메뉴"],
+  ["largeDog", "대형견"],
+];
+function isUnpublishedEnrichment(id, row) {
+  if (!row || typeof row !== "object") return true;
+  if (row.example === true || row.publish === false) return true;
+  return /^example/i.test(String(id || row.id || ""));
 }
-function fillFromTour(record, place) {
-  const next = { ...record };
-  const rules = place.tour && Array.isArray(place.tour.petRules) ? place.tour.petRules : [];
-  const blob = rules.map((rule) => displayValue(rule.label) + " " + displayValue(rule.value)).join(" ");
-  if (!blob) return next;
-  if (next.indoorOutdoor === "미확인") {
-    const indoor = /실내/.test(blob);
-    const outdoor = /야외|실외/.test(blob);
-    if (indoor || outdoor) {
-      next.indoorOutdoor = indoor && outdoor ? "TourAPI 동반 정보에 실내와 야외가 함께 적혀 있음" : indoor ? "TourAPI 동반 정보에 실내가 적혀 있음" : "TourAPI 동반 정보에 야외가 적혀 있음";
-    }
+function enrichmentValue(record, keys) {
+  if (!record) return "";
+  for (const key of keys) {
+    if (record[key] == null) continue;
+    const text = displayValue(record[key]);
+    if (text) return text;
   }
-  if (next.weightLimit === "미확인") {
-    const hit = rules.find((rule) => /kg|킬로|체중|무게|체고/.test(displayValue(rule.value)));
-    if (hit && displayValue(hit.value)) next.weightLimit = displayValue(hit.value);
-  }
-  if (next.extraFee === "미확인") {
-    const hit = rules.find((rule) => /요금|이용료|추가/.test(displayValue(rule.label) + displayValue(rule.value)));
-    if (hit && displayValue(hit.value)) next.extraFee = displayValue(hit.value);
-  }
-  if ((next.indoorOutdoor !== record.indoorOutdoor || next.weightLimit !== record.weightLimit || next.extraFee !== record.extraFee) && next.source === "미확인") {
-    next.source = "https://www.data.go.kr/data/15101578/openapi.do";
-    next.sourceLabel = "한국관광공사 TourAPI detailPetTour2";
-  }
-  return next;
+  return "";
 }
-function loadEnrichment() {
-  const file = path.join(ROOT, "data", "place-enrichment.json");
-  if (!fs.existsSync(file)) return { places: {} };
-  const parsed = JSON.parse(fs.readFileSync(file, "utf8"));
-  if (!parsed || typeof parsed.places !== "object") throw new Error("data/place-enrichment.json 형식이 아닙니다.");
-  return parsed;
-}
-function assertReviewEnrichment(editorial) {
-  const file = path.join(ROOT, "content", "place-enrichment.json");
-  if (!fs.existsSync(file)) throw new Error("content/place-enrichment.json 이 없습니다.");
-  const review = JSON.parse(fs.readFileSync(file, "utf8"));
-  const ids = Object.keys(editorial.places || {});
-  const reviewPlaces = review && review.places;
-  if (!reviewPlaces || ids.length !== Object.keys(reviewPlaces).length) throw new Error("보강 파일의 장소 수가 다릅니다.");
-  const unconfirmed = new Set(["미확인", "미확인.", "확인 불가", "알 수 없음"]);
-  for (const id of ids) {
-    const src = editorial.places[id];
-    const row = reviewPlaces[id];
-    if (!row) throw new Error("리뷰 형식 보강에 없는 장소: " + id);
-    for (const key of ["indoorOutdoor", "sizeLimit", "extraFee", "checkedOn", "checkedSource"]) {
-      if (typeof row[key] !== "string" || !row[key]) throw new Error("보강 필드 누락 " + id + " " + key);
-    }
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(row.checkedOn)) throw new Error("확인일 형식 " + id);
-    if (row.indoorOutdoor !== src.indoorOutdoor || row.extraFee !== src.extraFee || row.checkedOn !== src.checkedOn || row.checkedSource !== src.source) {
-      throw new Error("리뷰 형식 보강이 편집 파일과 다릅니다: " + id);
-    }
-    const limit = accessNotice(src.name) && accessNotice(src.name).tone === "limit";
-    if (limit && row.sizeLimit !== "미확인") throw new Error("국립공원 sizeLimit이 채워져 있습니다: " + id);
-    if (!limit && row.sizeLimit !== src.weightLimit) throw new Error("sizeLimit 별칭이 다릅니다: " + id);
-    const values = ["indoorOutdoor", "sizeLimit", "extraFee", "checkedOn", "checkedSource"].map((key) => row[key]);
-    const filled = values.every((value) => value && !unconfirmed.has(value)) && /실내|실외|야외/.test(row.indoorOutdoor);
-    if (limit && filled) throw new Error("국립공원이 PR #10 규칙으로 색인됩니다: " + id);
+function normalizeEnrichment(record) {
+  if (!record || typeof record !== "object") return null;
+  const normalized = {};
+  let any = false;
+  for (const field of ENRICHMENT_FIELDS) {
+    const value = enrichmentValue(record, field.keys);
+    if (!value) continue;
+    normalized[field.id] = value;
+    any = true;
   }
+  for (const keys of OPTIONAL_ENRICHMENT_KEYS) {
+    const value = enrichmentValue(record, keys);
+    if (!value) continue;
+    normalized[keys[0]] = value;
+    any = true;
+  }
+  const access = indexRule.explicitAccess(record);
+  if (access) {
+    normalized.petAccess = access;
+    any = true;
+  }
+  return any ? normalized : null;
+}
+function loadEnrichmentMap() {
+  if (!fs.existsSync(ENRICHMENT_FILE)) throw new Error("보강 파일이 없습니다: data/enrichment/places.json");
+  const parsed = JSON.parse(fs.readFileSync(ENRICHMENT_FILE, "utf8"));
+  const rows = parsed && parsed.places ? parsed.places : parsed;
+  const entries = Array.isArray(rows)
+    ? rows.filter((row) => row && row.id).map((row) => [String(row.id), row])
+    : Object.entries(rows && typeof rows === "object" ? rows : {});
+  const map = {};
+  let skipped = 0;
+  for (const [id, row] of entries) {
+    if (isUnpublishedEnrichment(id, row)) { skipped += 1; continue; }
+    map[String(id)] = row;
+  }
+  const example = parsed && parsed.places && parsed.places["EXAMPLE-DO-NOT-PUBLISH"];
+  if (!example || example.example !== true) throw new Error("예시 행 EXAMPLE-DO-NOT-PUBLISH 가 example:true 로 있어야 합니다.");
+  if (map["EXAMPLE-DO-NOT-PUBLISH"]) throw new Error("예시 보강 행이 게시 맵에 들어갔습니다.");
+  const probe = { id: "enrichment-probe", name: "보강 기준 확인", category: "food", addr: "서울특별시 중구", lat: 37.56, lng: 126.97 };
+  const sample = { ...example };
+  delete sample.example;
+  probe.enrichment = normalizeEnrichment(sample);
+  if (isThinPlace(probe)) throw new Error("예시와 같은 칸을 채운 실제 행이 색인 기준을 통과하지 못합니다.");
+  log("보강 파일 게시 행 " + Object.keys(map).length + "곳, 예시로 건너뛴 행 " + skipped + "곳");
+  return map;
 }
 const REGION_SHORT = { "서울특별시": "서울", "부산광역시": "부산", "대구광역시": "대구", "인천광역시": "인천", "광주광역시": "광주", "대전광역시": "대전", "울산광역시": "울산", "세종특별자치시": "세종", "경기도": "경기", "강원특별자치도": "강원", "충청북도": "충북", "충청남도": "충남", "전북특별자치도": "전북", "전라남도": "전남", "경상북도": "경북", "경상남도": "경남", "제주특별자치도": "제주" };
 function shortRegionName(address) {
@@ -224,7 +231,7 @@ function staticDirectoryHtml(places) {
   const picked = [];
   const used = new Set();
   for (const name of regions) {
-    const found = places.find((place) => shortRegionName(place.addr) === name && !used.has(place.id) && !(accessNotice(place.name) && accessNotice(place.name).tone === "limit"));
+    const found = places.find((place) => shortRegionName(place.addr) === name && !used.has(place.id) && indexRule.petAccessStatus(place) !== "restricted");
     if (!found) continue;
     used.add(found.id);
     picked.push(found);
@@ -232,7 +239,7 @@ function staticDirectoryHtml(places) {
   for (const place of places) {
     if (picked.length >= 30) break;
     if (used.has(place.id)) continue;
-    if (accessNotice(place.name) && accessNotice(place.name).tone === "limit") continue;
+    if (indexRule.petAccessStatus(place) === "restricted") continue;
     used.add(place.id);
     picked.push(place);
   }
@@ -262,13 +269,75 @@ function siteScopeHtml(places) {
   const beachName = places.filter((place) => /해수욕장/.test(place.name || "")).length;
   const beachSentence = beachName === 0 ? "장소 이름에 해수욕장이 들어간 카드는 없습니다." : `장소 이름에 해수욕장이 들어간 카드는 ${beachName.toLocaleString("ko-KR")}곳이며 출입은 미확인입니다.`;
   const n = places.length.toLocaleString("ko-KR");
-  return `<h2>수록 범위와 확인일</h2><p>2026-10-18 장소 파일에는 ${n}곳이 있습니다. 숙박 ${stay.toLocaleString("ko-KR")}곳, 음식점·카페 ${food.toLocaleString("ko-KR")}곳, 산책·공원 ${park.toLocaleString("ko-KR")}곳, 24시간 동물병원 ${hospital.toLocaleString("ko-KR")}곳입니다. 병원 카드 가운데 전화가 적힌 행은 ${hospitalPhone.toLocaleString("ko-KR")}곳이고, 한 곳은 번호가 비어 있습니다. 이 숫자는 카드의 개수입니다. 그날 영업 중이라는 뜻도, 반려동물 입장이 된다는 뜻도 아닙니다.</p><h2>시·도 분포</h2><p>열일곱 시·도를 파일에서 세면 다음과 같습니다. ${escapeHtml(regionSentence)}. 합은 ${n}곳입니다. 경기와 서울이 많다고 그 지역이 더 안전하거나 동반이 더 쉽다고 적지 않습니다.</p><h2>읽으면 안 되는 추천</h2><p>이름에 국립공원이 들어간 ${nationalPark.toLocaleString("ko-KR")}곳은 동반 장소로 색인하지 않습니다. 페이지에는 출입 제한 안내와 국립공원공단 출처만 붙입니다. 가지산도립공원과 신불산군립공원은 같은 날 울산시·밀양시·양산시 공지에서 허용이나 금지를 확인하지 못해 미확인입니다. 자연휴양림 이름 ${forest.toLocaleString("ko-KR")}곳도 관리소 문장이 없으면 미확인입니다. ${beachSentence} 주소에 해수욕장 길이 있어도 그 음식점이나 숙소를 해변 금지 구역으로 단정하지 않습니다.</p><h2>아직 비어 있는 칸</h2><p>실내·실외, 무게, 추가 요금은 공식 문장으로 확인한 국립공원 안내 외에는 미확인입니다. TourAPI 상세 캐시는 data/tourapi-cache.json에 두고, 환경 변수 TOURAPI_SERVICE_KEY가 있을 때만 빌드가 그 파일을 채웁니다. 이번 생성에는 키가 없어 새 동반 문장을 받지 않았습니다. 없는 체중이나 요금은 만들지 않습니다. 지도의 지역·유형 필터와 <a href="/guides/">여행 가이드</a>에서 카드를 고른 뒤, 전화나 관리기관 공지로 빈칸을 확인하면 됩니다. 출처는 한국관광공사 TourAPI, 한국문화정보원 애견동반 카페, 고캠핑 반려견 동반 캠핑장, maruvet·vet24 24시 목록입니다. 대표 장소 서른 곳의 링크와 가이드 여섯 편의 링크는 아래 정적 목록에도 있습니다. 스크립트가 장소 파일을 읽으면 그 목록은 접히고, 이 문단은 남습니다.</p>`;
+  return `<h2>수록 범위와 확인일</h2><p>2026-10-18 장소 파일에는 ${n}곳이 있습니다. 숙박 ${stay.toLocaleString("ko-KR")}곳, 음식점·카페 ${food.toLocaleString("ko-KR")}곳, 산책·공원 ${park.toLocaleString("ko-KR")}곳, 24시간 동물병원 ${hospital.toLocaleString("ko-KR")}곳입니다. 병원 카드 가운데 전화가 적힌 행은 ${hospitalPhone.toLocaleString("ko-KR")}곳이고, 한 곳은 번호가 비어 있습니다. 이 숫자는 카드의 개수입니다. 그날 영업 중이라는 뜻도, 반려동물 입장이 된다는 뜻도 아닙니다.</p><h2>시·도 분포</h2><p>열일곱 시·도를 파일에서 세면 다음과 같습니다. ${escapeHtml(regionSentence)}. 합은 ${n}곳입니다. 경기와 서울이 많다고 그 지역이 더 안전하거나 동반이 더 쉽다고 적지 않습니다.</p><h2>읽으면 안 되는 추천</h2><p>이름에 국립공원이 들어간 ${nationalPark.toLocaleString("ko-KR")}곳은 동반 장소로 색인하지 않습니다. 색인 규칙은 index-rule.js 한 곳이고, 국립공원 이름은 보강 칸을 허용으로 적어도 출입 제한입니다. 페이지에는 그 안내와 국립공원공단 출처만 붙입니다. 가지산도립공원과 신불산군립공원은 같은 날 울산시·밀양시·양산시 공지에서 허용이나 금지를 확인하지 못해 미확인입니다. 자연휴양림 이름 ${forest.toLocaleString("ko-KR")}곳도 관리소 문장이 없으면 미확인입니다. ${beachSentence} 주소에 해수욕장 길이 있어도 그 음식점이나 숙소를 해변 금지 구역으로 단정하지 않습니다.</p><h2>색인되는 장소</h2><p>장소 보강은 data/enrichment/places.json에만 둡니다. 키는 장소 아이디입니다. 검색에 넣는 카드는 공식 출처에 동반 가능이 적혀 petAccess가 allowed이고, 실내·실외, 무게·크기, 추가 요금, 확인일, 확인 출처가 모두 있는 곳입니다. 그 문장이 없는 칸은 만들지 않으며 그 카드는 noindex입니다. TourAPI 상세 캐시는 data/tourapi-cache.json에 두고, 환경 변수 TOURAPI_SERVICE_KEY가 있을 때만 빌드가 그 파일을 채웁니다. 이번 생성에는 키가 없어 새 동반 문장을 받지 않았습니다. 반려동물 동반 문장은 KorPetTourService2 detailPetTour2를 쓰도록 준비해 두었고, 예전 KorPetTourService 주소는 호출하지 않습니다. 없는 체중이나 요금은 만들지 않습니다. 지도의 지역·유형 필터와 <a href="/guides/">여행 가이드</a>에서 카드를 고른 뒤, 전화나 관리기관 공지로 빈칸을 확인하면 됩니다. 출처는 한국관광공사 TourAPI, 한국문화정보원 애견동반 카페, 고캠핑 반려견 동반 캠핑장, maruvet·vet24 24시 목록입니다. 대표 장소 서른 곳의 링크와 가이드 여섯 편의 링크는 아래 정적 목록에도 있습니다. 스크립트가 장소 파일을 읽으면 그 목록은 접히고, 이 문단은 남습니다.</p>`;
 }
-function makePlacePage(place, css, updatedAt, thin) {
+function straightKm(a, b) {
+  const toRad = (deg) => Number(deg) * Math.PI / 180;
+  const dLat = toRad(b.lat - a.lat);
+  const dLng = toRad(b.lng - a.lng);
+  const lat1 = toRad(a.lat);
+  const lat2 = toRad(b.lat);
+  const h = Math.sin(dLat / 2) ** 2 + Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLng / 2) ** 2;
+  return 6371 * 2 * Math.asin(Math.min(1, Math.sqrt(h)));
+}
+function sigunguName(address) {
+  return String(address || "").trim().split(/\s+/).slice(0, 2).join(" ");
+}
+function fmtKm(km) {
+  if (!Number.isFinite(km)) return "";
+  if (km < 1) return (Math.round(km * 1000)).toLocaleString("ko-KR") + "m";
+  return (Math.round(km * 10) / 10).toLocaleString("ko-KR") + "km";
+}
+function nearestHospitals(place, places, count) {
+  return places
+    .filter((item) => item.category === "hospital" && item.id !== place.id)
+    .map((item) => ({ item, km: straightKm(place, item) }))
+    .sort((a, b) => a.km - b.km || a.item.id.localeCompare(b.item.id))
+    .slice(0, count);
+}
+function placeEssay(place, places) {
+  const row = place.enrichment || {};
+  const region = shortRegionName(place.addr);
+  const local = sigunguName(place.addr);
+  const hospitals = nearestHospitals(place, places, 3);
+  const localHospitals = places.filter((item) => item.category === "hospital" && sigunguName(item.addr) === local);
+  const regionSame = places.filter((item) => item.category === place.category && shortRegionName(item.addr) === region);
+  const phone = displayValue(place.tel);
+  const hours = displayValue(place.hours);
+  const hospitalLines = hospitals.map((hit, index) => {
+    const tel = displayValue(hit.item.tel);
+    const hour = displayValue(hit.item.hours);
+    return `${index + 1}위는 ${hit.item.name}입니다. 주소는 ${displayValue(hit.item.addr) || "주소 칸이 비어 있습니다"}. ${tel ? "전화는 " + tel + "입니다." : "전화 칸은 비어 있습니다."} ${hour ? "진료시간 칸은 " + hour + "입니다." : ""} 이 장소 좌표에서 그 병원 좌표까지 직선거리는 ${fmtKm(hit.km)}입니다. 도로 거리나 소요 시간이 아닙니다.`;
+  }).join(" ");
+  const optional = [
+    ["목줄", row.leash],
+    ["고양이", row.cat],
+    ["마릿수", row.petCount],
+    ["이동장", row.cage],
+    ["펫 메뉴", row.petMenu],
+    ["대형견", row.largeDog],
+  ].filter((pair) => displayValue(pair[1]));
+  const optionalText = optional.length
+    ? optional.map(([label, value]) => `${label}은 출처에 “${value}”로 적혀 있습니다.`).join(" ")
+    : "목줄, 고양이, 마릿수, 이동장, 펫 메뉴, 대형견은 이 출처 문장에서 별도 칸으로 나누지 않았습니다.";
+  const rank = regionSame.findIndex((item) => item.id === place.id);
+  return [
+    `<h2 class="pd-sec-title">이 카드에서 확인한 동반 조건</h2>`,
+    `<p>${escapeHtml(place.name)}은 ${escapeHtml(region)} ${escapeHtml(local)}에 있는 ${escapeHtml(CATEGORIES[place.category].label)} 카드입니다. 주소는 ${escapeHtml(displayValue(place.addr) || "주소 칸이 비어 있습니다")}. ${phone ? "전화는 " + escapeHtml(phone) + "입니다." : "전화 칸은 비어 있어 이 페이지의 번호로 걸 수 없습니다."} ${hours ? "운영·진료 칸은 " + escapeHtml(hours) + "입니다." : "운영시간 칸은 비어 있습니다."} 좌표는 위도 ${place.lat}, 경도 ${place.lng}입니다. 같은 시·도의 같은 유형 카드는 ${regionSame.length.toLocaleString("ko-KR")}곳이고, 파일에 적힌 순서에서 이 카드는 그 묶음의 ${rank + 1}번째입니다.</p>`,
+    `<p>2026-10-18에 읽은 공식 출처는 동반이 가능하다고 적고 있습니다. 실내·실외 문장은 “${escapeHtml(row.indoorOutdoor)}”입니다. 무게·크기 문장은 “${escapeHtml(row.sizeLimit)}”입니다. 추가 요금 문장은 “${escapeHtml(row.extraFee)}”입니다. ${escapeHtml(optionalText)} 이 세 칸과 선택 칸은 그 페이지에 있는 문장만 옮겼습니다. 페이지에 없는 체중 숫자, 요금, 실내 여부를 다른 업소 규정으로 채우지 않았습니다.</p>`,
+    `<p>확인일은 ${escapeHtml(row.checkedOn)}이고, 확인 출처는 <a href="${escapeHtml(row.checkedSource)}" target="_blank" rel="noopener">${escapeHtml(row.checkedSource)}</a>입니다. 방문 전에는 그 주소를 다시 열고, 전화번호가 있으면 ${phone ? escapeHtml(phone) + "으로" : "관리기관으로"} 같은 문장이 아직 유효한지 묻습니다. 객실·구역·시간대마다 규정이 다를 수 있으므로, 이 카드의 문장을 현장 허가로 읽지 않습니다.</p>`,
+    `<h2 class="pd-sec-title">가까운 24시 동물병원</h2>`,
+    `<p>${escapeHtml(local)}에 수록된 24시 동물병원 카드는 ${localHospitals.length.toLocaleString("ko-KR")}곳입니다. 아래 거리는 장소 좌표와 병원 좌표의 직선거리이며, 길 안내 거리가 아닙니다. ${escapeHtml(hospitalLines)}</p>`,
+    `<p>진료를 받으려면 출발 전에 병원 전화로 당직과 진료 과목을 확인합니다. 목록에 24시간이 적혀 있어도 그날 야간 진료가 비는 경우가 있습니다. 이 페이지는 병원 예약을 대신하지 않습니다. 가장 가까운 병원의 직선거리 ${hospitals[0] ? fmtKm(hospitals[0].km) : ""}는 응급 이동 시간을 보장하지 않습니다.</p>`,
+    `<h2 class="pd-sec-title">방문 전 확인</h2>`,
+    `<p>${escapeHtml(place.name)}에서 확인할 순서는 이 카드에만 적습니다. 첫째, 출처 주소를 다시 엽니다. 둘째, 확인일 ${escapeHtml(row.checkedOn)} 뒤에 그 문장이 바뀌었는지 봅니다. 셋째, 무게·크기 문장에 이번 동물이 들어가는지 견주가 판단합니다. 넷째, 추가 요금 문장과 예약 화면의 금액이 같은지 비교합니다. 다섯째, 실내·실외 문장이 가려는 구역을 말하는지 봅니다. 여섯째, 가장 가까운 24시 병원${hospitals[0] ? " " + escapeHtml(hospitals[0].item.name) : ""}에 전화해 당직을 묻습니다. 같은 ${escapeHtml(region)}의 ${escapeHtml(CATEGORIES[place.category].label)} 카드 ${regionSame.length.toLocaleString("ko-KR")}곳 가운데 이 순서를 채운 페이지는 공식 문장이 있는 곳뿐입니다.</p>`,
+  ].join("\n");
+}
+function makePlacePage(place, css, updatedAt, thin, places) {
   const cat = CATEGORIES[place.category];
   const region = regionOf(place.addr);
-  const notice = accessNotice(place.name);
-  const limited = Boolean(notice && notice.tone === "limit");
+  const notice = indexRule.accessNotice(place);
+  const limited = Boolean(notice && notice.status === "restricted");
   const title = limited
     ? `${place.name} — 반려동물 출입 제한 · 댕냥이와 함께`
     : `${place.name} — ${region} 반려동물 동반 · 댕냥이와 함께`;
@@ -320,12 +389,20 @@ function makePlacePage(place, css, updatedAt, thin) {
     ? `<p class="pd-warn"><strong>야간·응급 진료 가능 여부는 방문 전 전화로 확인하세요.</strong></p>`
     : `<p class="pd-warn">공공데이터에 등록된 정보 기준이라 실제 운영 현황과 다를 수 있어요. 방문 전 반려동물 동반 가능 여부를 해당 업체에 확인하세요.</p>`;
   const noticeHtml = notice
-    ? `<div class="pd-warn"><strong>반려동물 출입 제한</strong><p>${escapeHtml(notice.label)}</p><p>${escapeHtml(notice.detail)}</p>${notice.sources && notice.sources.length ? `<ul>${notice.sources.map((href) => `<li><a href="${escapeHtml(href)}" target="_blank" rel="noopener">${escapeHtml(href)}</a></li>`).join("")}</ul>` : ""}</div>`
+    ? `<div class="pd-warn"><strong>${escapeHtml(notice.heading)}</strong><p>${escapeHtml(notice.label)}</p><p>${escapeHtml(notice.detail)}</p>${notice.sources && notice.sources.length ? `<ul>${notice.sources.map((href) => `<li><a href="${escapeHtml(href)}" target="_blank" rel="noopener">${escapeHtml(href)}</a></li>`).join("")}</ul>` : ""}</div>`
     : "";
-  const enrich = place.enrichment || null;
-  const enrichHtml = enrich
-    ? `<h2 class="pd-sec-title">동반 조건 보강</h2><div class="pd-card pd-enrich"><dl style="margin:0">${[["실내·실외", enrich.indoorOutdoor], ["무게·크기", enrich.weightLimit], ["추가 요금", enrich.extraFee], ["확인일", enrich.checkedOn]].map(([label, value]) => `<div class="pd-row"><dt>${escapeHtml(label)}</dt><dd>${escapeHtml(value || "미확인")}</dd></div>`).join("")}</dl></div>${/^https:\/\//.test(String(enrich.source || "")) ? `<p class="pd-caption">출처: <a href="${escapeHtml(enrich.source)}" target="_blank" rel="noopener">${escapeHtml(enrich.sourceLabel || enrich.source)}</a></p>` : `<p class="pd-caption">출처: 미확인</p>`}`
+  const row = place.enrichment || null;
+  const fieldRows = row
+    ? [["실내·실외", row.indoorOutdoor], ["무게·크기", row.sizeLimit], ["추가 요금", row.extraFee], ["목줄", row.leash], ["고양이", row.cat], ["마릿수", row.petCount], ["이동장", row.cage], ["펫 메뉴", row.petMenu], ["대형견", row.largeDog], ["확인일", row.checkedOn]]
+      .filter((pair) => displayValue(pair[1]))
+      .map(([label, value]) => `<div class="pd-row"><dt>${escapeHtml(label)}</dt><dd>${escapeHtml(value)}</dd></div>`)
+      .join("")
     : "";
+  const sourceHref = row && /^https?:\/\//.test(String(row.checkedSource || "")) ? row.checkedSource : "";
+  const enrichHtml = fieldRows
+    ? `<h2 class="pd-sec-title">동반 조건 보강</h2><div class="pd-card pd-enrich"><dl style="margin:0">${fieldRows}</dl></div>${sourceHref ? `<p class="pd-caption">확인 출처: <a href="${escapeHtml(sourceHref)}" target="_blank" rel="noopener">${escapeHtml(sourceHref)}</a></p>` : ""}`
+    : "";
+  const essayHtml = !thin && row ? placeEssay(place, places || []) : "";
   const fixLink = `<p><a class="pd-fix" href="/contact.html?place=${encodeURIComponent(place.id)}">정보 정정 요청</a></p>`;
   const adHtml = thin ? "" : AD_UNIT;
   return `<!doctype html>
@@ -362,6 +439,7 @@ function makePlacePage(place, css, updatedAt, thin) {
       ${petHtml}
       ${noticeHtml}
       ${enrichHtml}
+      ${essayHtml}
       <div class="pd-actions">${actions}</div>
       <div class="pd-maps">${mapSearch}</div>
       ${warning}
@@ -406,11 +484,7 @@ function editorialText(place) {
 // Hours are empty ("정보 없음") or the single token "24시간", and there is no original write-up.
 // Those pages stay on the site for visitors, but are noindex and left out of the sitemap.
 function isThinPlace(place) {
-  const notice = accessNotice(place.name);
-  if (notice && notice.tone === "limit") return true;
-  if (tourapi.isRich(place.tour)) return false;
-  if (verifiedEnrichment(place)) return false;
-  return Array.from(editorialText(place)).length < EDITORIAL_MIN_CHARS;
+  return !indexRule.isIndexable(place);
 }
 function makeMainMeta(html) {
   const titleMatch = html.match(/<title>([\s\S]*?)<\/title>/i);
@@ -528,7 +602,16 @@ function copyAssets() {
   for (const file of ["index.html", "places_park.json"]) {
     if (fs.existsSync(path.join(ROOT, file))) fs.copyFileSync(path.join(ROOT, file), path.join(OUT, file));
   }
-  if (fs.existsSync(path.join(ROOT, "data"))) fs.cpSync(path.join(ROOT, "data"), path.join(OUT, "data"), { recursive: true });
+  if (fs.existsSync(path.join(ROOT, "index-rule.js"))) fs.copyFileSync(path.join(ROOT, "index-rule.js"), path.join(OUT, "index-rule.js"));
+  if (fs.existsSync(path.join(ROOT, "data"))) {
+    fs.cpSync(path.join(ROOT, "data"), path.join(OUT, "data"), {
+      recursive: true,
+      filter(src) {
+        const rel = path.relative(path.join(ROOT, "data"), src);
+        return rel !== "enrichment" && !rel.startsWith("enrichment" + path.sep);
+      },
+    });
+  }
   if (fs.existsSync(path.join(ROOT, "og"))) fs.cpSync(path.join(ROOT, "og"), path.join(OUT, "og"), { recursive: true });
   if (fs.existsSync(path.join(ROOT, "posters"))) fs.cpSync(path.join(ROOT, "posters"), path.join(OUT, "posters"), { recursive: true });
 }
@@ -636,19 +719,29 @@ async function build() {
   fs.mkdirSync(path.join(OUT, "place"), { recursive: true });
   fs.writeFileSync(path.join(OUT, "place", "place.css"), css, "utf8");
   const officialMap = loadOfficialMap();
-  const enrichmentFile = loadEnrichment();
-  assertReviewEnrichment(enrichmentFile);
+  const enrichmentMap = loadEnrichmentMap();
+  for (const id of Object.keys(enrichmentMap)) {
+    if (!valid.some((place) => place.id === id)) throw new Error("보강 장소 id가 장소 파일에 없습니다: " + id);
+  }
+  if (fs.existsSync(path.join(OUT, "data", "enrichment"))) throw new Error("보강 예시 파일이 배포 폴더에 복사되었습니다.");
   const indexablePlaces = [];
   let thinCount = 0;
   for (const place of valid) {
     place.official = officialMap[place.id] || null;
-    if (enrichmentFile.places[place.id]) place.enrichment = fillFromTour(enrichmentFile.places[place.id], place);
+    place.enrichment = normalizeEnrichment(enrichmentMap[place.id]);
     const thin = isThinPlace(place);
     if (thin) thinCount += 1;
     else indexablePlaces.push(place);
     const filename = path.join(OUT, "place", place.id + ".html");
-    try { fs.writeFileSync(filename, makePlacePage(place, css, updatedAt, thin), "utf8"); }
+    try { fs.writeFileSync(filename, makePlacePage(place, css, updatedAt, thin, valid), "utf8"); }
     catch (error) { skipped.push(`${place.id}: ${place.name} — 페이지 생성 실패 (${error.message})`); }
+  }
+  for (const place of indexablePlaces) {
+    const html = fs.readFileSync(path.join(OUT, "place", place.id + ".html"), "utf8");
+    const article = (html.match(/<article[\s\S]*<\/article>/) || [html])[0].replace(/<script[\s\S]*?<\/script>/gi, "").replace(/<[^>]+>/g, "");
+    const hangul = (article.match(/[가-힣]/g) || []).length;
+    if (hangul < 1000) throw new Error("색인 장소 한글이 1000자 미만입니다: " + place.id + " " + hangul);
+    if (html.includes("예시")) throw new Error("색인 장소 페이지에 예시 문구가 있습니다: " + place.id);
   }
   const pageUrls = indexablePlaces.map((p) => `${BASE_URL}/place/${encodeURIComponent(p.id)}.html`);
   const sitemapUrls = [BASE_URL + "/", ...pageUrls];
@@ -660,10 +753,8 @@ async function build() {
   log(`데이터 기준일: ${updatedAt}`);
   log(`장소 정적 페이지 생성: ${builtPages}/${valid.length}`);
   log(`얇은 장소 noindex·사이트맵 제외: ${thinCount}곳, 색인을 유지하는 장소: ${indexablePlaces.length}곳`);
-  const limitedRich = valid.filter((place) => tourapi.isRich(place.tour) && accessNotice(place.name) && accessNotice(place.name).tone === "limit").length;
-  if (indexablePlaces.filter((place) => tourapi.isRich(place.tour)).length + limitedRich !== tourStats.rich) {
-    throw new Error("색인 장소 수가 TourAPI 상세(이미지·개요·동반 조건) 수와 다릅니다.");
-  }
+  const indexedNational = indexablePlaces.filter((place) => /국립공원/.test(place.name || ""));
+  if (indexedNational.length) throw new Error("국립공원이 색인되었습니다: " + indexedNational.map((place) => place.id).join(","));
   const sampleHtml = fs.readFileSync(path.join(OUT, "place", "kbizin-212.html"), "utf8");
   if (!sampleHtml.includes("카카오맵에서 보기") || !sampleHtml.includes("https://map.kakao.com/link/search/") || !sampleHtml.includes("네이버 지도에서 보기") || !sampleHtml.includes("https://map.naver.com/p/search/")) {
     throw new Error("장소 페이지에 카카오맵·네이버 지도 검색 링크가 없습니다.");
@@ -707,22 +798,13 @@ async function build() {
   if (/<ins\b[^>]*\badsbygoogle/.test(gajiHtml)) throw new Error("noindex인 가지산 페이지에 광고 단위가 있습니다.");
   const campHtml = fs.readFileSync(path.join(OUT, "place", "gocamp-22.html"), "utf8");
   if (!campHtml.includes("반려동물 출입 제한(장애인 보조견 제외, 공단 시범 장소만 예외)") || !campHtml.includes('name="robots" content="noindex, follow"')) throw new Error("국립공원 야영장 제한 안내 또는 noindex가 없습니다.");
-  const filled = (value) => {
-    const text = String(value || "").trim();
-    return Boolean(text && text !== "미확인" && !text.includes("미확인"));
-  };
-  let enrichN = 0, popularN = 0, indoorN = 0, weightN = 0, feeN = 0, sourceN = 0;
+  let enrichN = 0, allowedN = 0;
   for (const place of valid) {
-    const row = place.enrichment;
-    if (!row) continue;
+    if (!place.enrichment) continue;
     enrichN += 1;
-    if (row.popular) popularN += 1;
-    if (filled(row.indoorOutdoor)) indoorN += 1;
-    if (filled(row.weightLimit)) weightN += 1;
-    if (filled(row.extraFee)) feeN += 1;
-    if (/^https:\/\//.test(String(row.source || ""))) sourceN += 1;
+    if (place.enrichment.petAccess === "allowed") allowedN += 1;
   }
-  log(`보강 레코드 ${enrichN}곳 · 인기 ${popularN}곳 · 실내·실외 채움 ${indoorN} · 무게 채움 ${weightN} · 요금 채움 ${feeN} · 출처 URL ${sourceN} · 색인 장소 ${indexablePlaces.length}`);
+  log(`보강 게시 행 ${enrichN}곳 · petAccess allowed ${allowedN}곳 · 색인 장소 ${indexablePlaces.length}`);
   log(`전체 HTML: ${htmlCount}, OG PNG: 5, 장소 반영 전 sitemap URL: ${sitemapUrls.length}`);
   if (thinCount + indexablePlaces.length !== valid.length) throw new Error("얇은 장소 분류 수가 전체 장소 수와 다릅니다.");
   if (skipped.length) {

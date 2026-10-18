@@ -1,0 +1,58 @@
+{
+  "places": {
+    "EXAMPLE-DO-NOT-PUBLISH": {
+      "example": true,
+      "petAccess": "allowed",
+      "indoorOutdoor": "실내·실외",
+      "sizeLimit": "소형견 10kg 이하",
+      "extraFee": "추가 요금 없음",
+      "leash": "목줄 착용 필수",
+      "cat": "고양이 동반 불가",
+      "petCount": "최대 2마리",
+      "cage": "",
+      "petMenu": "",
+      "largeDog": "",
+      "checkedOn": "2026-10-18",
+      "checkedSource": "예시 행이라 페이지에 게시하지 않습니다"
+    },
+    "gocamp-19": {
+      "petAccess": "allowed",
+      "indoorOutdoor": "마킹 습관이 있는 반려견은 실내 매너벨트(기저귀) 착용이 필수입니다. 외부 산책 시에는 목줄을 착용합니다. 고캠핑 소개문 최종 정보 수정일은 2026-08-10입니다.",
+      "sizeLimit": "객실당 소형견(10kg 미만) 최대 2마리까지 입실 가능. 카라반 HP-760 5·10·11·19·20호와 글램핑 고급형 카바나 12·13·14·15호만 가능하고 그 외 객실은 이용 불가.",
+      "extraFee": "반려견 동반 요금은 1마리당 30,000원",
+      "leash": "외부 산책 시에는 반드시 목줄을 착용해 주세요.",
+      "petCount": "객실당 최대 2마리",
+      "cage": "실내 매너벨트(기저귀) 착용. 생리 중인 반려견은 기저귀 착용이 필수.",
+      "checkedOn": "2026-10-18",
+      "checkedSource": "https://gocamping.or.kr/bsite/camp/info/read.do?c_no=1065"
+    },
+    "tour-979536": {
+      "petAccess": "allowed",
+      "indoorOutdoor": "객실에 따라 노천탕이나 실내 옥 욕조, 야외 편백 욕조가 있으며 편백 욕조를 제외하고 반려견 입욕이 가능합니다. 카페 내부는 불가. 구석구석 기사는 2023년 2월에 작성되었고 이후 바뀔 수 있다고 적혀 있습니다.",
+      "sizeLimit": "10kg 미만의 모든 견종. 맹견 불가.",
+      "extraFee": "강아지 한 마리당 1만 5000원 추가요금. 비수기 객실 11만~34만 원은 사람 숙박 요금입니다.",
+      "petCount": "추가요금은 한 마리당으로 적혀 있습니다.",
+      "checkedOn": "2026-10-18",
+      "checkedSource": "https://korean.visitkorea.or.kr/detail/rem_detail.do?cotid=d62760f6-a777-447d-ba45-e434c34f5700"
+    },
+    "tour-2603489": {
+      "petAccess": "allowed",
+      "indoorOutdoor": "편의시설에 야외테이블파라솔 4개소와 야외용책상 1개소가 있습니다.",
+      "sizeLimit": "동물보호법에 따라 동물등록이 완료된 반려견만 입장. 도사견, 아메리칸 핏불테리어, 아메리칸 스태퍼드셔 테리어, 스패퍼드셔 불 테리어, 로트와일러와 그 잡종, 사람을 공격하여 상해를 입힐 가능성이 높은 개, 사나운 개, 계속 짖는 개, 질병이 있거나 맹견은 입장할 수 없습니다.",
+      "extraFee": "입장료 무료",
+      "leash": "반려동물 목줄은 이중문 안에서 풀거나 체결",
+      "checkedOn": "2026-10-18",
+      "checkedSource": "https://www.incheon.go.kr/park/park010218"
+    },
+    "tour-2930677": {
+      "petAccess": "allowed",
+      "indoorOutdoor": "천연 잔디 야외 놀이터, 야외훈련장, 야외 수영장과 실내 놀이터가 있습니다. 구석구석 기사는 2023년 12월에 작성되었고 이후 바뀔 수 있다고 적혀 있습니다. 기사 장소는 대전 유성구 금고동이며 카드 주소는 금고길 7입니다.",
+      "sizeLimit": "공원은 체고에 따라 소중형견과 대형견으로 나뉩니다. 실내 놀이터는 체고 40cm 미만이고 동물등록이 완료된 반려견만 이용합니다. 동반 가능 동물은 모든 견종이며 맹견은 불가합니다.",
+      "extraFee": "이용 요금 무료. 주차비 무료. 반려동물 입장료 없음.",
+      "leash": "동반 시 목줄 착용, 동물 등록, 광견병 예방 접종, 배변 봉투와 물그릇 지참. 반려견 놀이터에서는 리드 줄 없이 이용할 수 있다고 적혀 있습니다.",
+      "largeDog": "대형견 구역이 소중형견과 나뉘어 있습니다. 실내 놀이터는 체고 40cm 미만.",
+      "checkedOn": "2026-10-18",
+      "checkedSource": "https://korean.visitkorea.or.kr/detail/rem_detail.do?cotid=33483c28-e4cd-427e-bf82-f31dcd96b97d"
+    }
+  }
+}
