@@ -4,8 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="color-scheme" content="light dark" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" media="print" onload="this.media='all'" />
-    <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" /></noscript>
+    <link rel="preload" href="/fonts/DoHyeon-Regular.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="icon" href="data:," />
     <link rel="stylesheet" href="/ad-slot.css" />
     <title>댕냥이와 함께 — 반려동물 동반 전국 지도</title>
@@ -28,16 +27,16 @@
     <style>
       :root {
         color-scheme: light dark;
-        --bg: #FAF9F6;
-        --surface: #ffffff;
-        --surface-2: #F3F1EC;
-        --ink: #1A1A1A;
-        --ink-2: #55524C;
-        --ink-3: #6B675F;
-        --brand-text: #C2410C;
+        --bg: #FBF3E4;
+        --surface: #FFFDF8;
+        --surface-2: #F3E6D4;
+        --ink: #201D18;
+        --ink-2: #5A5046;
+        --ink-3: #5A5046;
+        --brand-text: #B83A17;
         --line: #E7E3DA;
         --line-strong: #D6D1C5;
-        --brand: #E4572E;
+        --brand: #C2441F;
         --brand-hover: #C9481F;
         --brand-ink: #ffffff;
         --accent-soft: #FBEDE7;
@@ -90,12 +89,36 @@
           --shadow: 0 12px 32px rgba(0, 0, 0, 0.55);
         }
       }
+      @font-face {
+        font-family: "DoHyeon";
+        src: url("/fonts/DoHyeon-Regular.woff2") format("woff2");
+        font-weight: 400;
+        font-style: normal;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: "Gothic A1";
+        src: url("/fonts/GothicA1-Regular.woff2") format("woff2");
+        font-weight: 400;
+        font-style: normal;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: "Gothic A1";
+        src: url("/fonts/GothicA1-Bold.woff2") format("woff2");
+        font-weight: 700;
+        font-style: normal;
+        font-display: swap;
+      }
       * { box-sizing: border-box; }
-      html, body { height: 100%; }
+      button, input, select, textarea { font-family: inherit; }
+      html, body { height: auto; }
       body {
         margin: 0;
-        font-family: "Pretendard Variable", Pretendard, -apple-system, "Noto Sans KR", "Malgun Gothic", sans-serif;
+        font-family: "Gothic A1", sans-serif;
         font-size: 16px;
+        font-weight: 400;
+        font-synthesis: none;
         background: var(--bg);
         color: var(--ink);
         display: flex;
@@ -133,15 +156,22 @@
         overflow-x: auto;
         scrollbar-width: none;
       }
+      .site-bar .brand { font-family: "DoHyeon", sans-serif; font-size: 22px; font-weight: 400; min-height: 44px; }
       .site-nav a {
-        font-size: 15px;
+        font-size: 14px;
         font-weight: 700;
         color: var(--ink);
         text-decoration: none;
-        padding: 8px 10px;
+        min-height: 44px;
+        min-width: 44px;
+        padding: 0 10px;
+        display: flex;
+        align-items: center;
         border-radius: 999px;
         white-space: nowrap;
       }
+      .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+      :focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
       .site-nav a:hover,
       .site-nav a[aria-current="page"] { background: var(--surface-2); }
       .trust-nav {
@@ -156,6 +186,9 @@
         font-size: 15px;
         font-weight: 700;
         text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        min-height: 44px;
       }
       .trust-nav a:hover { color: var(--brand-text); }
       .facts { margin-top: 20px; }
@@ -386,7 +419,7 @@
       .chip {
         font: inherit;
         font-size: 15px;
-        font-weight: 600;
+        font-weight: 700;
         border-radius: 999px;
         min-height: 44px;
         padding: 0 14px;
@@ -411,28 +444,59 @@
         border-color: var(--ink);
         color: var(--bg);
       }
-      .chip[aria-pressed="true"] .cnt { color: inherit; opacity: 0.65; }
+      .chip[aria-pressed="true"] .cnt { color: inherit; opacity: 1; }
 
       /* ---------- main split ---------- */
       main {
         flex: none;
-        height: 70dvh;
+        height: auto;
         display: flex;
+        flex-direction: column;
         min-height: 0;
       }
       .map-wrap {
         position: relative;
-        flex: 1;
-        min-width: 0;
+        flex: none;
+        width: 100%;
+        height: 40dvh;
+        min-height: 0;
         background: var(--surface-2);
+        border-block: 1px solid var(--line);
+        overflow: hidden;
       }
       #map { position: absolute; inset: 0; z-index: 1; max-width: 100%; background: var(--surface-2); }
       .leaflet-control-attribution { max-width: calc(100% - 10px); white-space: normal; }
+      .map-wrap .leaflet-container,
+      .map-wrap .leaflet-bar a,
+      .map-wrap .leaflet-control-attribution,
+      .map-wrap .leaflet-control-attribution a {
+        font-family: "Gothic A1", sans-serif;
+      }
       .map-wrap .leaflet-control-zoom.leaflet-bar a {
         width: 44px;
         height: 44px;
         line-height: 44px;
         font-size: 22px;
+      }
+      .map-wrap .leaflet-control-attribution {
+        margin: 0;
+        padding: 0 6px;
+        background: rgba(255, 253, 248, 0.92);
+        color: #5A5046;
+        font-size: 12px;
+        line-height: 16px;
+        max-width: calc(100% - 8px);
+        max-height: 16px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .map-wrap .leaflet-control-attribution a {
+        color: #5A5046;
+      }
+      @media (prefers-color-scheme: dark) {
+        .map-wrap .leaflet-control-attribution { background: rgba(32, 29, 24, 0.92); color: #C7C2B8; }
+        .map-wrap .leaflet-control-attribution a { color: #C7C2B8; }
       }
       .map-fallback { display: none; }
       body.no-map #map { display: none; }
@@ -463,9 +527,9 @@
         background: var(--ink); color: var(--bg);
         display: grid; place-items: center; font-weight: 800; letter-spacing: -0.01em; cursor: pointer;
       }
-      .mcluster--s { width: 34px; height: 34px; font-size: 12.5px; }
-      .mcluster--m { width: 42px; height: 42px; font-size: 13.5px; background: var(--brand); color: #1A1A1A; }
-      .mcluster--l { width: 50px; height: 50px; font-size: 14.5px; background: var(--brand); color: #1A1A1A; }
+        .mcluster--s { width: 36px; height: 36px; font-size: 13px; background: #C2441F; color: #fff; }
+        .mcluster--m { width: 44px; height: 44px; font-size: 14px; background: #C2441F; color: #fff; }
+        .mcluster--l { width: 52px; height: 52px; font-size: 14px; background: #C2441F; color: #fff; }
 
       /* ---------- detail page (#/place/{id}) ---------- */
       .page-detail {
@@ -802,8 +866,8 @@
         background: var(--surface);
         border: 1px solid var(--line-strong);
         border-radius: 999px;
-        min-width: 38px;
-        height: 38px;
+        min-width: 44px;
+        height: 44px;
         padding: 0 10px;
         cursor: pointer;
       }
@@ -849,14 +913,54 @@
       }
       footer a { color: inherit; }
 
+      .pm-hero { display: flex; align-items: flex-end; gap: 12px; padding: 12px 16px 4px; max-width: 100%; }
+      .pm-hero .big { font-family: "DoHyeon", sans-serif; font-size: clamp(3.5rem, 17vw, 4.5rem); line-height: 0.95; letter-spacing: -0.02em; color: var(--ink); font-weight: 400; }
+      .pm-hero h1 { margin: 0; font-weight: 700; font-size: 16px; line-height: 22px; padding-bottom: 6px; }
+      .pm-hero h1 small { display: block; font-weight: 400; font-size: 13px; line-height: 20px; color: var(--ink-2); }
+      .pm-find { display: grid; grid-template-columns: minmax(0, 1fr) 96px 44px; gap: 8px; padding: 8px 16px 0; max-width: 100%; }
+      .pm-find .search-box { position: relative; height: 44px; min-width: 0; padding: 0; border: 0; box-shadow: inset 0 0 0 1px var(--line-strong); }
+      .pm-find .search-box:focus-within { box-shadow: inset 0 0 0 2px var(--ink); }
+      .pm-find .search-box input { height: 44px; padding: 0 44px 0 12px; }
+      .pm-find select, .pm-local select { height: 44px; width: 100%; min-width: 0; border: 1px solid rgba(32, 29, 24, 0.4); background: var(--surface); border-radius: 10px; padding: 0 8px; font: inherit; font-size: 15px; color: var(--ink); }
+      .pm-find button[type="submit"] { height: 44px; width: 44px; border: 0; border-radius: 10px; background: var(--ink); color: var(--bg); display: flex; align-items: center; justify-content: center; cursor: pointer; }
+      .pm-local { padding: 8px 16px 0; }
+      .pm-local:has(select:disabled) { display: none; }
+      .pm-find + .chips, .chips { padding: 8px 16px; min-width: 0; max-width: 100%; }
+      .pm-find .search-clear {
+        position: absolute;
+        right: 0;
+        top: 0;
+        width: 44px;
+        height: 44px;
+        display: none;
+        align-items: center;
+        justify-content: center;
+      }
+      .site-bar, .pm-hero, .pm-find, .pm-local, main, footer { min-width: 0; max-width: 100%; }
+      .pm-hero h1 { min-width: 0; }
+      .pm-story { padding: 16px 16px 8px; max-width: 720px; }
+      .pm-story h2 { margin: 0; font-family: "DoHyeon", sans-serif; font-weight: 400; font-size: 26px; line-height: 32px; }
+      .pm-story .sub { margin: 0; font-size: 13px; line-height: 20px; color: var(--ink-2); }
+      .pm-story ul { list-style: none; margin: 8px 0 0; padding: 0; border-top: 1px solid var(--ink); }
+      .pm-story li a { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 0 8px; padding: 8px 0; border-bottom: 1px solid var(--line); min-height: 44px; color: inherit; text-decoration: none; }
+      .pm-story li b { font-size: 15px; line-height: 22px; font-weight: 700; }
+      .pm-story li em { font-style: normal; font-size: 13px; line-height: 22px; color: var(--brand-text); font-weight: 700; }
+      .pm-story li span { grid-column: 1 / 3; font-size: 13px; line-height: 20px; color: var(--ink-2); overflow-wrap: anywhere; }
+      .pm-story .src { font-size: 13px; line-height: 20px; color: var(--ink-2); margin: 8px 0 0; }
+      body.view-detail .home-only { display: none; }
+      aside { width: auto; border-left: 0; }
+
       /* ---------- mobile ---------- */
       @media (max-width: 840px) {
-        /* 모바일은 고정 셸 대신 페이지 전체가 스크롤되는 흐름.
-           지도는 한 화면을 넘지 않게 380px·뷰포트 60% 중 작은 값으로 두고,
-           한 손가락 세로 스와이프는 페이지를 스크롤한다. */
+        /* 모바일은 페이지 전체가 스크롤된다.
+           지도 높이는 뷰포트의 40%이고, 한 손가락 세로 스와이프는 페이지를 스크롤한다. */
         html, body { height: auto; overflow: visible; }
         main { flex-direction: column; flex: none; height: auto; }
-        .map-wrap { flex: none; height: min(380px, 60dvh); max-height: 60dvh; min-height: 0; }
+        .map-wrap { flex: none; height: 40dvh; max-height: none; min-height: 0; }
+        .site-bar { gap: 8px; padding: 0 12px; }
+        .site-bar .brand { font-size: 20px; min-width: 0; }
+        .site-nav { flex: none; }
+        .site-nav a { padding: 0 8px; }
         .map-wrap .leaflet-container,
         .map-wrap .leaflet-container.leaflet-touch-drag,
         .map-wrap .leaflet-container.leaflet-touch-drag.leaflet-touch-zoom {
@@ -899,10 +1003,13 @@
         background: var(--emg);
         color: #fff;
         font-size: 13.5px;
-        font-weight: 800;
+        font-weight: 700;
         text-decoration: none;
         border-radius: 999px;
-        padding: 10px 15px;
+        min-height: 44px;
+        padding: 0 15px;
+        display: inline-flex;
+        align-items: center;
         white-space: nowrap;
       }
       .row-call:active { filter: brightness(0.9); }
@@ -976,6 +1083,7 @@
         color: var(--ink-2);
         background: transparent;
         border: 0;
+        min-height: 44px;
         padding: 10px;
         cursor: pointer;
       }
@@ -1200,58 +1308,56 @@
     <div class="site-bar">
       <a class="brand" href="/">
         <span class="paw" aria-hidden="true">
-          <svg width="23" height="23" viewBox="0 0 24 24"><path d="M12 13.2c2.9 0 5.6 2.3 5.6 4.7 0 1.5-1.1 2.5-2.7 2.5-1 0-1.8-.4-2.9-.4s-1.9.4-2.9.4c-1.6 0-2.7-1-2.7-2.5 0-2.4 2.7-4.7 5.6-4.7ZM6.2 8.1c1 .3 1.5 1.7 1.1 3-.4 1.4-1.5 2.2-2.5 1.9-1-.3-1.5-1.7-1.1-3 .4-1.3 1.5-2.2 2.5-1.9Zm11.6 0c1-.3 2.1.6 2.5 1.9.4 1.3-.1 2.7-1.1 3-1 .3-2.1-.5-2.5-1.9-.4-1.3.1-2.7 1.1-3ZM9.3 3.6c1.1.1 1.9 1.4 1.8 2.9-.1 1.4-1 2.6-2.1 2.5C7.9 8.9 7.1 7.6 7.2 6.2c.1-1.5 1-2.7 2.1-2.6Zm5.4 0c1.1-.1 2 1.1 2.1 2.6.1 1.4-.7 2.7-1.8 2.8-1.1.1-2-1.1-2.1-2.5-.1-1.5.7-2.8 1.8-2.9Z"/></svg>
+          <svg viewBox="0 0 32 32" width="24" height="24"><g fill="#C2441F"><ellipse cx="16" cy="21" rx="7" ry="6"/><circle cx="7" cy="13" r="3.2"/><circle cx="12.5" cy="7.5" r="3.2"/><circle cx="19.5" cy="7.5" r="3.2"/><circle cx="25" cy="13" r="3.2"/></g></svg>
         </span>
         <span>댕냥이와 함께</span>
       </a>
-      <span class="proto-badge">공공데이터 기반</span>
       <nav class="site-nav" aria-label="주요 메뉴">
-        <a href="/" aria-current="page">전국 지도</a>
         <a href="/guides/">여행 가이드</a>
         <a href="/about.html">소개</a>
       </nav>
     </div>
-    <header>
-      <h1 class="hero-title">댕냥이와 함께, 전국의 댕댕 스폿을 한 지도에</h1>
-      <p class="hero-sub">서울부터 제주까지 — <b>전국</b>의 애견 숙박 · 동반 음식점·카페 · 반려견 공원과 산책로, 그리고 밤에도 문 여는 <b>24시간 동물병원</b>까지 담았어요. 관광지만 모아둔 여행 지도가 아니라, 주말 나들이부터 동네 산책, 한밤중 응급 상황까지 <b>여행지 너머 매일의 일상</b>을 챙기는 생활 밀착형 지도예요.</p>
-      <div class="hero-stats" aria-label="서비스 범위">
-        <span id="statRegions">전국 17개 시·도</span>
-        <span id="statTotal">총 1,443곳</span>
-        <span id="statStay">애견 숙박 406곳</span>
-        <span id="statHospital">24시 동물병원 280곳</span>
-      </div>
-    </header>
-
-    <div class="toolbar">
-      <label class="search-box">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 2a8 8 0 1 0 4.9 14.3l5 5 1.5-1.4-5-5A8 8 0 0 0 10 2Zm0 2a6 6 0 1 1 0 12 6 6 0 0 1 0-12Z"/></svg>
-        <input id="search" type="search" placeholder="이름 검색 (예: 와인바, 펜션)" autocomplete="off" />
+    <div class="pm-hero home-only">
+      <span class="big" id="statTotal">1,443</span>
+      <h1>곳 · 지도에 담은 동반 장소<small>17개 시·도 · 공개 자료 3곳 합계</small></h1>
+    </div>
+    <form class="pm-find home-only" id="homeFind" action="/" method="get" role="search">
+      <label class="sr" for="search">장소 검색</label>
+      <div class="search-box">
+        <input id="search" name="q" type="search" placeholder="장소·동네 이름" autocomplete="off" enterkeyhint="search" />
         <button class="search-clear" id="searchClear" type="button" aria-label="검색어 지우기">×</button>
-      </label>
+      </div>
+      <label class="sr" for="regionFilter">지역</label>
+      <select id="regionFilter" name="region" aria-label="지역">
+        <option value="">전국</option>
+      </select>
+      <button type="submit" aria-label="검색"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg></button>
+    </form>
+    <div class="chips home-only" id="chips" role="group" aria-label="장소 종류">
+      <button type="button" class="chip" data-cat="" aria-pressed="true">전체 <span class="cnt">1,443</span></button>
+      <button type="button" class="chip" data-cat="stay" aria-pressed="false">숙박 <span class="cnt">406</span></button>
+      <button type="button" class="chip" data-cat="food" aria-pressed="false">식당·카페 <span class="cnt">604</span></button>
+      <button type="button" class="chip" data-cat="park" aria-pressed="false">산책 <span class="cnt">153</span></button>
+      <button type="button" class="chip" data-cat="hospital" aria-pressed="false">24시 병원 <span class="cnt">280</span></button>
+    </div>
+    <div class="pm-local home-only">
+      <label class="sr" for="localityFilter">시·군·구</label>
+      <select id="localityFilter" name="locality" aria-label="시·군·구" disabled>
+        <option value="">시·군·구 전체</option>
+      </select>
     </div>
 
     <main>
-      <section class="map-wrap" aria-label="지도">
+      <section class="map-wrap" aria-label="전국 지도, 숫자는 장소 수">
         <div id="map"></div>
         <div class="map-fallback" id="mapFallback" aria-live="polite"></div>
       </section>
 
+      <section class="pm-story home-only" id="homeStory" aria-labelledby="st-h">
+        <!--HOME_STORY-->
+      </section>
+
       <aside aria-label="장소 목록">
-        <div class="list-filters">
-          <div class="filter-row">
-            <label class="filter-select">
-              <select id="regionFilter" aria-label="시·도">
-                <option value="">전국</option>
-              </select>
-            </label>
-            <label class="filter-select">
-              <select id="localityFilter" aria-label="시·군·구" disabled>
-                <option value="">시·군·구 전체</option>
-              </select>
-            </label>
-          </div>
-          <div class="chips" id="chips" role="group" aria-label="장소 유형"></div>
-        </div>
         <div class="list-head"><b>장소 목록</b><span id="resultCount"></span></div>
         <div class="list" id="list"></div>
         <div class="empty" id="empty"></div>
@@ -1406,7 +1512,7 @@
         var localityFilterEl = document.getElementById("localityFilter");
         if (state.q) {
           searchEl.value = state.q;
-          clearEl.style.display = "block";
+          clearEl.style.display = "flex";
         }
 
         function esc(s) {
@@ -1516,18 +1622,8 @@
           });
 
         function fillStats() {
-          var regions = {};
-          var stayCount = 0;
-          var hospitalCount = 0;
-          PLACES.forEach(function (p) {
-            if (p.region) regions[p.region] = true;
-            if (p.cat === "stay") stayCount++;
-            if (p.cat === "hospital") hospitalCount++;
-          });
-          document.getElementById("statRegions").textContent = "전국 " + Object.keys(regions).length + "개 시·도";
-          document.getElementById("statTotal").textContent = "총 " + fmt(PLACES.length) + "곳";
-          document.getElementById("statStay").textContent = "애견 숙박 " + fmt(stayCount) + "곳";
-          document.getElementById("statHospital").textContent = "24시 동물병원 " + fmt(hospitalCount) + "곳";
+          var total = document.getElementById("statTotal");
+          if (total) total.textContent = fmt(PLACES.length);
         }
 
         /* ---------- 지역·유형 필터 ---------- */
@@ -1588,18 +1684,22 @@
           if (edge.left < box.left) chipsEl.scrollLeft -= box.left - edge.left;
           else if (edge.right > box.right) chipsEl.scrollLeft += edge.right - box.right;
         }
+        var CHIP_ITEMS = [
+          { key: "", label: "전체" },
+          { key: "stay", label: "숙박" },
+          { key: "food", label: "식당·카페" },
+          { key: "park", label: "산책" },
+          { key: "hospital", label: "24시 병원" }
+        ];
         function buildChips() {
           chipsEl.innerHTML = "";
-          var items = [{ key: "", label: "전체" }].concat(TYPE_ORDER.map(function (key) {
-            return { key: key, label: CATS[key].label };
-          }));
-          items.forEach(function (item) {
+          CHIP_ITEMS.forEach(function (item) {
             var b = document.createElement("button");
             b.type = "button";
             b.className = "chip";
             b.setAttribute("data-cat", item.key);
             b.setAttribute("aria-pressed", "false");
-            b.innerHTML = (item.key ? '<span class="dot dot--' + item.key + '"></span>' : "") + esc(item.label) + ' <span class="cnt">0</span>';
+            b.innerHTML = esc(item.label) + ' <span class="cnt">0</span>';
             b.addEventListener("click", function () {
               if (state.type === item.key) return;
               state.type = item.key;
@@ -1623,7 +1723,7 @@
         /* ---------- search ---------- */
         searchEl.addEventListener("input", function () {
           state.q = searchEl.value.trim();
-          clearEl.style.display = state.q ? "block" : "none";
+          clearEl.style.display = state.q ? "flex" : "none";
           applyFilters();
           if (searchTimer) clearTimeout(searchTimer);
           searchTimer = setTimeout(function () {
@@ -1639,6 +1739,15 @@
           applyFilters({ url: "push", fitMap: true });
           searchEl.focus();
         });
+        var homeFind = document.getElementById("homeFind");
+        if (homeFind) {
+          homeFind.addEventListener("submit", function (event) {
+            event.preventDefault();
+            state.q = searchEl.value.trim();
+            clearEl.style.display = state.q ? "flex" : "none";
+            applyFilters({ url: "push", fitMap: true });
+          });
+        }
 
         /* catKey가 빈 문자열이면 유형을 가리지 않는다. 칩 숫자는 지역·검색만 반영한다. */
         function inScope(p, catKey) {
@@ -1706,12 +1815,38 @@
               (meta.length ? '<span class="row-meta"><span>' + meta.join("</span><span>") + "</span></span>" : "") +
             "</span>";
         }
+        function slotDocTop(slot) {
+          return slot.getBoundingClientRect().top + window.scrollY;
+        }
+        function sinkBelowFold(slot) {
+          if (!slot) return;
+          slot.style.marginTop = "";
+          var steps = 0;
+          while (steps < 40 && slotDocTop(slot) < window.innerHeight) {
+            steps += 1;
+            var next = slot.nextElementSibling;
+            if (next) {
+              next.after(slot);
+              continue;
+            }
+            var parent = slot.parentElement;
+            if (parent && parent !== document.body && parent.parentElement && parent.nextElementSibling) {
+              parent.after(slot);
+              continue;
+            }
+            break;
+          }
+          var top = slotDocTop(slot);
+          if (top < window.innerHeight) slot.style.marginTop = Math.ceil(window.innerHeight - top) + "px";
+        }
         function placeHomeAd(slot) {
           if (!slot) slot = document.getElementById("homeAd");
           if (!slot || !listEl) return;
+          slot.style.marginTop = "";
           var rows = listEl.querySelectorAll(".place-row");
           if (!rows.length) {
             listEl.insertAdjacentElement("afterend", slot);
+            sinkBelowFold(slot);
             return;
           }
           var index = Math.min(5, rows.length - 1);
@@ -1720,9 +1855,13 @@
             if (row.nextSibling !== slot) row.parentNode.insertBefore(slot, row.nextSibling);
           }
           park(index);
-          while (index < rows.length - 1 && slot.getBoundingClientRect().top + window.scrollY < 900) {
+          while (index < rows.length - 1 && slotDocTop(slot) < window.innerHeight) {
             index += 1;
             park(index);
+          }
+          if (slotDocTop(slot) < window.innerHeight) {
+            listEl.insertAdjacentElement("afterend", slot);
+            sinkBelowFold(slot);
           }
         }
         function renderList() {
@@ -2359,7 +2498,8 @@
           document.body.classList.remove("no-map");
           try {
           if (!leafletMap) {
-            leafletMap = L.map(mapEl, { dragging: !prefersPageScroll(), zoomControl: true, maxZoom: 19, tapHold: false, touchZoom: true });
+            leafletMap = L.map(mapEl, { dragging: !prefersPageScroll(), zoomControl: false, maxZoom: 19, tapHold: false, touchZoom: true });
+            L.control.zoom({ position: "topright" }).addTo(leafletMap);
             releaseOneFingerScroll(leafletMap);
             showKorea(leafletMap);
             mapTileLoaded = false;
@@ -2458,7 +2598,13 @@
           }
           if (opts.url) commitUrl(opts.url);
           syncCrawlCatalog();
+          placeHomeAd(document.getElementById("homeAd"));
         }
+        var homeAdResizeTimer = null;
+        window.addEventListener("resize", function () {
+          if (homeAdResizeTimer) clearTimeout(homeAdResizeTimer);
+          homeAdResizeTimer = setTimeout(function () { placeHomeAd(document.getElementById("homeAd")); }, 150);
+        });
         window.addEventListener("popstate", function () {
           var next = readUrlState();
           state.region = next.region;
@@ -2466,7 +2612,7 @@
           state.type = next.type;
           state.q = next.q;
           searchEl.value = state.q;
-          clearEl.style.display = state.q ? "block" : "none";
+          clearEl.style.display = state.q ? "flex" : "none";
           if (searchTimer) { clearTimeout(searchTimer); searchTimer = null; }
           if (!dataReady) return;
           historySilent = true;

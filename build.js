@@ -127,7 +127,7 @@ const ENRICHMENT_FIELDS = [
 const UNCONFIRMED = new Set(["미확인", "미확인.", "확인 불가", "알 수 없음"]);
 const INDEX_BODY_MIN = 24;
 const AD_UNIT = '<aside class="ad-slot" aria-label="광고"><p class="ad-slot__label">광고</p><ins class="adsbygoogle" style="display:block;width:100%" data-ad-client="ca-pub-4533404826925371" data-ad-format="auto" data-full-width-responsive="true"></ins></aside>';
-const AD_WATCH = '<script>(function(){function mark(){document.querySelectorAll(".ad-slot").forEach(function(s){var i=s.querySelector("ins.adsbygoogle");s.classList.toggle("is-filled",!!i&&i.getAttribute("data-ad-status")==="filled");});}if(!document.body)return;new MutationObserver(mark).observe(document.body,{subtree:true,attributes:true,attributeFilter:["data-ad-status"]});mark();})();</script>';
+const AD_WATCH = '<script>(function(){function mark(){document.querySelectorAll(".ad-slot").forEach(function(s){var i=s.querySelector("ins.adsbygoogle");s.classList.toggle("is-filled",!!i&&i.getAttribute("data-ad-status")==="filled");});}function topOf(slot){return slot.getBoundingClientRect().top+window.scrollY;}function sink(slot){if(!slot||slot.id==="homeAd")return;slot.style.marginTop="";var steps=0;while(steps<40&&topOf(slot)<window.innerHeight){steps+=1;var next=slot.nextElementSibling;if(next){next.after(slot);continue;}var parent=slot.parentElement;if(parent&&parent!==document.body&&parent.parentElement&&parent.nextElementSibling){parent.after(slot);continue;}break;}var top=topOf(slot);if(top<window.innerHeight)slot.style.marginTop=Math.ceil(window.innerHeight-top)+"px";}function place(){document.querySelectorAll(".ad-slot").forEach(sink);}if(!document.body)return;new MutationObserver(mark).observe(document.body,{subtree:true,attributes:true,attributeFilter:["data-ad-status"]});mark();place();var timer=null;window.addEventListener("resize",function(){if(timer)clearTimeout(timer);timer=setTimeout(place,150);});})();</script>';
 let catalogPlaces = [];
 const REGION_ORDER = [
   "서울특별시", "경기도", "인천광역시", "강원특별자치도",
@@ -622,6 +622,37 @@ function crawlCatalogHtml(places) {
   const guideItems = homeGuideLinks().map((guide) => `<li><a href="/guides/${encodeURIComponent(guide.id)}.html">${escapeHtml(guide.title)}</a></li>`).join("");
   return `<div class="crawl-catalog-inner"><h2>시·도별 장소 수</h2><ul class="region-counts">${regionItems}</ul><h2>시·도별 대표 장소</h2><p class="crawl-note">지도가 열리지 않아도 상세 페이지로 이동할 수 있어요. 수록 ${places.length.toLocaleString("ko-KR")}곳 가운데 시·도마다 고른 ${reps.length}곳입니다.</p>${placeItems}<h2>여행 가이드</h2><ul class="guide-links">${guideItems}</ul></div>`;
 }
+const STORY_IDS = ["tour-2706354", "tour-3540230", "tour-3536570", "tour-2807380", "tour-2615225"];
+const STORY_KIND = { stay: "숙박", food: "음식점·카페", park: "산책·놀이터", hospital: "24시 병원" };
+function homeStoryHtml(places) {
+  const byId = new Map(places.map((place) => [place.id, place]));
+  const gangwon = places.filter((place) => regionOf(place.addr) === "강원특별자치도");
+  const picked = STORY_IDS.map((id) => byId.get(id)).filter((place) => place && indexRule.includeInPetLists(place));
+  if (picked.length !== STORY_IDS.length) {
+    throw new Error("강원 이야기 장소가 빠졌습니다: " + picked.map((place) => place.id).join(", "));
+  }
+  const items = picked.map((place) => {
+    const addr = String(place.addr || "").trim().split(/\s+/).slice(1).join(" ");
+    const kind = STORY_KIND[place.category] || CATEGORIES[place.category].label;
+    return `<li><a href="/place/${encodeURIComponent(place.id)}.html"><b>${escapeHtml(place.name)}</b><em>${escapeHtml(kind)}</em><span>${escapeHtml(addr)}</span></a></li>`;
+  }).join("");
+  const count = gangwon.length.toLocaleString("ko-KR");
+  return `<h2 id="st-h">강원, 지도에 담긴 곳</h2><p class="sub">지역 이야기 · 강원 ${count}곳 중 ${picked.length}곳</p><ul>${items}</ul><p class="src">출처: 한국관광공사·고캠핑·식품안전나라. 동반 범위·무게·추가요금은 방문 전 업체 확인.</p>`;
+}
+function injectHomeStory(html, places) {
+  if (!html.includes("<!--HOME_STORY-->")) throw new Error("홈 HTML에 지역 이야기 위치가 없습니다.");
+  const story = homeStoryHtml(places);
+  const next = html.replace("<!--HOME_STORY-->", story);
+  for (const name of ["강릉 안목해맞이공원", "고심스테이", "강릉 한우타운", "감자밭", "고석정"]) {
+    if (!next.includes(name)) throw new Error("홈 지역 이야기에 장소가 없습니다: " + name);
+  }
+  for (const banned of ["관리자 메모", "직접 찍은", "YYYY.MM.DD", "운영자 직접 작성", "운영자가 다녀온"]) {
+    if (next.includes(banned)) throw new Error("운영자 메모 자리가 홈에 남아 있습니다: " + banned);
+  }
+  const counted = (story.match(/강원 ([0-9,]+)곳/) || [])[1] || "?";
+  log("홈 지역 이야기: 강원 " + counted + "곳 중 5곳");
+  return next;
+}
 function injectCrawlCatalog(html, places) {
   if (!html.includes("<!--CRAWL_CATALOG-->")) throw new Error("홈 HTML에 정적 목록 위치가 없습니다.");
   const next = html.replace("<!--CRAWL_CATALOG-->", crawlCatalogHtml(places));
@@ -970,6 +1001,13 @@ function copyAssets() {
     });
   }
   if (fs.existsSync(path.join(ROOT, "og"))) fs.cpSync(path.join(ROOT, "og"), path.join(OUT, "og"), { recursive: true });
+  const fontSrc = path.join(ROOT, "fonts");
+  for (const file of ["DoHyeon-Regular.woff2", "GothicA1-Regular.woff2", "GothicA1-Bold.woff2"]) {
+    const from = path.join(fontSrc, file);
+    if (!fs.existsSync(from)) throw new Error("홈 글꼴 파일이 없습니다: fonts/" + file);
+    fs.mkdirSync(path.join(OUT, "fonts"), { recursive: true });
+    fs.copyFileSync(from, path.join(OUT, "fonts", file));
+  }
 }
 function mainCss(html) {
   const blocks = [...html.matchAll(/<style\b[^>]*>([\s\S]*?)<\/style>/gi)];
@@ -1067,6 +1105,7 @@ async function build() {
   copyAssets();
   if (fs.existsSync(path.join(OUT, "data", "enrichment"))) throw new Error("보강 예시 파일이 배포 폴더에 복사되었습니다.");
   let main = makeMainMeta(rawIndex).replace(/데이터 기준일: \d{4}-\d{2}-\d{2}/, "데이터 기준일: " + updatedAt);
+  main = injectHomeStory(main, valid);
   main = injectCrawlCatalog(main, valid);
   if (USE_SRI) main = await withSri(main);
   fs.writeFileSync(path.join(OUT, "index.html"), main, "utf8");
