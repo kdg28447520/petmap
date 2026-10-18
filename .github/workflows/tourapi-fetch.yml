@@ -1,0 +1,88 @@
+name: TourAPI raw fetch
+
+# This workflow must not run on push. A push trigger would spend the
+# data.go.kr dev-account quota (about 1,000 detail calls/day) on every update.
+#
+# GitHub Actions runs scheduled workflows only from the default branch.
+# This file lives on tourapi-fetch and is not on main, so the cron below
+# does not fire and does not call TourAPI. It starts only if this workflow
+# file is on the repository default branch. Do not merge this branch into
+# main to start the schedule.
+#
+# cron '10 15 * * *' is 15:10 UTC, which is 00:10 Asia/Seoul (KST).
+# One-shot-safe: there is no push trigger, so the raw-data commit cannot
+# start another run; concurrency does not overlap runs; each run stops at
+# 950 calls and skips detail files already saved under data/tourapi-raw/.
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "10 15 * * *"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: tourapi-fetch
+  cancel-in-progress: false
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  fetch:
+    name: Fetch KorPetTourService2
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - name: Checkout tourapi-fetch
+        uses: actions/checkout@v4
+        with:
+          ref: tourapi-fetch
+          fetch-depth: 1
+          persist-credentials: true
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Fetch raw pages
+        env:
+          TOURAPI_SERVICE_KEY: ${{ secrets.TOURAPI_SERVICE_KEY }}
+        run: bash .github/scripts/tourapi-fetch.sh
+
+      - name: Commit raw responses
+        if: always()
+        run: |
+          set -euo pipefail
+          set +x
+          git checkout -B tourapi-fetch
+          branch=$(git rev-parse --abbrev-ref HEAD)
+          if [ "$branch" != "tourapi-fetch" ]; then
+            echo "Refusing to commit from branch ${branch}."
+            exit 1
+          fi
+          if [ ! -d data/tourapi-raw ]; then
+            echo "No data/tourapi-raw directory to commit."
+            exit 0
+          fi
+          find data/tourapi-raw -name '*.partial' -delete
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- data/tourapi-raw
+          if git diff --cached --quiet; then
+            echo "No changes under data/tourapi-raw."
+            exit 0
+          fi
+          while IFS= read -r path; do
+            [ -n "$path" ] || continue
+            case "$path" in
+              data/tourapi-raw/*) ;;
+              *)
+                echo "Refusing to commit ${path}."
+                exit 1
+                ;;
+            esac
+          done < <(git diff --cached --name-only)
+          when=$(TZ=Asia/Seoul date +%Y-%m-%d)
+          echo "Committing $(git diff --cached --name-only | wc -l) files under data/tourapi-raw."
+          git commit -m "TourAPI raw fetch ${when}"
+          git push origin HEAD:tourapi-fetch
