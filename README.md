@@ -22,21 +22,7 @@ REPORT_EMAIL=help@example.com node build.js
 
 장소 상세의 사진·개요·반려동물 동반 조건은 한국관광공사 TourAPI(국문 관광정보 서비스, KorService2)에서 빌드할 때만 받습니다. 브라우저가 이 API를 호출하지 않고, 결과는 `data/tourapi-cache.json`과 정적 HTML에 남습니다. 인증키가 없으면 그 세 항목을 지어 넣지 않습니다. 모든 장소에는 상호와 주소로 만든 카카오맵·네이버 지도 검색 링크를 붙입니다.
 
-색인과 사이트맵에 넣는 장소는 `content/place-enrichment.json`의 보강 정보가 채워진 곳만입니다. 키는 장소 ID이고, 각 항목은 `indoorOutdoor`(실내/실외), `sizeLimit`(무게·크기 제한), `extraFee`(추가 요금), `checkedOn`(YYYY-MM-DD), `checkedSource`(확인 출처)를 가집니다. 다섯 칸이 모두 있고, 값이 `미확인`·`확인 중`·`정보 없음`이 아니며, 보강 문장과 관광 개요를 합친 길이가 24자 이상일 때만 `index`와 사이트맵에 넣습니다. 나머지는 `noindex, follow`이고 광고 단위(`ins.adsbygoogle`)를 넣지 않습니다. 광고 스크립트와 `ads.txt`는 그대로 둡니다. 모든 상세에는 `/contact.html?place=장소ID`로 가는 `정보 정정 요청` 링크가 있습니다. 가이드 본문이 그 장소를 링크하면 상세에 `관련 가이드`가 붙습니다.
-
-```json
-{
-  "places": {
-    "tour-2707444": {
-      "indoorOutdoor": "실내",
-      "sizeLimit": "소형견 10kg 이하",
-      "extraFee": "추가 요금 없음",
-      "checkedOn": "2026-10-18",
-      "checkedSource": "업체 공식 안내"
-    }
-  }
-}
-```
+색인 여부는 `index-rule.js`만 결정합니다. `build.js`, `guides.js`, 브라우저 지도(`index.html` → `/index-rule.js`)가 이 모듈을 같이 씁니다. 장소 보강 원본은 `data/enrichment/places.json` 한 파일입니다. 키는 장소 ID입니다. 색인하려면 `petAccess`가 `allowed`이고 필수 칸 `indoorOutdoor`(실내/실외), `sizeLimit`(무게·크기 제한), `extraFee`(추가 요금), `checkedOn`(YYYY-MM-DD), `checkedSource`(확인 출처)가 채워져야 합니다. `restricted`·`unverified`·빈 `petAccess`는 색인하지 않습니다. 이름에 `국립공원`이 있는 장소는 값을 채워도 출입 제한입니다. 선택 칸 `leash`, `cat`, `petCount`, `cage`, `petMenu`, `largeDog`는 타일만 만들고 색인 조건에는 들어가지 않습니다. 다섯 필수 칸이 모두 있고, 값이 `미확인`·`확인 중`·`정보 없음`이 아니며, 보강 문장과 관광 개요를 합친 길이가 24자 이상일 때 그 페이지는 자동으로 `index`, 사이트맵, 광고 단위를 갖습니다. 나머지는 `noindex, follow`이고 광고 단위(`ins.adsbygoogle`)를 넣지 않습니다. `example: true`, `publish: false`, ID가 `EXAMPLE`으로 시작하는 행은 게시하지 않습니다. 저장소의 `EXAMPLE-DO-NOT-PUBLISH` 행은 그 예시이며 배포 폴더로 복사하지 않습니다. 필드 설명은 `data/enrichment/SCHEMA.md`에 있습니다. 광고 스크립트와 `ads.txt`는 그대로 둡니다. 모든 상세에는 `/contact.html?place=장소ID`로 가는 `정보 정정 요청` 링크가 있습니다. 가이드 본문이 그 장소를 링크하면 상세에 `관련 가이드`가 붙습니다.
 
 인증키 환경변수 이름은 `TOURAPI_SERVICE_KEY`입니다. [한국관광공사_국문 관광정보 서비스_GW](https://www.data.go.kr/data/15101578/openapi.do)에서 활용신청을 하면 개발계정은 자동승인됩니다. 마이페이지의 인증키 중 디코딩된 일반 인증키를 넣습니다.
 
@@ -81,7 +67,7 @@ HTTP를 HTTPS로 올리는 첫 단계는 Vercel 가장자리에서 처리됩니�
 
 - Production 도메인의 기본 호스트는 `www.petmap.kr`이고, `petmap.kr`은 `www.petmap.kr`로 301합니다.
 - 도메인 설정에서 HTTP→HTTPS 리디렉션이 켜져 있습니다. Vercel 프로젝트는 이 리디렉션이 기본값입니다.
-- 배포 후 `curl -sI http://petmap.kr/`, `curl -sI http://www.petmap.kr/`, `curl -sI https://petmap.kr/`의 상태 코드가 301이고 `Location`이 `https://www.petmap.kr/`인지 확인합니다. 포트 80이 막힌 환경에서는 이 확인을 할 수 없습니다.
+- 배포 후 `curl -sI http://petmap.kr/`, `curl -sI http://www.petmap.kr/`, `curl -sI https://petmap.kr/`의 `Location`이 `https://www.petmap.kr/`인지 확인합니다. HTTP를 HTTPS로 올리는 가장자리 응답은 308일 수 있습니다. `vercel.json`에 적힌 호스트 규칙(apex → www, 앱에 도달한 http www → https www)은 301입니다. 포트 80이 막힌 환경에서는 이 확인을 할 수 없습니다.
 
 GitHub 기본 브랜치에 반영되면 Vercel이 새 빌드를 배포합니다. 배포 후 다음 주소를 확인합니다.
 

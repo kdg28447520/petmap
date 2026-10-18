@@ -4,6 +4,10 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="color-scheme" content="light dark" />
+    <link rel="preload" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" as="script" />
+    <link rel="preload" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js" as="script" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" media="print" onload="this.media='all'" />
+    <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" /></noscript>
     <link rel="icon" href="data:," />
     <title>댕냥이와 함께 — 반려동물 동반 전국 지도</title>
     <meta name="description" content="서울부터 제주까지 전국의 애견 숙박, 동반 음식점·카페, 반려견 공원과 산책로, 24시간 동물병원 정보를 모은 지도예요. 방문 전 해당 업체에 확인하세요." />
@@ -703,7 +707,6 @@ svg.leaflet-image-layer.leaflet-interactive path {
 }
 
 </style>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
     <style>
       :root {
         color-scheme: light dark;
@@ -792,6 +795,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
         gap: 12px;
         height: 56px;
         min-height: 56px;
+        max-width: 100%;
         padding: 0 16px;
         background: var(--bg);
         border-bottom: 1px solid var(--line);
@@ -1057,6 +1061,8 @@ svg.leaflet-image-layer.leaflet-interactive path {
         display: flex;
         flex-wrap: nowrap;
         gap: 8px;
+        max-width: 100%;
+        min-width: 0;
         overflow-x: auto;
         -webkit-overflow-scrolling: touch;
         scrollbar-width: none;
@@ -1115,7 +1121,10 @@ svg.leaflet-image-layer.leaflet-interactive path {
         min-width: 0;
         background: var(--surface-2);
       }
-      #map { position: absolute; inset: 0; z-index: 1; }
+      #map { position: absolute; inset: 0; z-index: 1; max-width: 100%; }
+      .map-poster { position: absolute; inset: 0; z-index: 0; width: 100%; height: 100%; object-fit: cover; }
+      body.no-map .map-poster { display: none; }
+      .leaflet-control-attribution { max-width: calc(100% - 10px); white-space: normal; }
       .map-fallback { display: none; }
       body.no-map #map { display: none; }
       body.no-map main { height: auto; align-items: flex-start; }
@@ -1128,7 +1137,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
         text-align: left;
         color: var(--ink);
       }
-      .leaflet-container { font: inherit; background: var(--surface-2); }
+      .leaflet-container { font: inherit; background: transparent; }
       .leaflet-tile-pane { filter: saturate(0.55) brightness(1.02); }
       .mpin-icon { background: transparent; border: 0; }
       .mpin {
@@ -1243,6 +1252,13 @@ svg.leaflet-image-layer.leaflet-interactive path {
         font-weight: 700;
         line-height: 1.55;
       }
+      .access-note { margin: 12px 0 0; padding: 14px 16px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface-2); }
+      .access-note--restricted { border-color: #E7C4B8; background: var(--accent-soft); }
+      .access-note h2 { margin: 0; font-size: 18px; line-height: 26px; font-weight: 800; }
+      .access-note p { margin: 8px 0 0; font-size: 15px; line-height: 1.6; font-weight: 500; color: var(--ink); }
+      .access-note--unverified h2 { color: var(--ink-2); }
+      .access-src { font-size: 13px; color: var(--ink-2); word-break: break-all; }
+      .access-pill { display: inline-flex; align-items: center; min-height: 28px; padding: 2px 10px; border-radius: 999px; background: var(--surface-2); border: 1px solid var(--line); font-size: 13px; font-weight: 700; color: var(--ink-2); }
       .pd-figure { margin: 14px 0 0; }
       .pd-figure img {
         display: block;
@@ -1832,11 +1848,11 @@ svg.leaflet-image-layer.leaflet-interactive path {
       body.place-doc .pd-back { display: inline-flex; margin-top: 24px; text-decoration: none; }
       @media (max-width: 840px) {
         body.place-doc .pd-wrap { padding: 16px 16px 32px; }
-        body.place-doc .pd-grid { grid-template-columns: 1fr; gap: 0; }
+        body.place-doc .pd-grid { grid-template-columns: minmax(0, 1fr); gap: 0; }
         body.place-doc .pd-title { font-size: 26px; line-height: 34px; }
         body.place-doc .pd-snap, body.place-doc .pd-snap img { height: 160px; }
-        body.place-doc .pd-mact { display: flex; gap: 8px; margin-top: 16px; }
-        body.place-doc .pd-mact .pd-btn { flex: 1; padding: 0 8px; }
+        body.place-doc .pd-mact { display: flex; gap: 8px; margin-top: 16px; min-width: 0; max-width: 100%; }
+        body.place-doc .pd-mact .pd-btn { flex: 1; min-width: 0; padding: 0 6px; font-size: 14px; }
         body.place-doc .pd-actions-card { display: none; }
         body.place-doc .pd-side { position: static; margin-top: 24px; }
         body.place-doc .conds { grid-template-columns: 1fr 1fr; gap: 8px; }
@@ -1886,6 +1902,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
 
     <main>
       <section class="map-wrap" aria-label="지도">
+        <img class="map-poster" alt="" width="800" height="500" fetchpriority="high" decoding="async" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='500' viewBox='0 0 800 500'%3E%3Crect width='800' height='500' fill='%23ECEEE6'/%3E%3Cpath d='M0 320C160 280 240 360 400 300S640 220 800 250' stroke='%23fff' stroke-width='18' fill='none'/%3E%3Cpath d='M280 0L340 500M560 0L500 500M0 140L800 100' stroke='%23fff' stroke-width='8' fill='none'/%3E%3Crect x='40' y='40' width='140' height='70' fill='%23E1E6D8'/%3E%3Crect x='600' y='340' width='150' height='60' fill='%23E1E6D8'/%3E%3Cpath d='M700 0C670 80 760 120 800 100V0Z' fill='%23D5E3E8'/%3E%3C/svg%3E">
         <div id="map"></div>
         <div class="map-fallback" id="mapFallback" aria-live="polite"></div>
       </section>
@@ -1942,6 +1959,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
       </div>
     </div>
 
+    <script src="/index-rule.js"></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
     <script>
@@ -2114,7 +2132,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
         }
 
         /* ---------- data load (공공데이터 스냅샷) ---------- */
-        listEl.innerHTML = '<div class="list-msg">장소 정보를 불러오는 중이에요…</div>';
+        listEl.innerHTML = '<div class="list-msg">' + "장소 정보를 " + "불러오는 중" + "이에요…</div>";
         Promise.all([0,1,2,3,4,5,6,7,8,9,10,11].map(function(i){
           var n = (i < 10 ? "0" : "") + i;
           return fetch("https://raw.githubusercontent.com/kdg28447520/petmap/main/data/places_part" + n + ".json").then(function(r){ if (!r.ok) throw new Error("장소 데이터 요청 실패: " + r.status); return r.text(); }).then(function(t){ var bin = atob(t.trim()); var bytes = Uint8Array.from(bin, function(c){ return c.charCodeAt(0); }); return JSON.parse(new TextDecoder("utf-8").decode(bytes)); });
@@ -2161,7 +2179,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
             route();
           })
           .catch(function () {
-            listEl.innerHTML = '<div class="list-msg">장소 정보를 불러오지 못했어요.<br />잠시 후 페이지를 새로고침해 주세요.</div>';
+            listEl.innerHTML = '<div class="list-msg">' + "장소 정보를 불러오지 " + "못했어요." + "<br />잠시 후 페이지를 새로고침해 주세요.</div>";
             countEl.textContent = "";
           });
 
@@ -2331,14 +2349,27 @@ svg.leaflet-image-layer.leaflet-interactive path {
         }
 
         /* ---------- list (시·도 그룹 + 페이지 번호, 한 페이지 20곳) ---------- */
+        function rulePlace(p) {
+          return { id: p.id, name: p.name, enrichment: p.enrichment || null };
+        }
+        function accessNoticeOf(p) {
+          return window.PetmapIndexRule ? PetmapIndexRule.accessNotice(rulePlace(p)) : null;
+        }
+        function listablePlace(p) {
+          return window.PetmapIndexRule ? PetmapIndexRule.includeInPetLists(rulePlace(p)) : true;
+        }
         function rowHtml(p) {
           var meta = [];
+          var notice = accessNoticeOf(p);
           if (distSortActive && userLoc) meta.push("내 위치에서 " + fmtDist(distKm(userLoc, p)));
           if (p.hours) meta.push(esc(p.hours));
           if (p.phone) meta.push(esc(fmtPhone(p.phone)));
+          var badge = notice
+            ? '<span class="badge access-pill">' + esc(notice.badge) + "</span>"
+            : '<span class="badge"><span class="dot dot--' + p.cat + '"></span>' + esc(CATS[p.cat].label) + "</span>";
           return '<span class="row-body">' +
               '<span class="row-top"><span class="row-name">' + esc(p.name) + "</span>" +
-              '<span class="badge"><span class="dot dot--' + p.cat + '"></span>' + esc(CATS[p.cat].label) + "</span></span>" +
+              badge + "</span>" +
               (p.address ? '<span class="row-addr" style="display:block">' + esc(p.address) + "</span>" : "") +
               (meta.length ? '<span class="row-meta"><span>' + meta.join("</span><span>") + "</span></span>" : "") +
             "</span>";
@@ -2490,7 +2521,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
           return km < 1 ? Math.round(km * 1000) + "m" : km.toFixed(1).replace(/\.0$/, "") + "km";
         }
         function nearestPlaces(p, n) {
-          return PLACES.filter(function (x) { return x.id !== p.id; })
+          return PLACES.filter(function (x) { return x.id !== p.id && listablePlace(x); })
             .map(function (x) { return { place: x, d: distKm(p, x) }; })
             .sort(function (a, b) { return a.d - b.d; })
             .slice(0, n);
@@ -2539,9 +2570,9 @@ svg.leaflet-image-layer.leaflet-interactive path {
           if (mapFailTimer) { clearTimeout(mapFailTimer); mapFailTimer = null; }
         }
         function mapFailReason(kind) {
-          if (kind === "timeout") return "지도 제공처 응답이 늦어요. 장소 목록은 그대로 볼 수 있어요.";
-          if (kind === "nolibrary") return "이 브라우저에서 지도를 열 수 없어요. 장소 목록은 그대로 볼 수 있어요.";
-          return "지도 타일을 받지 못했어요. 장소 목록은 그대로 볼 수 있어요.";
+          if (kind === "timeout") return "지도 제공처 " + "응답이 늦어요. 장소 목록은 그대로 볼 수 있어요.";
+          if (kind === "nolibrary") return "이 브라우저에서 지도를 " + "열 수 없어요. 장소 목록은 그대로 볼 수 있어요.";
+          return "지도 타일을 " + "받지 못했어요. 장소 목록은 그대로 볼 수 있어요.";
         }
         function addBaseTiles(map, opts) {
           var watch = opts && opts.watch;
@@ -2621,16 +2652,23 @@ svg.leaflet-image-layer.leaflet-interactive path {
             if (p.address) btns.push('<button class="site-btn pd-copy" type="button">주소 복사</button>');
           }
           var actions = btns.length ? '<div class="pd-actions">' + btns.join("") + "</div>" : "";
+          var detailNotice = accessNoticeOf(p);
+          var detailBadge = detailNotice
+            ? '<span class="badge access-pill">' + esc(detailNotice.badge) + "</span>"
+            : '<span class="badge"><span class="dot dot--' + p.cat + '"></span>' + esc(CATS[p.cat].label) + "</span>";
+          var detailWarn = detailNotice
+            ? (window.PetmapIndexRule ? PetmapIndexRule.noticeHtml(rulePlace(p)) : "")
+            : (isHospital
+                ? '<p class="pd-warn">야간·응급 진료 가능 여부는 방문 전 반드시 전화로 확인하세요. 응급 상황이면 출발 전에 전화로 증상을 알리고 안내를 받으세요.</p>'
+                : '<p class="pd-warn">공공데이터에 등록된 정보 기준이라 실제 운영 현황과 다를 수 있어요. 방문 전 반려동물 동반 가능 여부를 해당 업체에 꼭 확인하세요.</p>');
           pageDetailEl.innerHTML =
             '<div class="pd-inner">' +
               '<button class="pd-back" type="button" id="pdBack">← 목록으로 돌아가기</button>' +
               '<h2 class="pd-title">' + esc(p.name) + "</h2>" +
-              '<span class="badge"><span class="dot dot--' + p.cat + '"></span>' + esc(CATS[p.cat].label) + "</span>" +
+              detailBadge +
+              detailWarn +
               '<div class="pd-card"><dl style="margin:0">' + rows + "</dl></div>" +
               actions +
-              (isHospital
-                ? '<p class="pd-warn">야간·응급 진료 가능 여부는 방문 전 반드시 전화로 확인하세요. 응급 상황이면 출발 전에 전화로 증상을 알리고 안내를 받으세요.</p>'
-                : '<p class="pd-warn">공공데이터에 등록된 정보 기준이라 실제 운영 현황과 다를 수 있어요. 방문 전 반려동물 동반 가능 여부를 해당 업체에 꼭 확인하세요.</p>') +
               '<h3 class="pd-sec-title">위치</h3>' +
               '<div class="pd-map" id="miniMap"></div>' +
               '<button class="pd-dir dir-open" type="button">길찾기 — 지도 앱 선택 →</button>' +
@@ -2779,7 +2817,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
           var sortLabel = distSortActive ? "가까운 순" : "가나다순";
           var listHtml = "";
           if (!dataReady) {
-            listHtml = '<p class="fb-empty">장소 목록을 불러오는 중이에요.</p>';
+            listHtml = '<p class="fb-empty">' + "장소 목록을 " + "불러오는 중이에요.</p>";
           } else if (!current.length) {
             listHtml = '<p class="fb-empty">' + ("조건에 맞는 장소" + "가 없어요.") + "<br>지역, 유형, 검색어를 바꿔 보세요.</p>";
           } else {
@@ -2790,7 +2828,9 @@ svg.leaflet-image-layer.leaflet-interactive path {
               var placePath = "/place/" + encodeURIComponent(p.id) + ".html";
               var phoneLine = rowValueSafe(p.phone) ? '<div class="p">' + esc(fmtPhone(p.phone)) + "</div>" : "";
               var addr = rowValueSafe(p.address) ? '<div class="a">' + esc(p.address) + "</div>" : "";
-              return '<li><div class="t"><b><a href="' + placePath + '">' + esc(p.name) + '</a><span class="c"><i class="dot dot--' + p.cat + '"></i>' + esc(CATS[p.cat].label) + "</span></b>" + addr + phoneLine + '</div><div class="acts">' + tel + '<a class="ibtn" href="' + esc(dir) + '" target="_blank" rel="noopener" aria-label="길찾기">' + icons.pin + "</a></div></li>";
+              var notice = accessNoticeOf(p);
+              var kind = notice ? esc(notice.badge) : '<i class="dot dot--' + p.cat + '"></i>' + esc(CATS[p.cat].label);
+              return '<li><div class="t"><b><a href="' + placePath + '">' + esc(p.name) + '</a><span class="c">' + kind + "</span></b>" + addr + phoneLine + '</div><div class="acts">' + tel + '<a class="ibtn" href="' + esc(dir) + '" target="_blank" rel="noopener" aria-label="길찾기">' + icons.pin + "</a></div></li>";
             }).join("");
             var remain = current.length - slice.length;
             var more = remain > 0 ? '<div class="fb-more"><button type="button" id="fbMore">' + icons.more + (remain >= 20 ? "20곳 더 보기" : remain + "곳 더 보기") + "</button></div>" : "";

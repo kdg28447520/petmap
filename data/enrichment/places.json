@@ -1,0 +1,19 @@
+{
+  "places": {
+    "EXAMPLE-DO-NOT-PUBLISH": {
+      "example": true,
+      "petAccess": "allowed",
+      "indoorOutdoor": "실내·실외",
+      "sizeLimit": "소형견 10kg 이하",
+      "extraFee": "추가 요금 없음",
+      "leash": "목줄 착용 필수",
+      "cat": "고양이 동반 불가",
+      "petCount": "최대 2마리",
+      "cage": "",
+      "petMenu": "",
+      "largeDog": "",
+      "checkedOn": "2026-10-18",
+      "checkedSource": "예시 행이라 페이지에 게시하지 않습니다"
+    }
+  }
+}

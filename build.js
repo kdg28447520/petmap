@@ -10,6 +10,7 @@ const crypto = require("node:crypto");
 const zlib = require("node:zlib");
 const { execFileSync } = require("node:child_process");
 const tourapi = require("./tourapi");
+const indexRule = require("./index-rule");
 
 const ROOT = __dirname;
 const DOMAIN = process.env.SITE_DOMAIN || "www.petmap.kr";
@@ -100,7 +101,7 @@ function jsonLdFor(place) {
     "@context": "https://schema.org",
     "@type": place.category === "hospital" ? "VeterinaryCare" : "Place",
     name: place.name,
-    description: descriptionFor(place, CATEGORIES[place.category]),
+    description: indexRule.accessNotice(place) ? place.name + " · " + indexRule.accessNotice(place).label : descriptionFor(place, CATEGORIES[place.category]),
     address: { "@type": "PostalAddress", streetAddress: place.addr || "", addressCountry: "KR" },
     geo: { "@type": "GeoCoordinates", latitude: place.lat, longitude: place.lng },
   };
@@ -148,17 +149,51 @@ const HOME_GUIDE_IDS = [
   "busan-pet-beach-cafe",
   "korea-pet-map-counts",
 ];
+const ENRICHMENT_FILE = path.join(ROOT, "data", "enrichment", "places.json");
+const OPTIONAL_ENRICHMENT_KEYS = [
+  ["leash", "목줄"],
+  ["cat", "고양이"],
+  ["petCount", "마릿수", "동반 마릿수"],
+  ["cage", "케이지", "이동장"],
+  ["petMenu", "펫메뉴", "펫 메뉴"],
+  ["largeDog", "대형견"],
+];
+function isUnpublishedEnrichment(id, row) {
+  if (!row || typeof row !== "object") return true;
+  if (row.example === true || row.publish === false) return true;
+  return /^example/i.test(String(id || row.id || ""));
+}
 function loadEnrichmentMap() {
-  const file = path.join(ROOT, "content", "place-enrichment.json");
-  if (!fs.existsSync(file)) return {};
-  const parsed = JSON.parse(fs.readFileSync(file, "utf8"));
+  if (!fs.existsSync(ENRICHMENT_FILE)) throw new Error("보강 파일이 없습니다: data/enrichment/places.json");
+  const parsed = JSON.parse(fs.readFileSync(ENRICHMENT_FILE, "utf8"));
   const rows = parsed && parsed.places ? parsed.places : parsed;
-  if (Array.isArray(rows)) {
-    const map = {};
-    for (const row of rows) if (row && row.id) map[String(row.id)] = row;
-    return map;
+  const entries = Array.isArray(rows)
+    ? rows.filter((row) => row && row.id).map((row) => [String(row.id), row])
+    : Object.entries(rows && typeof rows === "object" ? rows : {});
+  const map = {};
+  let skipped = 0;
+  for (const [id, row] of entries) {
+    if (isUnpublishedEnrichment(id, row)) { skipped += 1; continue; }
+    map[String(id)] = row;
   }
-  return rows && typeof rows === "object" ? rows : {};
+  const example = parsed && parsed.places && parsed.places["EXAMPLE-DO-NOT-PUBLISH"];
+  if (!example || example.example !== true) throw new Error("예시 행 EXAMPLE-DO-NOT-PUBLISH 가 example:true 로 있어야 합니다.");
+  if (map["EXAMPLE-DO-NOT-PUBLISH"]) throw new Error("예시 보강 행이 게시 맵에 들어갔습니다.");
+  const probe = {
+    id: "enrichment-probe",
+    name: "보강 기준 확인",
+    category: "food",
+    addr: "서울특별시 중구",
+    lat: 37.56,
+    lng: 126.97,
+    enrichment: null,
+  };
+  const sample = { ...example };
+  delete sample.example;
+  probe.enrichment = normalizeEnrichment(sample);
+  if (isThinPlace(probe)) throw new Error("예시와 같은 칸을 채운 실제 행이 색인 기준을 통과하지 못합니다.");
+  log("보강 파일 게시 행 " + Object.keys(map).length + "곳, 예시로 건너뛴 행 " + skipped + "곳");
+  return map;
 }
 function enrichmentValue(record, keys) {
   if (!record) return "";
@@ -179,6 +214,17 @@ function normalizeEnrichment(record) {
     normalized[field.id] = value;
     any = true;
   }
+  for (const keys of OPTIONAL_ENRICHMENT_KEYS) {
+    const value = enrichmentValue(record, keys);
+    if (!value) continue;
+    normalized[keys[0]] = value;
+    any = true;
+  }
+  const access = indexRule.explicitAccess(record);
+  if (access) {
+    normalized.petAccess = access;
+    any = true;
+  }
   return any ? normalized : null;
 }
 function enrichmentRows(place) {
@@ -186,14 +232,7 @@ function enrichmentRows(place) {
   return ENRICHMENT_FIELDS.map((field) => ({ id: field.id, label: field.label, value: enrichmentValue(record, [field.id]) }));
 }
 function isFilledEnrichment(place) {
-  const rows = enrichmentRows(place);
-  if (rows.some((row) => !row.value || UNCONFIRMED.has(row.value))) return false;
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(rows.find((row) => row.id === "checkedOn").value)) return false;
-  if (!/실내|실외|야외/.test(rows.find((row) => row.id === "indoorOutdoor").value)) return false;
-  const overview = place.tour && displayValue(place.tour.overview) || "";
-  const pet = place.tour && Array.isArray(place.tour.petRules) ? place.tour.petRules.map((rule) => displayValue(rule.value)).join("") : "";
-  const body = (rows.map((row) => row.value).join("") + overview + pet).replace(/\s/g, "");
-  return Array.from(body).length >= INDEX_BODY_MIN;
+  return indexRule.isFilledEnrichment(place);
 }
 const ICON = {
   check: '<path d="M20 6 9 17l-5-5"/>',
@@ -298,6 +337,34 @@ function tilesFromRules(rules, tiles) {
     pushTile(tiles, { icon: "rule", label: label || "동반 조건", tone: "must", status: value, note: "" });
   }
 }
+function optionalFieldTiles(record, tiles) {
+  const leash = confirmedText(enrichmentValue(record, ["leash"]));
+  if (leash) {
+    const required = /필수|착용|해야|필요|지참/.test(leash);
+    pushTile(tiles, { icon: "leash", label: "목줄 착용", tone: "must", status: required ? "필수" : leash, note: required && leash !== "필수" ? leash : "" });
+  }
+  const cat = confirmedText(enrichmentValue(record, ["cat"]));
+  if (cat) {
+    const denied = /불가|안\s*됨|금지|제외/.test(cat);
+    const allowed = /가능|허용|환영/.test(cat);
+    pushTile(tiles, { icon: "cat", label: "고양이 동반", tone: denied ? "no" : allowed ? "yes" : "must", status: denied ? "불가" : allowed ? "가능" : cat, note: cat });
+  }
+  const count = confirmedText(enrichmentValue(record, ["petCount"]));
+  if (count) pushTile(tiles, { icon: "count", label: "동반 마릿수", tone: "must", status: count, note: "" });
+  const cage = confirmedText(enrichmentValue(record, ["cage"]));
+  if (cage) {
+    const required = /필수|필요|착용|지참|해야/.test(cage);
+    pushTile(tiles, { icon: "cage", label: required ? "케이지 필수" : "케이지·이동장", tone: "must", status: required ? "필수" : cage, note: required ? cage : "" });
+  }
+  const menu = confirmedText(enrichmentValue(record, ["petMenu"]));
+  if (menu) {
+    const missing = /없|불가|제공하지/.test(menu);
+    const present = /가능|있|제공/.test(menu);
+    pushTile(tiles, { icon: "menu", label: "펫 전용 메뉴", tone: missing ? "no" : "yes", status: missing ? "없음" : present ? "있음" : menu, note: menu });
+  }
+  const large = confirmedText(enrichmentValue(record, ["largeDog"]));
+  if (large) pushTile(tiles, sizeTile(/대형견/.test(large) ? large : "대형견 " + large));
+}
 function companionTiles(place) {
   const tiles = [];
   const record = place && place.enrichment;
@@ -307,6 +374,7 @@ function companionTiles(place) {
   if (indoor) pushTile(tiles, indoorTile(indoor));
   if (size) pushTile(tiles, sizeTile(size));
   if (fee) pushTile(tiles, feeTile(fee));
+  optionalFieldTiles(record, tiles);
   const rules = place && place.tour && Array.isArray(place.tour.petRules) ? place.tour.petRules : [];
   tilesFromRules(rules, tiles);
   return tiles;
@@ -356,6 +424,7 @@ function nearestCompanions(place) {
   const rest = [];
   for (const other of catalogPlaces) {
     if (!other || other.id === place.id) continue;
+    if (!indexRule.includeInPetLists(other)) continue;
     if (!Number.isFinite(other.lat) || !Number.isFinite(other.lng)) continue;
     if (locality && localityOf(other.addr) === locality) sameLocality.push(other);
     else if (regionOf(other.addr) === region) sameRegion.push(other);
@@ -379,7 +448,10 @@ function nearbyHtml(place) {
   const region = regionOf(place.addr);
   const allLocal = locality && picked.every((item) => localityOf(item.place.addr) === locality);
   const allRegion = picked.every((item) => regionOf(item.place.addr) === region);
-  const title = allLocal ? locality + "의 다른 동반 장소" : (REGION_SHORT[region] || region) + "의 다른 동반 장소";
+  const friendlyHere = indexRule.includeInPetLists(place);
+  const title = friendlyHere
+    ? (allLocal ? locality + "의 다른 동반 장소" : (REGION_SHORT[region] || region) + "의 다른 동반 장소")
+    : "주변 장소";
   const sub = allLocal ? "같은 시·군·구에서 가까운 순" : allRegion ? "같은 시·도에서 가까운 순" : "가까운 순";
   const items = picked.map((item) => {
     const other = item.place;
@@ -416,7 +488,7 @@ function staticMapHtml(place) {
   const address = displayValue(place.addr);
   const alt = place.name + " 위치. 위도 " + lat.toFixed(5) + ", 경도 " + lng.toFixed(5) + (address ? ". " + address : "");
   const caption = address || ("위도 " + lat.toFixed(5) + ", 경도 " + lng.toFixed(5));
-  return `<figure class="pd-snap"><img src="/place/maps/${encodeURIComponent(place.id)}.svg" width="700" height="200" alt="${escapeHtml(alt)}" loading="lazy" decoding="async"><figcaption>${escapeHtml(caption)}</figcaption></figure>`;
+  return `<figure class="pd-snap"><img src="/place/maps/${encodeURIComponent(place.id)}.svg" width="700" height="200" alt="${escapeHtml(alt)}" loading="eager" fetchpriority="high" decoding="async"><figcaption>${escapeHtml(caption)}</figcaption></figure>`;
 }
 function crumbHtml(place) {
   const region = regionOf(place.addr);
@@ -468,13 +540,14 @@ function pickRepresentatives(places) {
     const list = byRegion.get(region) || [];
     const chosen = [];
     for (const category of ["food", "stay", "park", "hospital"]) {
-      const found = list.find((place) => place.category === category && !seen.has(place.id));
+      const found = list.find((place) => place.category === category && !seen.has(place.id) && indexRule.includeInPetLists(place));
       if (!found) continue;
       chosen.push(found);
       if (chosen.length >= 2) break;
     }
     for (const place of list) {
       if (chosen.length >= 2) break;
+      if (!indexRule.includeInPetLists(place)) continue;
       if (!chosen.includes(place)) chosen.push(place);
     }
     for (const place of chosen) {
@@ -485,6 +558,7 @@ function pickRepresentatives(places) {
   if (picked.length < 30) {
     for (const place of places.slice().sort((a, b) => (a.id < b.id ? -1 : 1))) {
       if (picked.length >= 30) break;
+      if (!indexRule.includeInPetLists(place)) continue;
       if (seen.has(place.id)) continue;
       seen.add(place.id);
       picked.push(place);
@@ -515,7 +589,7 @@ function crawlCatalogHtml(places) {
 function injectCrawlCatalog(html, places) {
   if (!html.includes("<!--CRAWL_CATALOG-->")) throw new Error("홈 HTML에 정적 목록 위치가 없습니다.");
   const next = html.replace("<!--CRAWL_CATALOG-->", crawlCatalogHtml(places));
-  const forbidden = (next.match(/불러올 수 없어요|조건에 맞는 장소가 없어요/g) || []).length;
+  const forbidden = (next.match(/불러올 수 없어요|조건에 맞는 장소가 없어요|장소 정보를 불러오는 중|장소 정보를 불러오지 못했어요|장소 목록을 불러오는 중|지도를 불러오지 못했어요|이 브라우저에서 지도를 열 수 없어요|지도 타일을 받지 못했어요|지도 제공처 응답이 늦어요/g) || []).length;
   if (forbidden) throw new Error("홈 서버 HTML에 빈 상태 문구가 있습니다: " + forbidden);
   const placeLinks = (next.match(/href="\/place\/[^"]+\.html"/g) || []).length;
   const guideLinks = (next.match(/href="\/guides\/[^"]+\.html"/g) || []).length;
@@ -539,8 +613,9 @@ function makePlacePage(place, css, updatedAt, thin) {
   const cat = CATEGORIES[place.category];
   const region = regionOf(place.addr);
   const locality = localityOf(place.addr);
-  const title = `${place.name} — ${region} 반려동물 동반 · 댕냥이와 함께`;
-  const description = descriptionFor(place, cat);
+  const notice = indexRule.accessNotice(place);
+  const title = indexRule.placeTitle(place, region);
+  const description = notice ? place.name + " · " + notice.label : descriptionFor(place, cat);
   const url = `${BASE_URL}/place/${encodeURIComponent(place.id)}.html`;
   const image = `${BASE_URL}/og/${cat.image}`;
   const isHospital = place.category === "hospital";
@@ -562,11 +637,14 @@ function makePlacePage(place, css, updatedAt, thin) {
   const photoHtml = photo
     ? `<figure class="pd-figure"><img src="${escapeHtml(photo.url)}" width="${Math.round(Number(photo.width))}" height="${Math.round(Number(photo.height))}" alt="${escapeHtml(photo.alt || place.name)}" loading="lazy" decoding="async"><figcaption class="pd-caption">${escapeHtml(tourapi.imageCaption(photo))}</figcaption></figure>`
     : staticMapHtml(place);
-  const overviewHtml = overview ? `<p class="pd-overview">${escapeHtml(overview)}</p>` : "";
-  const enrich = enrichmentHtml(place);
+  const overviewHtml = notice ? "" : (overview ? `<p class="pd-overview">${escapeHtml(overview)}</p>` : "");
+  const enrich = notice ? "" : enrichmentHtml(place);
   const correction = enrich ? "" : `<p class="pd-correct">${correctionButton(place)}</p>`;
   const where = [REGION_SHORT[region] || region, locality].filter((part) => part && part !== "전국").join(" ");
-  const warning = isHospital
+  const catLine = notice
+    ? `<p class="pd-cat"><span class="access-pill">${escapeHtml(notice.label)}</span></p>`
+    : `<p class="pd-cat"><span class="dot dot--${place.category}"></span>${escapeHtml(cat.label)}${where ? " · " + escapeHtml(where) : ""}</p>`;
+  const warning = notice ? "" : isHospital
     ? `<p class="pd-warn"><strong>야간·응급 진료 가능 여부는 방문 전 전화로 확인하세요.</strong></p>`
     : `<p class="pd-warn">공공데이터에 등록된 정보 기준이라 실제 운영 현황과 다를 수 있어요. 방문 전 반려동물 동반 가능 여부를 해당 업체에 확인하세요.</p>`;
   const checkedLine = badgeText
@@ -580,7 +658,8 @@ function makePlacePage(place, css, updatedAt, thin) {
   <meta name="color-scheme" content="light dark">
   ${thin ? '<meta name="robots" content="noindex, follow">' : ""}
   ${makeMeta({ title, description, url, image, alt: place.name, type: "place" })}
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"></noscript>
   <link rel="stylesheet" href="/place/place.css">
   <script type="application/ld+json">${jsonLdFor(place)}</script>
 </head>
@@ -602,7 +681,8 @@ function makePlacePage(place, css, updatedAt, thin) {
       <div class="pd-grid">
         <div class="pd-col">
           <h1 class="pd-title">${escapeHtml(place.name)}</h1>
-          <p class="pd-cat"><span class="dot dot--${place.category}"></span>${escapeHtml(cat.label)}${where ? " · " + escapeHtml(where) : ""}</p>
+          ${indexRule.noticeHtml(place)}
+          ${catLine}
           ${photoHtml}
           ${overviewHtml}
           ${rows ? `<div class="pd-info"><dl>${rows}</dl></div>` : ""}
@@ -652,16 +732,23 @@ function sourceFor(place) {
   if (place.source === "gocamping") return "고캠핑(gocamping.or.kr) · 반려견동반 캠핑장";
   return "한국관광공사 TourAPI · 반려동물 동반 여행 정보";
 }
-// Index only places whose enrichment block is filled and whose visible body
-// clears INDEX_BODY_MIN. Everything else stays on the site as noindex,follow
-// and is left out of the sitemap. TourAPI detail alone does not index a page.
+// Index decision lives in index-rule.js. Thin means not indexable:
+// petAccess is not exactly "allowed", or the five enrichment fields are incomplete.
 function isThinPlace(place) {
-  return !isFilledEnrichment(place);
+  return !indexRule.isIndexable(place);
 }
 function assertEnrichmentPolicy() {
   const base = { id: "policy-check", name: "정책 확인", category: "food", addr: "서울특별시 중구", lat: 1, lng: 1, source: "kbizin", tel: "", hours: "", homepage: "" };
-  const filled = { ...base, enrichment: { indoorOutdoor: "실내·실외", sizeLimit: "소형견 10kg 이하", extraFee: "추가 요금 없음", checkedOn: "2026-10-18", checkedSource: "업체 공식 안내 페이지" } };
+  const filled = { ...base, enrichment: { petAccess: "allowed", indoorOutdoor: "실내·실외", sizeLimit: "소형견 10kg 이하", extraFee: "추가 요금 없음", checkedOn: "2026-10-18", checkedSource: "업체 공식 안내 페이지" } };
   if (isThinPlace(filled)) throw new Error("보강이 채워진 장소가 noindex로 분류되었습니다.");
+  const filledWithoutAccess = { ...base, id: "policy-no-access", enrichment: { indoorOutdoor: "실내·실외", sizeLimit: "소형견 10kg 이하", extraFee: "추가 요금 없음", checkedOn: "2026-10-18", checkedSource: "업체 공식 안내 페이지" } };
+  if (!isThinPlace(filledWithoutAccess)) throw new Error("petAccess가 allowed가 아닌 장소가 색인 대상이 되었습니다.");
+  const banned = { ...filled, id: "policy-park", name: "계룡산국립공원" };
+  if (!isThinPlace(banned)) throw new Error("국립공원이 색인 대상이 되었습니다.");
+  const bannedPage = makePlacePage(banned, "", "2026-10-18", true);
+  if (!bannedPage.includes("반려동물 출입 제한") || bannedPage.includes("반려동물 동반 ·") || !bannedPage.includes('content="noindex, follow"') || /<ins\b[^>]*\bclass="adsbygoogle"/.test(bannedPage)) {
+    throw new Error("국립공원 페이지가 동반 가능 장소처럼 보이거나 색인됩니다.");
+  }
   const indexed = makePlacePage(filled, "", "2026-10-18", false);
   const hasAdUnit = (html) => /<ins\b[^>]*\bclass="adsbygoogle"/.test(html);
   const indexedOk = !indexed.includes("noindex") && hasAdUnit(indexed) && indexed.includes("정보 정정 요청") && indexed.includes("contact.html?place=policy-check") && indexed.includes('class="enr"') && indexed.includes("반려동물 동반 조건") && indexed.includes("실내 동반") && indexed.includes("실내·실외") && indexed.includes("무게·크기 제한") && indexed.includes("소형견 10kg 이하") && indexed.includes("추가 요금") && indexed.includes("업체 공식 안내 페이지") && indexed.includes("2026.10 확인") && indexed.includes('class="ad-slot"') && indexed.includes("min-height:250px");
@@ -684,6 +771,15 @@ function assertEnrichmentPolicy() {
   if (!isThinPlace(partial)) throw new Error("출처가 없는 보강이 색인 대상이 되었습니다.");
   const unknown = { ...base, enrichment: { indoorOutdoor: "미확인", sizeLimit: "소형견 10kg 이하", extraFee: "추가 요금 없음", checkedOn: "2026-10-18", checkedSource: "업체 공식 안내" } };
   if (!isThinPlace(unknown)) throw new Error("미확인 보강이 색인 대상이 되었습니다.");
+  const optional = {
+    ...base,
+    enrichment: normalizeEnrichment({ leash: "목줄 착용 필수", cat: "고양이 동반 불가", petCount: "최대 2마리", cage: "이동장 필수", petMenu: "펫 메뉴 있음", largeDog: "대형견 동반 가능" }),
+  };
+  const optionalPage = makePlacePage(optional, "", "2026-10-18", true);
+  if (!optionalPage.includes("목줄 착용") || !optionalPage.includes("고양이 동반") || !optionalPage.includes("불가") || !optionalPage.includes("동반 마릿수") || !optionalPage.includes("최대 2마리") || !optionalPage.includes("케이지 필수") || !optionalPage.includes("펫 전용 메뉴") || !optionalPage.includes("대형견 동반") || hasAdUnit(optionalPage) || !optionalPage.includes('content="noindex, follow"')) {
+    throw new Error("선택 보강 칸이 타일로 나오지 않았습니다.");
+  }
+  if (normalizeEnrichment({ cage: "", petMenu: "", example: true })) throw new Error("빈 선택 칸이 보강으로 남았습니다.");
 }
 function makeMainMeta(html) {
   const titleMatch = html.match(/<title>([\s\S]*?)<\/title>/i);
@@ -798,10 +894,19 @@ function generateOgImages() {
 }
 function copyAssets() {
   fs.mkdirSync(OUT, { recursive: true });
-  for (const file of ["index.html", "places_park.json"]) {
+  for (const file of ["index.html", "index-rule.js", "places_park.json"]) {
     if (fs.existsSync(path.join(ROOT, file))) fs.copyFileSync(path.join(ROOT, file), path.join(OUT, file));
   }
-  if (fs.existsSync(path.join(ROOT, "data"))) fs.cpSync(path.join(ROOT, "data"), path.join(OUT, "data"), { recursive: true });
+  const dataSrc = path.join(ROOT, "data");
+  if (fs.existsSync(dataSrc)) {
+    fs.cpSync(dataSrc, path.join(OUT, "data"), {
+      recursive: true,
+      filter(src) {
+        const rel = path.relative(dataSrc, src);
+        return rel !== "enrichment" && !rel.startsWith("enrichment" + path.sep);
+      },
+    });
+  }
   if (fs.existsSync(path.join(ROOT, "og"))) fs.cpSync(path.join(ROOT, "og"), path.join(OUT, "og"), { recursive: true });
 }
 function mainCss(html) {
@@ -832,6 +937,9 @@ function verifyOgFiles() {
   return htmlFiles.length;
 }
 async function build() {
+  if (ENRICHMENT_FIELDS.map((field) => field.id).join(",") !== indexRule.FIELD_IDS.join(",")) {
+    throw new Error("보강 필드가 index-rule.js의 색인 규칙과 다릅니다.");
+  }
   const rawIndex = fs.readFileSync(path.join(ROOT, "index.html"), "utf8");
   const html = makeMainMeta(rawIndex);
   const css = mainCss(html);
@@ -890,11 +998,12 @@ async function build() {
   for (const place of valid) place.enrichment = normalizeEnrichment(enrichmentMap[place.id]);
   assertEnrichmentPolicy();
   const tourStats = tourapi.summarize(valid);
-  const filledCount = valid.filter((place) => isFilledEnrichment(place)).length;
+  const filledCount = valid.filter((place) => indexRule.isIndexable(place)).length;
   log(`TourAPI contentid ${tour.contentIds}곳, 이번 빌드에서 받은 상세 ${tour.fetched}곳`);
   log(`이미지 ${tourStats.images} · 개요 ${tourStats.overviews} · TourAPI로 새로 채운 홈페이지 ${tourStats.apiHomepages} · 기존 홈페이지 ${tourStats.existingHomepages} · 동반 조건 ${tourStats.petRules} · TourAPI 상세 충족 ${tourStats.rich} · 보강 후 색인 ${filledCount}`);
   fs.rmSync(OUT, { recursive: true, force: true });
   copyAssets();
+  if (fs.existsSync(path.join(OUT, "data", "enrichment"))) throw new Error("보강 예시 파일이 배포 폴더에 복사되었습니다.");
   let main = makeMainMeta(rawIndex).replace(/데이터 기준일: \d{4}-\d{2}-\d{2}/, "데이터 기준일: " + updatedAt);
   main = injectCrawlCatalog(main, valid);
   if (USE_SRI) main = await withSri(main);
@@ -940,7 +1049,7 @@ async function build() {
   for (const place of valid) {
     const pagePath = path.join(OUT, "place", place.id + ".html");
     const page = fs.readFileSync(pagePath, "utf8");
-    const filled = isFilledEnrichment(place);
+    const filled = indexRule.isIndexable(place);
     const url = `${BASE_URL}/place/${encodeURIComponent(place.id)}.html`;
     const inSitemap = sitemapXml.includes(`<loc>${url}</loc>`);
     if (filled !== inSitemap) throw new Error("사이트맵과 보강 색인 기준이 다릅니다: " + place.id);
@@ -962,6 +1071,21 @@ async function build() {
   if (/<ins\b[^>]*\bclass="adsbygoogle"/.test(sampleHtml)) throw new Error("noindex 샘플 장소에 광고 단위가 있습니다.");
   log(`전체 HTML: ${htmlCount}, OG PNG: 5, 장소 반영 전 sitemap URL: ${sitemapUrls.length}`);
   if (thinCount + indexablePlaces.length !== valid.length) throw new Error("얇은 장소 분류 수가 전체 장소 수와 다릅니다.");
+  const homeHtml = fs.readFileSync(path.join(OUT, "index.html"), "utf8");
+  const flagged = valid.filter((place) => indexRule.accessNotice(place));
+  const restricted = flagged.filter((place) => indexRule.petAccessStatus(place) === "restricted");
+  const unverifiedNamed = flagged.filter((place) => indexRule.petAccessStatus(place) === "unverified");
+  if (restricted.length !== 4) throw new Error("출입 제한 장소가 4곳이 아닙니다: " + restricted.map((place) => place.name).join(", "));
+  if (unverifiedNamed.length !== 6) throw new Error("출입 미확인 공원·휴양림이 6곳이 아닙니다: " + unverifiedNamed.map((place) => place.name).join(", "));
+  for (const place of flagged) {
+    const page = fs.readFileSync(path.join(OUT, "place", place.id + ".html"), "utf8");
+    const notice = indexRule.accessNotice(place);
+    if (!page.includes(notice.heading) || !page.includes('content="noindex, follow"') || /<ins\b[^>]*\bclass="adsbygoogle"/.test(page) || page.includes("반려동물 동반 ·")) {
+      throw new Error("출입 제한·미확인 장소가 동반 가능 장소로 게시되었습니다: " + place.id);
+    }
+    if (homeHtml.includes("/place/" + encodeURIComponent(place.id) + ".html")) throw new Error("홈 대표 목록에 출입 제한·미확인 장소가 있습니다: " + place.id);
+    if (sitemapXml.includes("/place/" + encodeURIComponent(place.id) + ".html")) throw new Error("사이트맵에 출입 제한·미확인 장소가 있습니다: " + place.id);
+  }
   if (skipped.length) {
     console.warn(`[petmap] 건너뛴 장소 ${skipped.length}건:`);
     skipped.forEach((line) => console.warn("  - " + line));

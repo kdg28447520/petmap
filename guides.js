@@ -6,6 +6,7 @@
  */
 const fs=require("node:fs");
 const path=require("node:path");
+const indexRule=require("./index-rule");
 const ROOT=__dirname, OUT=path.join(ROOT,"dist");
 const BASE="https://www.petmap.kr";
 const updated="2026-10-14";
@@ -21,7 +22,7 @@ const PAW='<svg width="23" height="23" viewBox="0 0 24 24" aria-hidden="true"><p
 const chrome='<header class="site-bar"><a class="brand" href="/"><span class="paw">'+PAW+'</span><span>댕냥이와 함께</span></a><nav class="site-nav" aria-label="주요 메뉴"><a href="/">전국 지도</a><a href="/guides/">여행 가이드</a><a href="/about.html">소개</a></nav></header>';
 const trustFooter='<footer class="site-footer"><nav class="trust-nav" aria-label="안내"><a href="/about.html">소개</a><a href="/privacy.html">개인정보처리방침</a><a href="/contact.html">문의</a><a href="/terms.html">이용안내</a></nav><p>© 댕냥이와 함께 · 공공데이터 기반 안내 · 방문 전 해당 업체에 직접 확인해 주세요.</p></footer>';
 const adSlot='<aside class="ad-slot" aria-label="광고"><p class="ad-slot-label">광고</p><ins class="adsbygoogle" style="display:block;width:100%;min-height:250px" data-ad-client="ca-pub-4533404826925371" data-ad-format="auto" data-full-width-responsive="true"></ins></aside>';
-const css=':root{color-scheme:light}*{box-sizing:border-box}body{margin:0;background:#faf9f6;color:#262522;font-family:Pretendard,"Noto Sans KR",system-ui,sans-serif;font-size:16px;line-height:1.75}a{color:#1765ac}a:hover{text-decoration:underline}.shell{max-width:920px;margin:auto;padding:0 22px 60px}.site-bar{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:12px;height:56px;padding:0 16px;background:#faf9f6;border-bottom:1px solid #e7e3da}.brand{display:flex;align-items:center;gap:8px;color:#1a1a1a;font-size:17px;font-weight:800;text-decoration:none}.brand .paw{display:grid;place-items:center;width:23px;height:23px}.site-nav{display:flex;gap:2px;margin-left:auto;min-width:0;overflow-x:auto;scrollbar-width:none}.site-nav a{font-size:15px;font-weight:700;color:#1a1a1a;text-decoration:none;padding:8px 10px;border-radius:999px;white-space:nowrap;background:transparent}.site-nav a:hover{background:#f3f1ec}.site-footer{padding:22px 16px 32px;text-align:center;color:#6B675F;font-size:14px}.trust-nav{display:flex;flex-wrap:wrap;justify-content:center;gap:8px 14px;margin:0 0 8px}.trust-nav a{color:#55524C;font-size:15px;font-weight:700;text-decoration:none}.ad-slot{min-height:250px;margin:32px 0;contain:layout;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;background:#f3f1ec;border:1px solid #e7e3da;border-radius:12px;overflow:hidden}.ad-slot-label{margin:0;font-size:13px;font-weight:700;letter-spacing:.06em;color:#6B675F}h1{font-size:clamp(26px,4vw,36px);letter-spacing:-.8px;line-height:1.38;margin:16px 0}h2{font-size:23px;line-height:1.5;margin:36px 0 12px}h3{font-size:18px;margin:20px 0 9px}.lede{font-size:17px;color:#3d4546}.meta{font-size:14px;color:#6B675F}.article{background:white;border-radius:17px;padding:28px 35px;border:1px solid #eceae7}.section{margin-top:27px}.section p{margin:10px 0 16px}.table-scroll{max-width:100%;overflow-x:auto;border-radius:12px;border:1px solid #e8e8e5}table{border-collapse:collapse;width:100%;min-width:580px;font-size:16px}th,td{text-align:left;padding:11px 13px;border-bottom:1px solid #eee}th{background:#f2f5f4}td a{font-weight:700}.figure{margin:23px 0;overflow:hidden;border:1px solid #eee;border-radius:12px;background:#f8f7f2}.figure img{display:block;max-width:100%;width:100%;max-height:300px;object-fit:cover}.figure figcaption{font-size:14px;padding:8px 13px;color:#6B675F}.bullets{padding-left:21px}.bullets li{margin-bottom:12px}.checklist{list-style:none;padding:0}.checklist li{padding:7px 0;border-bottom:1px solid #f3f3f0}.checklist li{position:relative;padding-left:26px}.checklist li:before{content:"";position:absolute;left:0;top:12px;width:16px;height:16px;background:url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2716%27 height=%2716%27 viewBox=%270 0 16 16%27%3E%3Crect x=%271%27 y=%271%27 width=%2714%27 height=%2714%27 rx=%273%27 fill=%27none%27 stroke=%27%235F7161%27 stroke-width=%271.5%27/%3E%3Cpath d=%27M4 8.2 6.6 11 12 5%27 fill=%27none%27 stroke=%27%235F7161%27 stroke-width=%271.6%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27/%3E%3C/svg%3E") center/16px 16px no-repeat}.subtle{color:#6B675F;font-size:14px}.note{padding:15px 17px;background:#f5f7f5;border-radius:12px;border-left:4px solid #467e70}.summary{margin-top:30px;padding:20px;background:#f6f6f3;border-radius:12px}.refs{padding:14px;background:#faf9f7;border-radius:12px;font-size:15px}.guide-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.guide-card{padding:18px;border:1px solid #ddd;border-radius:12px;background:#fff;text-decoration:none;color:#282722}.guide-card b{display:block;line-height:1.5}.guide-card small{color:#6B675F;font-size:15px}.footer{font-size:14px;color:#6B675F;margin-top:26px}.crumb{font-size:14px;color:#6B675F;margin-top:15px}dl dt{font-weight:700;margin-top:17px}dl dd{margin:4px 0 16px}@media(max-width:680px){.shell{padding:0 14px 45px}.article{padding:18px 17px;border-radius:12px}h2{font-size:20px}.guide-cards{grid-template-columns:1fr}.site-nav{gap:2px}.site-nav a{font-size:15px;padding:8px 10px}}';
+const css=':root{color-scheme:light}*{box-sizing:border-box}body{margin:0;background:#faf9f6;color:#262522;font-family:Pretendard,"Noto Sans KR",system-ui,sans-serif;font-size:16px;line-height:1.75;overflow-wrap:break-word}a{color:#1765ac}a:hover{text-decoration:underline}.shell{max-width:920px;margin:auto;padding:0 22px 60px}.site-bar{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:12px;height:56px;padding:0 16px;background:#faf9f6;border-bottom:1px solid #e7e3da}.brand{display:flex;align-items:center;gap:8px;color:#1a1a1a;font-size:17px;font-weight:800;text-decoration:none}.brand .paw{display:grid;place-items:center;width:23px;height:23px}.site-nav{display:flex;gap:2px;margin-left:auto;min-width:0;overflow-x:auto;scrollbar-width:none}.site-nav a{font-size:15px;font-weight:700;color:#1a1a1a;text-decoration:none;padding:8px 10px;border-radius:999px;white-space:nowrap;background:transparent}.site-nav a:hover{background:#f3f1ec}.site-footer{padding:22px 16px 32px;text-align:center;color:#6B675F;font-size:14px}.trust-nav{display:flex;flex-wrap:wrap;justify-content:center;gap:8px 14px;margin:0 0 8px}.trust-nav a{color:#55524C;font-size:15px;font-weight:700;text-decoration:none}.ad-slot{min-height:250px;margin:32px 0;contain:layout;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;background:#f3f1ec;border:1px solid #e7e3da;border-radius:12px;overflow:hidden}.ad-slot-label{margin:0;font-size:13px;font-weight:700;letter-spacing:.06em;color:#6B675F}h1{font-size:clamp(26px,4vw,36px);letter-spacing:-.8px;line-height:1.38;margin:16px 0}h2{font-size:23px;line-height:1.5;margin:36px 0 12px}h3{font-size:18px;margin:20px 0 9px}.lede{font-size:17px;color:#3d4546}.meta{font-size:14px;color:#6B675F}.article{background:white;border-radius:17px;padding:28px 35px;border:1px solid #eceae7}.section{margin-top:27px}.section p{margin:10px 0 16px}.table-scroll{max-width:100%;overflow-x:auto;border-radius:12px;border:1px solid #e8e8e5}table{border-collapse:collapse;width:100%;min-width:580px;font-size:16px}th,td{text-align:left;padding:11px 13px;border-bottom:1px solid #eee}th{background:#f2f5f4}td a{font-weight:700}.figure{margin:23px 0;overflow:hidden;border:1px solid #eee;border-radius:12px;background:#f8f7f2}.figure img{display:block;max-width:100%;width:100%;max-height:300px;object-fit:cover}.figure figcaption{font-size:14px;padding:8px 13px;color:#6B675F}.bullets{padding-left:21px}.bullets li{margin-bottom:12px}.checklist{list-style:none;padding:0}.checklist li{padding:7px 0;border-bottom:1px solid #f3f3f0}.checklist li{position:relative;padding-left:26px}.checklist li:before{content:"";position:absolute;left:0;top:12px;width:16px;height:16px;background:url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2716%27 height=%2716%27 viewBox=%270 0 16 16%27%3E%3Crect x=%271%27 y=%271%27 width=%2714%27 height=%2714%27 rx=%273%27 fill=%27none%27 stroke=%27%235F7161%27 stroke-width=%271.5%27/%3E%3Cpath d=%27M4 8.2 6.6 11 12 5%27 fill=%27none%27 stroke=%27%235F7161%27 stroke-width=%271.6%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27/%3E%3C/svg%3E") center/16px 16px no-repeat}.subtle{color:#6B675F;font-size:14px}.note{padding:15px 17px;background:#f5f7f5;border-radius:12px;border-left:4px solid #467e70}.summary{margin-top:30px;padding:20px;background:#f6f6f3;border-radius:12px}.refs{padding:14px;background:#faf9f7;border-radius:12px;font-size:15px}.guide-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.guide-card{padding:18px;border:1px solid #ddd;border-radius:12px;background:#fff;text-decoration:none;color:#282722}.guide-card b{display:block;line-height:1.5}.guide-card small{color:#6B675F;font-size:15px}.footer{font-size:14px;color:#6B675F;margin-top:26px}.crumb{font-size:14px;color:#6B675F;margin-top:15px}dl dt{font-weight:700;margin-top:17px}dl dd{margin:4px 0 16px}@media(max-width:680px){.shell{padding:0 14px 45px}.article{padding:18px 17px;border-radius:12px}h2{font-size:20px}.guide-cards{grid-template-columns:1fr}.site-nav{gap:2px}.site-nav a{font-size:15px;padding:8px 10px}}';
 function layout(title,desc,url,html,structured){
  const absolute=BASE+url;
  const meta='<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>'+esc(title)+' | 댕냥이와 함께</title><meta name="description" content="'+esc(desc)+'"><link rel="canonical" href="'+absolute+'"><meta property="og:type" content="article"><meta property="og:title" content="'+esc(title)+'"><meta property="og:description" content="'+esc(desc)+'"><meta property="og:url" content="'+absolute+'"><meta property="og:image" content="'+BASE+'/og/default.png"><meta property="og:site_name" content="댕냥이와 함께"><meta name="twitter:card" content="summary_large_image">';
@@ -30,11 +31,11 @@ function layout(title,desc,url,html,structured){
 function write(name,html){const p=path.join(OUT,name);fs.mkdirSync(path.dirname(p),{recursive:true});fs.writeFileSync(p,html,"utf8");}
 function getPlaces(g){
  const terms=g.regionKeys||[];
- return all.filter(p=>(!g.categories||g.categories.includes(p.category))&&(!terms.length||terms.some(s=>(p.addr||"").includes(s)))).slice(0,8);
+ return all.filter(p=>indexRule.includeInPetLists(p)&&(!g.categories||g.categories.includes(p.category))&&(!terms.length||terms.some(s=>(p.addr||"").includes(s)))).slice(0,8);
 }
 function itemTable(places){
  const rows=places.map(p=>'<tr><td><a href="/place/'+encodeURIComponent(p.id)+'.html">'+esc(p.name)+'</a></td><td>'+esc(p.addr||"주소 재확인")+'</td><td>'+esc(({stay:"숙박",food:"음식점·카페",park:"산책·놀이터",hospital:"동물병원"})[p.category]||"장소")+'</td><td>업체 확인</td></tr>').join("");
- return '<div class="table-scroll"><table><thead><tr><th>장소명</th><th>주소</th><th>유형</th><th>동반 조건·요금</th></tr></thead><tbody>'+rows+'</tbody></table></div><p class="subtle">표의 장소는 사이트 수록 데이터에서 지역·카테고리 기준으로 추린 예시이며, 추천 순위나 최신 운영 보증이 아닙니다. 자세한 사항은 각 시설에 확인하세요.</p>';
+ return '<div class="table-scroll"><table><thead><tr><th>장소명</th><th>주소</th><th>유형</th><th>동반 조건·요금</th></tr></thead><tbody>'+rows+'</tbody></table></div><p class="subtle">표의 장소는 사이트 수록 데이터에서 지역·카테고리 기준으로 추린 목록이며, 추천 순위나 최신 운영 보증이 아닙니다. 국립공원은 출입 제한, 도립공원·군립공원·자연휴양림은 출입 미확인이라 이 표에 넣지 않습니다. 자세한 사항은 각 시설에 확인하세요.</p>';
 }
 function compareTable(g){
  const opts=[
@@ -304,8 +305,54 @@ function assertPublished(){
  }
  const home=fs.readFileSync(path.join(OUT,"index.html"),"utf8");
  if(!home.includes('href="/guides/"'))problems.push("지도 화면 메뉴에 가이드 링크가 없습니다.");
- const emptyPhrases=(home.match(/불러올 수 없어요|조건에 맞는 장소가 없어요/g)||[]).length;
- if(emptyPhrases)problems.push("홈 서버 HTML에 빈 상태 문구 "+emptyPhrases);
+ const statusPhrase=/불러올 수 없어요|조건에 맞는 장소가 없어요|장소 정보를 불러오는 중|장소 정보를 불러오지 못했어요|장소 목록을 불러오는 중|지도를 불러오지 못했어요|이 브라우저에서 지도를 열 수 없어요|지도 타일을 받지 못했어요|지도 제공처 응답이 늦어요/g;
+ let phraseHits=0, footerMiss=0, maxAds=0, adPages=0, brokenLinks=0;
+ const brokenSample=[];
+ function walkChecks(dir){
+  for(const ent of fs.readdirSync(dir,{withFileTypes:true})){
+   const filename=path.join(dir,ent.name);
+   if(ent.isDirectory()){walkChecks(filename);continue;}
+   if(!ent.name.endsWith(".html"))continue;
+   const html=fs.readFileSync(filename,"utf8");
+   const rel=path.relative(OUT,filename);
+   phraseHits+=(html.match(statusPhrase)||[]).length;
+   if(html.includes("EXAMPLE-DO-NOT-PUBLISH"))problems.push("예시 보강 행이 페이지에 있습니다: "+rel);
+   for(const href of ['href="/about.html"','href="/privacy.html"','href="/contact.html"','href="/terms.html"']){
+    if(!html.includes(href)){footerMiss++;problems.push("푸터 링크 없음 "+href+" "+rel);break;}
+   }
+   const units=(html.match(/<ins\b[^>]*\bclass="adsbygoogle"/g)||[]).length;
+   if(units)adPages++;
+   if(units>maxAds)maxAds=units;
+   if(units>3)problems.push("광고 단위 "+units+"개: "+rel);
+   const visible=html.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi,"");
+   const baseDir=path.dirname(filename);
+   for(const match of visible.matchAll(/(?:href|src)="([^"]+)"/g)){
+    let url=match[1].trim();
+    if(!url||url.startsWith("#")||url.startsWith("//")||/^(https?:|mailto:|tel:|javascript:|data:)/i.test(url))continue;
+    url=url.split("#")[0].split("?")[0];
+    if(!url)continue;
+    let target;
+    try{target=url.startsWith("/")?path.join(OUT,decodeURIComponent(url)):path.resolve(baseDir,decodeURIComponent(url));}
+    catch(error){brokenLinks++;if(brokenSample.length<8)brokenSample.push(rel+" -> "+match[1]);continue;}
+    if(!target.startsWith(OUT)){brokenLinks++;if(brokenSample.length<8)brokenSample.push(rel+" -> "+match[1]);continue;}
+    if(fs.existsSync(target)&&fs.statSync(target).isDirectory())target=path.join(target,"index.html");
+    else if(!path.extname(target)){
+     if(fs.existsSync(target+".html"))target=target+".html";
+     else if(fs.existsSync(path.join(target,"index.html")))target=path.join(target,"index.html");
+    }
+    if(!fs.existsSync(target)){brokenLinks++;if(brokenSample.length<8)brokenSample.push(rel+" -> "+match[1]);}
+   }
+  }
+ }
+ walkChecks(OUT);
+ if(phraseHits)problems.push("서버 HTML 상태 문구 "+phraseHits);
+ if(footerMiss)problems.push("푸터 네 링크가 빠진 페이지 "+footerMiss);
+ if(brokenLinks)problems.push("깨진 내부 링크 "+brokenLinks+" "+brokenSample.join(" | "));
+ if(fs.existsSync(path.join(OUT,"data","enrichment")))problems.push("보강 예시 파일이 dist에 있습니다.");
+ const robots=fs.readFileSync(path.join(OUT,"robots.txt"),"utf8");
+ if(!/^Sitemap:\s+https:\/\/www\.petmap\.kr\/sitemap\.xml\s*$/m.test(robots))problems.push("robots.txt에 Sitemap 줄이 없습니다.");
+ const terms=fs.readFileSync(path.join(OUT,"terms.html"),"utf8");
+ if(!terms.includes("이용 안내"))problems.push("이용안내 페이지가 없습니다.");
  const homePlaceLinks=(home.match(/href="\/place\/[^"]+\.html"/g)||[]).length;
  const homeGuideLinks=(home.match(/href="\/guides\/[^"]+\.html"/g)||[]).length;
  if(homePlaceLinks<30)problems.push("홈 장소 링크 "+homePlaceLinks);
@@ -315,9 +362,27 @@ function assertPublished(){
  if(linkStats.total<100||linkStats.rate<0.9)problems.push("가이드 표 장소명 링크 "+linkStats.linked+"/"+linkStats.total);
  const notFound=fs.readFileSync(path.join(OUT,"404.html"),"utf8");
  if(!notFound.includes('content="noindex, follow"')||/<ins\b[^>]*\bclass="adsbygoogle"/.test(notFound))problems.push("404 페이지 색인 또는 광고 단위");
+ const flagged=places.filter(place=>indexRule.accessNotice(place));
+ const restrictedNames=flagged.filter(place=>indexRule.petAccessStatus(place)==="restricted").map(place=>place.name);
+ const unverifiedNames=flagged.filter(place=>indexRule.petAccessStatus(place)==="unverified").map(place=>place.name);
+ if(restrictedNames.length!==4)problems.push("출입 제한 장소 "+restrictedNames.join(","));
+ if(unverifiedNames.length!==6)problems.push("출입 미확인 장소 "+unverifiedNames.join(","));
+ for(const place of flagged){
+  const page=fs.readFileSync(path.join(OUT,"place",place.id+".html"),"utf8");
+  const notice=indexRule.accessNotice(place);
+  if(!page.includes(notice.heading)||page.includes("반려동물 동반 ·")||!page.includes('content="noindex, follow"'))problems.push("동반 안내로 남은 장소 "+place.id);
+  if(locs.has(BASE+"/place/"+encodeURIComponent(place.id)+".html"))problems.push("사이트맵에 남은 제한 장소 "+place.id);
+ }
+ const guideDir=path.join(OUT,"guides");
+ for(const name of fs.readdirSync(guideDir).filter(item=>item.endsWith(".html"))){
+  const html=fs.readFileSync(path.join(guideDir,name),"utf8");
+  for(const place of flagged){
+   if(html.includes("/place/"+encodeURIComponent(place.id)+".html"))problems.push("가이드가 제한 장소를 동반 목록에 링크 "+name+" "+place.id);
+  }
+ }
  if(problems.length||missingScript){
   throw new Error("[petmap check] "+problems.slice(0,12).join(" | ")+(missingScript?(" missingScript="+missingScript):""));
  }
- console.log("[petmap check] html",htmlCount,"noindex",noindex,"sitemap",locs.size,"place in sitemap",placeLocs.length,"home place links",homePlaceLinks,"home guide links",homeGuideLinks,"guide place-name links",linkStats.linked+"/"+linkStats.total,"guides with /place/",linkStats.guidesWithPlaceLink+"/"+linkStats.guidePages);
+ console.log("[petmap check] html",htmlCount,"noindex",noindex,"sitemap",locs.size,"place in sitemap",placeLocs.length,"home place links",homePlaceLinks,"home guide links",homeGuideLinks,"guide place-name links",linkStats.linked+"/"+linkStats.total,"guides with /place/",linkStats.guidesWithPlaceLink+"/"+linkStats.guidePages,"footer miss",footerMiss,"broken links",brokenLinks,"status phrases",phraseHits,"ad pages",adPages,"max ad units",maxAds);
 }
 assertPublished();
