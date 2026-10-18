@@ -125,6 +125,27 @@ const BLOCKED_HOSTS = [
   "campinghub.kr",
   "pickcare.co.kr",
   "udanax.org",
+  "ojigo.kr",
+  "5gcamp.com",
+  "ktourinfo.com",
+  "ttpk.co.kr",
+  "ok114.co.kr",
+  "bizwiki.co.kr",
+  "winmoa.net",
+  "koreafestar.com",
+  "easehub.co.kr",
+  "newsdreamy.com",
+  "adrything.com",
+  "bowwow.co.kr",
+  "saramin.co.kr",
+  "animalnara.com",
+  "ambitstock.com",
+  "xodaeseae.com",
+  "graega.com",
+  "seksj.co.kr",
+  "laforet.kr",
+  "wjsevin.com",
+  "sprinkle.co.kr",
 ];
 
 function loadPlaces() {
@@ -201,7 +222,8 @@ function directoryPath(raw) {
     if (/\/biz\/[A-Za-z]{2}\d{6,}/i.test(url.pathname)) return true;
     if (/\/travel\/(?:\d+|food\/)/i.test(url.pathname)) return true;
     if (/\/view\/\d+/i.test(url.pathname)) return true;
-    if (/\/franchise\/detail\/|\/facilities\/\d+|\/accommodations\/|\/nature\/n-eco_park|\/tour\/\d+\/\d+|\/camps\/|\/camp\/\d+|listing-camp-detail|\/camping\/\d+\.html|\/lounge\/pickspot\//i.test(url.pathname)) return true;
+    if (/\/franchise\/detail\/|\/facilities\/\d+|\/accommodations\/|\/nature\/n-eco_park|\/tour\/\d+\/\d+|\/camps\/|\/camp\/\d+|listing-camp-detail|\/camping\/\d+\.html|\/lounge\/pickspot\/|\/campsites\/|\/camping\/\d+|bz_info\.php|company-info|\/lodgings\/|\/venues\/\d+|\/feed\/\d+|\/rooms\/\d+|\/news\/tour\/|\/gov\/|\/biz\/\d{5,}|bbs\/board\.php/i.test(pathAndQuery)) return true;
+    if (/[?&](?:uid|c_idx)=\d+/i.test(url.search)) return true;
     if (/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i.test(url.pathname)) return true;
     if (/\/vet\/[^/]+\/[^/]+\//i.test(url.pathname)) return true;
     let decoded = url.pathname;
@@ -721,7 +743,7 @@ function writeOutputs(records, unmatched, notes) {
   }
   fs.writeFileSync(SOURCES_PATH, JSON.stringify(sources, null, 2) + "\n", "utf8");
   fs.writeFileSync(UNMATCHED_PATH, unmatched.join("\n") + (unmatched.length ? "\n" : ""), "utf8");
-  fs.writeFileSync(NOTES_PATH, JSON.stringify({ matched: notes.length, unmatched: unmatched.length, notes }, null, 2) + "\n", "utf8");
+  fs.writeFileSync(NOTES_PATH, JSON.stringify({ matched: records.length, unmatched: unmatched.length, withImage: records.filter((record) => record.poster).length, notes }, null, 2) + "\n", "utf8");
 }
 
 async function main() {
@@ -820,7 +842,15 @@ async function main() {
   records.push(...kept);
   records.sort((a, b) => a.id.localeCompare(b.id));
   unmatched.sort();
-  if (!only) writeOutputs(records, unmatched, notes.filter((note) => note.ok !== false || note.risk));
+  const matchNotes = records.map((record) => ({
+    id: record.id,
+    name: record.name || "",
+    url: record.url,
+    site: record.site,
+    how: record.how || "",
+    risk: record.risk || "",
+  }));
+  if (!only) writeOutputs(records, unmatched, matchNotes);
   else {
     console.log(JSON.stringify({ records, unmatched, notes }, null, 2));
     return;
@@ -836,4 +866,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = { decide, blockedHost, canonicalPage, nameHit, addressHit, selfCheck };
+module.exports = { decide, blockedHost, directoryPath, copiesCatalogId, canonicalPage, nameHit, addressHit, selfCheck };
