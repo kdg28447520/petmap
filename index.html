@@ -687,6 +687,24 @@
         font-weight: 500;
         line-height: 1.55;
       }
+      .pd-official { margin: 14px 0 0; }
+      .pd-official img {
+        display: block;
+        width: 100%;
+        height: auto;
+        aspect-ratio: 16 / 9;
+        object-fit: cover;
+        border-radius: var(--radius);
+        border: 1px solid var(--line);
+        background: var(--surface-2);
+      }
+      .pd-photo-credit {
+        margin: 6px 2px 0;
+        color: var(--ink-3);
+        font-size: 12px;
+        font-weight: 600;
+        line-height: 1.45;
+      }
       .pd-overview {
         margin: 14px 0 0;
         color: var(--ink);
@@ -1484,6 +1502,7 @@
         }
 
         var PLACES = [];
+        var OFFICIAL = {};
         var REPORT_EMAIL = "__REPORT_EMAIL__";
         /* 유형은 하나만 고른다. URL의 type 값은 짧은 슬러그(vet 등)로 둔다. */
         var TYPE_ORDER = ["food", "hospital", "stay", "park"];
@@ -1610,6 +1629,14 @@
           var rows = [];
           parts.forEach(function(p){ rows = rows.concat(p); });
           return rows;
+        }).then(function (rows) {
+          return fetch("/posters/places/SOURCES.json").then(function (r) {
+            if (!r.ok) return {};
+            return r.json();
+          }).catch(function () { return {}; }).then(function (official) {
+            OFFICIAL = official && typeof official === "object" ? official : {};
+            return rows;
+          });
         }).then(function(rows){
             var seenId = {};
             PLACES = rows.filter(function (p) {
@@ -2261,13 +2288,17 @@
               ? '<a class="call-btn call-btn--emg" href="' + esc(telHref(p)) + '">지금 전화하기</a>'
               : '<a class="call-btn" href="' + esc(telHref(p)) + '">전화 걸기</a>');
           }
-          if (p.homepage) {
+          var off = OFFICIAL[p.id];
+          var offUrl = off && /^https?:\/\//.test(off.url) ? off.url : "";
+          var sameHome = offUrl && p.homepage && offUrl.replace(/\/$/, "") === p.homepage.replace(/\/$/, "");
+          if (p.homepage && !(sameHome && p.source !== "gocamping")) {
             btns.push('<a class="site-btn" href="' + esc(p.homepage) + '" target="_blank" rel="noopener">' + (p.source === "gocamping" ? "고캠핑 상세 보기" : "공식 사이트") + "</a>");
-          } else {
+          } else if (!p.homepage && !offUrl) {
             /* 홈페이지가 없는 곳은 공식사이트 대신 길찾기·주소복사를 우선 배치 */
             btns.push('<button class="site-btn dir-open" type="button">길찾기</button>');
             if (p.address) btns.push('<button class="site-btn pd-copy" type="button">주소 복사</button>');
           }
+          if (offUrl) btns.push('<a class="site-btn" href="' + esc(offUrl) + '" target="_blank" rel="noopener">공식 홈페이지/블로그</a>');
           var actions = btns.length ? '<div class="pd-actions">' + btns.join("") + "</div>" : "";
           var detailNotice = accessNoticeOf(p);
           var detailBadge = detailNotice
@@ -2278,9 +2309,13 @@
             : (isHospital
                 ? '<p class="pd-warn">야간·응급 진료 가능 여부는 방문 전 반드시 전화로 확인하세요. 응급 상황이면 출발 전에 전화로 증상을 알리고 안내를 받으세요.</p>'
                 : '<p class="pd-warn">공공데이터에 등록된 정보 기준이라 실제 운영 현황과 다를 수 있어요. 방문 전 반려동물 동반 가능 여부를 해당 업체에 꼭 확인하세요.</p>');
+          var photoHtml = off && off.poster
+            ? '<figure class="pd-official"><img src="/posters/places/' + encodeURIComponent(p.id) + '.webp" width="480" height="270" alt="' + esc(p.name) + '"><figcaption class="pd-photo-credit">이미지 출처: ' + esc(off.site || "") + "</figcaption></figure>"
+            : "";
           pageDetailEl.innerHTML =
             '<div class="pd-inner">' +
               '<button class="pd-back" type="button" id="pdBack">← 목록으로 돌아가기</button>' +
+              photoHtml +
               '<h2 class="pd-title">' + esc(p.name) + "</h2>" +
               detailBadge +
               detailWarn +

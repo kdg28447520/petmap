@@ -93,6 +93,23 @@ function makeMeta({ title, description, url, image, alt, type }) {
     `<meta name="twitter:image" content="${escapeHtml(image)}">`,
   ].join("\n    ");
 }
+function sameLink(a, b) {
+  try { return new URL(a).href.replace(/\/$/, "") === new URL(b).href.replace(/\/$/, ""); }
+  catch (_) { return false; }
+}
+function loadOfficialMap() {
+  const file = path.join(ROOT, "posters", "places", "SOURCES.json");
+  if (!fs.existsSync(file)) return {};
+  const parsed = JSON.parse(fs.readFileSync(file, "utf8"));
+  if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) throw new Error("posters/places/SOURCES.json 형식이 아닙니다.");
+  const map = {};
+  for (const [id, row] of Object.entries(parsed)) {
+    if (!row || typeof row.url !== "string" || !/^https?:\/\//i.test(row.url)) continue;
+    const poster = path.join(ROOT, "posters", "places", id + ".webp");
+    map[id] = { url: row.url, site: String(row.site || ""), image: String(row.image || ""), poster: fs.existsSync(poster) };
+  }
+  return map;
+}
 function phoneHref(phone) {
   const digits = String(phone || "").replace(/\D/g, "");
   return digits.length >= 9 ? "tel:" + digits : "";
@@ -107,7 +124,8 @@ function jsonLdFor(place) {
     geo: { "@type": "GeoCoordinates", latitude: place.lat, longitude: place.lng },
   };
   if (place.tel) data.telephone = place.tel;
-  if (place.homepage) data.url = place.homepage;
+  if (place.official && place.official.url) data.url = place.official.url;
+  else if (place.homepage) data.url = place.homepage;
   if (place.hours) data.additionalProperty = { "@type": "PropertyValue", name: "진료시간", value: place.hours };
   if (place.tour && tourapi.isUsablePhoto(place.tour.image)) data.image = place.tour.image.url;
   return safeJson(data);
@@ -530,10 +548,16 @@ function crumbHtml(place) {
 function actionButtons(place, options) {
   const tel = phoneHref(place.tel);
   const phone = displayValue(place.tel);
-  const official = displayValue(place.homepage);
+  const homepage = displayValue(place.homepage);
+  const verified = place.official && place.official.url ? place.official : null;
+  const sameOfficial = verified && homepage && sameLink(verified.url, homepage);
   const mapUrl = `https://map.kakao.com/link/to/${encodeURIComponent(place.name)},${place.lat},${place.lng}`;
   const buttons = [`<a class="pd-btn pri" href="${escapeHtml(mapUrl)}" target="_blank" rel="noopener">${strokeIcon("pin", 18)}길찾기</a>`];
-  if (official) buttons.push(`<a class="pd-btn" href="${escapeHtml(official)}" target="_blank" rel="noopener">${strokeIcon("external", 18)}공식 사이트</a>`);
+  if (homepage && !(sameOfficial && place.source !== "gocamping")) {
+    const label = place.source === "gocamping" ? "고캠핑 상세 보기" : "공식 사이트";
+    buttons.push(`<a class="pd-btn" href="${escapeHtml(homepage)}" target="_blank" rel="noopener">${strokeIcon("external", 18)}${label}</a>`);
+  }
+  if (verified) buttons.push(`<a class="pd-btn" href="${escapeHtml(verified.url)}" target="_blank" rel="noopener">${strokeIcon("external", 18)}공식 홈페이지/블로그</a>`);
   if (tel && phone) buttons.push(`<a class="pd-btn" href="${escapeHtml(tel)}">${strokeIcon("phone", 18)}<span>전화</span></a>`);
   if (options && options.stacked) {
     const rest = buttons.slice(1);
@@ -688,6 +712,7 @@ function makePlacePage(place, css, updatedAt) {
   const url = `${BASE_URL}/place/${encodeURIComponent(place.id)}.html`;
   const image = `${BASE_URL}/og/${cat.image}`;
   const isHospital = place.category === "hospital";
+  const official = place.official && place.official.url ? place.official : null;
   const search = tourapi.mapLinks(place);
   const detail = place.tour || null;
   const overview = detail ? displayValue(detail.overview) : "";
@@ -703,7 +728,10 @@ function makePlacePage(place, css, updatedAt) {
     hours ? `<div class="pd-row"><dt>${isHospital ? "진료시간" : "운영시간"}</dt><dd>${escapeHtml(hours)}</dd></div>` : "",
     source ? `<div class="pd-row"><dt>출처</dt><dd>${escapeHtml(source)}</dd></div>` : "",
   ].filter(Boolean).join("\n");
-  const photoHtml = photo ? photoFigureHtml(photo, place.name) : staticMapHtml(place);
+  const officialPhoto = official && official.poster
+    ? `<figure class="pd-official"><img src="/posters/places/${encodeURIComponent(place.id)}.webp" width="480" height="270" alt="${escapeHtml(place.name)}" loading="lazy" decoding="async"><figcaption class="pd-photo-credit">이미지 출처: ${escapeHtml(official.site || "")}</figcaption></figure>`
+    : "";
+  const photoHtml = officialPhoto || (photo ? photoFigureHtml(photo, place.name) : staticMapHtml(place));
   const overviewHtml = notice ? "" : (overview ? `<p class="pd-overview">${escapeHtml(overview)}</p>` : "");
   const enrich = notice ? "" : enrichmentHtml(place);
   const correction = enrich ? "" : `<p class="pd-correct">${correctionButton(place)}</p>`;
@@ -1008,6 +1036,7 @@ function copyAssets() {
     fs.mkdirSync(path.join(OUT, "fonts"), { recursive: true });
     fs.copyFileSync(from, path.join(OUT, "fonts", file));
   }
+  if (fs.existsSync(path.join(ROOT, "posters"))) fs.cpSync(path.join(ROOT, "posters"), path.join(OUT, "posters"), { recursive: true });
 }
 function mainCss(html) {
   const blocks = [...html.matchAll(/<style\b[^>]*>([\s\S]*?)<\/style>/gi)];
@@ -1120,9 +1149,11 @@ async function build() {
   fs.mkdirSync(path.join(OUT, "place", "maps"), { recursive: true });
   fs.writeFileSync(path.join(OUT, "place", "place.css"), css, "utf8");
   catalogPlaces = valid;
+  const officialMap = loadOfficialMap();
   const indexablePlaces = [];
   let thinCount = 0;
   for (const place of valid) {
+    place.official = officialMap[place.id] || null;
     const thin = isThinPlace(place);
     if (thin) thinCount += 1;
     else indexablePlaces.push(place);
@@ -1187,6 +1218,21 @@ async function build() {
   if (sampleHtml.includes("예시") || sampleHtml.includes("pd-photo-paw") || !sampleHtml.includes('class="pd-snap"') || !fs.existsSync(path.join(OUT, "place", "maps", "kbizin-212.svg"))) {
     throw new Error("장소 페이지에 예시 값이나 발바닥 플레이스홀더가 있습니다.");
   }
+  let officialPages = 0;
+  let officialImages = 0;
+  for (const [id, row] of Object.entries(officialMap)) {
+    const page = path.join(OUT, "place", id + ".html");
+    if (!fs.existsSync(page)) throw new Error("공식 출처가 있는 장소 페이지가 없습니다: " + id);
+    const html = fs.readFileSync(page, "utf8");
+    if (!html.includes("공식 홈페이지/블로그") || !html.includes(row.url)) throw new Error("공식 홈페이지/블로그 버튼이 없습니다: " + id);
+    officialPages += 1;
+    if (row.poster) {
+      if (!html.includes("이미지 출처: " + row.site) || !html.includes("/posters/places/" + encodeURIComponent(id) + ".webp")) throw new Error("공식 이미지 캡션이 없습니다: " + id);
+      if (!fs.existsSync(path.join(OUT, "posters", "places", id + ".webp"))) throw new Error("포스터 파일이 배포물에 없습니다: " + id);
+      officialImages += 1;
+    }
+  }
+  log(`공식 홈페이지/블로그 ${officialPages}곳, 대표 이미지 ${officialImages}곳`);
   if (!sampleHtml.includes('name="robots" content="noindex, follow"')) throw new Error("정보가 얇은 장소가 색인 대상이 되었습니다.");
   if (/<ins\b[^>]*\bclass="adsbygoogle"/.test(sampleHtml)) throw new Error("noindex 샘플 장소에 광고 단위가 있습니다.");
   log(`전체 HTML: ${htmlCount}, OG PNG: 5, 장소 반영 전 sitemap URL: ${sitemapUrls.length}`);
