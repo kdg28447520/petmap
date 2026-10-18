@@ -1,0 +1,2407 @@
+{
+  "matched": 300,
+  "unmatched": 1143,
+  "withImage": 248,
+  "notes": [
+    {
+      "id": "gocamp-109",
+      "name": "봉좌마을 캠핑장",
+      "url": "http://phbj.cafe24.com/yeyak",
+      "site": "phbj.cafe24.com",
+      "how": "tokens+phone",
+      "risk": ""
+    },
+    {
+      "id": "gocamp-119",
+      "name": "산과 벗 캠핑장",
+      "url": "https://mountainandcompanioncamping.co.kr/pages/history",
+      "site": "mountainandcompanioncamping.co.kr",
+      "how": "full+road+number",
+      "risk": ""
+    },
+    {
+      "id": "gocamp-12",
+      "name": "거목 글램핑",
+      "url": "https://blog.naver.com/geomokjeong_",
+      "site": "네이버 블로그",
+      "how": "full+road+number",
+      "risk": "blog"
+    },
+    {
+      "id": "gocamp-122",
+      "name": "화금지 숲속캠핑장",
+      "url": "https://cdforest.campingt.me/3941/home/index",
+      "site": "cdforest.campingt.me",
+      "how": "full+phone",
+      "risk": "platform"
+    },
+    {
+      "id": "gocamp-141",
+      "name": "도지캠핑",
+      "url": "https://dojipet.campingt.me/3944/home/index",
+      "site": "dojipet.campingt.me",
+      "how": "full+phone",
+      "risk": "platform"
+    },
+    {
+      "id": "gocamp-148",
+      "name": "더열린캠핑장",
+      "url": "https://cafe.naver.com/open5018",
+      "site": "네이버 카페",
+      "how": "full+phone",
+      "risk": "blog"
+    },
+    {
+      "id": "gocamp-149",
+      "name": "포근마루캠핑장",
+      "url": "https://www.marucamp.kr/",
+      "site": "marucamp.kr",
+      "how": "full+road+number",
+      "risk": ""
+    },
+    {
+      "id": "gocamp-153",
+      "name": "청산리오토캠핑장",
+      "url": "https://cafe.naver.com/konan0713",
+      "site": "네이버 카페",
+      "how": "full+phone",
+      "risk": "blog,no-image"
+    },
+    {
+      "id": "gocamp-160",
+      "name": "소프(SOPH)",
+      "url": "https://www.soph.co.kr/",
+      "site": "soph.co.kr",
+      "how": "full+phone",
+      "risk": ""
+    },
+    {
+      "id": "gocamp-170",
+      "name": "광교호수공원 가족캠핑장",
+      "url": "https://yt.suwon.go.kr/_pcfg/?menuid=sub09090204",
+      "site": "yt.suwon.go.kr",
+      "how": "full+phone",
+      "risk": "public-body"
+    },
+    {
+      "id": "gocamp-180",
+      "name": "싱글벙글캠핑장",
+      "url": "https://cafe.naver.com/smilecamping",
+      "site": "네이버 카페",
+      "how": "full+phone",
+      "risk": "blog"
+    },
+    {
+      "id": "gocamp-185",
+      "name": "구릉지캠핑장",
+      "url": "https://blog.naver.com/hill2-425",
+      "site": "네이버 블로그",
+      "how": "full+road+number",
+      "risk": "blog"
+    },
+    {
+      "id": "gocamp-186",
+      "name": "충북대학교 천문대천문체험학교",
+      "url": "http://cbnuo.chungbuk.ac.kr/cbnuo/activity/act_facility.php",
+      "site": "cbnuo.chungbuk.ac.kr",
+      "how": "brand+phone",
+      "risk": "partial-name"
+    },
+    {
+      "id": "gocamp-188",
+      "name": "아스트로마스 캠핑랜드",
+      "url": "https://astromars.letsnowgo.com/v2/deploy?group_key=1",
+      "site": "astromars.letsnowgo.com",
+      "how": "full+road+number",
+      "risk": ""
+    },
+    {
+      "id": "gocamp-196",
+      "name": "캠프빌리지",
+      "url": "https://campvillage.co.kr/contact.html",
+      "site": "campvillage.co.kr",
+      "how": "full+phone",
+      "risk": ""
+    },
+    {
+      "id": "gocamp-208",
+      "name": "벳소캠프",
+      "url": "https://cafe.naver.com/betsocamp",
+      "site": "네이버 카페",
+      "how": "full+road+number",
+      "risk": "blog"
+    },
+    {
+      "id": "gocamp-213",
+      "name": "캠프다온",
+      "url": "https://cafe.naver.com/campdaon",
+      "site": "네이버 카페",
+      "how": "full+road+number",
+      "risk": "blog"
+    },
+    {
+      "id": "gocamp-24",
+      "name": "충주 루루네 오토캠핑장",
+      "url": "https://blog.naver.com/rurunecamping",
+      "site": "네이버 블로그",
+      "how": "full+phone",
+      "risk": "blog"
+    },
+    {
+      "id": "gocamp-245",
+      "name": "파머스글램핑",
+      "url": "https://www.sanghafarm.co.kr/hotel/room/glamping.jsp",
+      "site": "sanghafarm.co.kr",
+      "how": "full+road+number",
+      "risk": "no-image"
+    },
+    {
+      "id": "gocamp-25",
+      "name": "산음 해피데이 캠핑장",
+      "url": "https://blog.naver.com/candy31511",
+      "site": "네이버 블로그",
+      "how": "full+road+number",
+      "risk": "blog"
+    },
+    {
+      "id": "gocamp-259",
+      "name": "자연애캠핑장",
+      "url": "https://naturelove.campingt.me/3967/home/index",
+      "site": "naturelove.campingt.me",
+      "how": "full+road+number",
+      "risk": "platform"
+    },
+    {
+      "id": "gocamp-260",
+      "name": "천리안 캠프힐",
+      "url": "https://cafe.naver.com/chunrian",
+      "site": "네이버 카페",
+      "how": "full+phone",
+      "risk": "blog"
+    },
+    {
+      "id": "gocamp-262",
+      "name": "청도 힐링 오토캠핑장",
+      "url": "https://cafe.naver.com/yongbau",
+      "site": "네이버 카페",
+      "how": "full+phone",
+      "risk": "blog"
+    },
+    {
+      "id": "gocamp-266",
+      "name": "홀리데이캠프캠핑장",
+      "url": "https://blog.naver.com/holidaycamp1",
+      "site": "네이버 블로그",
+      "how": "full+phone",
+      "risk": "blog"
+    },
+    {
+      "id": "gocamp-271",
+      "name": "소나무숲아래",
+      "url": "https://www.chungju.go.kr/www/contents.do?key=2853",
+      "site": "chungju.go.kr",
+      "how": "full+road+number",
+      "risk": "public-body"
+    },
+    {
+      "id": "gocamp-278",
+      "name": "산내별빛오토캠핑장",
+      "url": "https://www.starlightcamp.kr/",
+      "site": "starlightcamp.kr",
+      "how": "full+phone",
+      "risk": ""
+    },
+    {
+      "id": "gocamp-279",
+      "name": "성주봉자연휴양림 야영장",
+      "url": "https://www.foresttrip.go.kr/pot/rm/fa/selectCmpgrArmpListView.do?hmpgId=ID02030039&menuId=002002002",
+      "site": "foresttrip.go.kr",
+      "how": "full+phone",
+      "risk": "public-body,no-image,shared-domain"
+    },
+    {
+      "id": "gocamp-296",
+      "name": "명도그 오토캠핑장",
+      "url": "http://www.xn--6e0b3jw2e9se8plc8r9ocp2uqrgbkk1ka.com/",
+      "site": "xn--6e0b3jw2e9se8plc8r9ocp2uqrgbkk1ka.com",
+      "how": "full+phone",
+      "risk": ""
+    },
+    {
+      "id": "gocamp-40",
+      "name": "진도 카멜리아 힐즈 오토캠핑장",
+      "url": "http://c-camping.co.kr/",
+      "site": "c-camping.co.kr",
+      "how": "full+road+number",
+      "risk": ""
+    },
+    {
+      "id": "gocamp-51",
+      "name": "양지생태마을캠핑장",
+      "url": "https://cafe.naver.com/sunnycamp",
+      "site": "네이버 카페",
+      "how": "full+phone",
+      "risk": "blog"
+    },
+    {
+      "id": "gocamp-53",
+      "name": "베이스 캠프",
+      "url": "https://basecamp.campingt.me/3955/home/index",
+      "site": "basecamp.campingt.me",
+      "how": "full+road+number",
+      "risk": "platform"
+    },
+    {
+      "id": "gocamp-56",
+      "name": "파라다이스 캠핑장",
+      "url": "https://paradise.campingt.me/3973/home/index",
+      "site": "paradise.campingt.me",
+      "how": "full+road+number",
+      "risk": "platform"
+    },
+    {
+      "id": "gocamp-58",
+      "name": "에제르파크 바베큐장",
+      "url": "https://ezerpark.letsnowgo.com/v2/deploy",
+      "site": "ezerpark.letsnowgo.com",
+      "how": "full+phone",
+      "risk": ""
+    },
+    {
+      "id": "gocamp-6",
+      "name": "용암산성오토캠핑장",
+      "url": "https://donggucamp.co.kr/",
+      "site": "donggucamp.co.kr",
+      "how": "full+road+number",
+      "risk": ""
+    },
+    {
+      "id": "gocamp-62",
+      "name": "산수향 야영장",
+      "url": "https://blog.naver.com/w40211",
+      "site": "네이버 블로그",
+      "how": "full+road+number",
+      "risk": "blog"
+    },
+    {
+      "id": "gocamp-64",
+      "name": "패밀리오토캠핑장(한국전통문화체험학교)",
+      "url": "https://blog.naver.com/woorii2985",
+      "site": "네이버 블로그",
+      "how": "base+road+number",
+      "risk": "blog"
+    },
+    {
+      "id": "gocamp-67",
+      "name": "하늘연캠핑장",
+      "url": "https://cafe.naver.com/skystarcamp",
+      "site": "네이버 카페",
+      "how": "full+road+number",
+      "risk": "blog"
+    },
+    {
+      "id": "gocamp-85",
+      "name": "스테이고가수",
+      "url": "https://blog.naver.com/stay_gogasu",
+      "site": "네이버 블로그",
+      "how": "full+phone",
+      "risk": "blog"
+    },
+    {
+      "id": "gocamp-89",
+      "name": "가야산오토캠핑장",
+      "url": "https://sj.go.kr/gayasan/camping/main.do",
+      "site": "sj.go.kr",
+      "how": "full+phone",
+      "risk": "public-body"
+    },
+    {
+      "id": "gocamp-92",
+      "name": "국립화천숲속야영장",
+      "url": "https://www.foresttrip.go.kr/indvz/main.do?hmpgId=0116",
+      "site": "foresttrip.go.kr",
+      "how": "full+phone",
+      "risk": "public-body,shared-domain"
+    },
+    {
+      "id": "h24-301000001020200001",
+      "name": "웰튼동물의료센터",
+      "url": "https://blog.naver.com/weltonamc2",
+      "site": "네이버 블로그",
+      "how": "full+phone",
+      "risk": "blog"
+    },
+    {
+      "id": "h24-301000001020210002",
+      "name": "에스디(SD)동물의료센터,서울",
+      "url": "https://sdamc.co.kr/",
+      "site": "sdamc.co.kr",
+      "how": "tokens+phone",
+      "risk": ""
+    },
+    {
+      "id": "h24-302000001020160002",
+      "name": "24시 시유동물메디컬센터",
+      "url": "https://blog.naver.com/seeu_amc",
+      "site": "네이버 블로그",
+      "how": "full+phone",
+      "risk": "blog"
+    },
+    {
+      "id": "h24-302000001020170002",
+      "name": "더힐동물의료센터",
+      "url": "https://blog.naver.com/thehillvmc",
+      "site": "네이버 블로그",
+      "how": "full+phone",
+      "risk": "blog"
+    },
+    {
+      "id": "h24-303000001020070002",
+      "name": "24시센트럴동물메디컬센터",
+      "url": "http://www.xn--24-qp6i57v43be1or8g.com/",
+      "site": "xn--24-qp6i57v43be1or8g.com",
+      "how": "full+phone",
+      "risk": ""
+    },
+    {
+      "id": "h24-305000001020130004",
+      "name": "VIP동물의료센터 동대문점",
+      "url": "https://www.vipah.co.kr/kr/",
+      "site": "vipah.co.kr",
+      "how": "brand+road+number",
+      "risk": "partial-name,shared-domain"
+    },
+    {
+      "id": "h24-305000001020160001",
+      "name": "스마트동물병원",
+      "url": "https://blog.naver.com/smartddm",
+      "site": "네이버 블로그",
+      "how": "full+phone",
+      "risk": "blog"
+    },
+    {
+      "id": "h24-307000001020090001",
+      "name": "VIP 동물의료센터",
+      "url": "https://www.vipah.co.kr/kr/",
+      "site": "vipah.co.kr",
+      "how": "full+road+number",
+      "risk": "shared-domain"
+    },
+    {
+      "id": "h24-308000001020190001",
+      "name": "24시루시드동물메디컬센터",
+      "url": "https://blog.naver.com/lucidamc",
+      "site": "네이버 블로그",
+      "how": "full+phone",
+      "risk": "blog"
+    },
+    {
+      "id": "h24-309000001020230001",
+      "name": "24시 딜라이트 동물의료센터",
+      "url": "http://delightamc.com/",
+      "site": "delightamc.com",
+      "how": "full+phone",
+      "risk": ""
+    },
+    {
+      "id": "h24-310000001020130003",
+      "name": "노원N동물의료센터",
+      "url": "https://www.namc.co.kr/",
+      "site": "namc.co.kr",
+      "how": "full+phone",
+      "risk": ""
+    },
+    {
+      "id": "h24-311000001020130001",
+      "name": "24시스마트동물메디컬센터",
+      "url": "https://blog.naver.com/eosksh",
+      "site": "네이버 블로그",
+      "how": "full+phone",
+      "risk": "blog"
+    },
+    {
+      "id": "h24-311000001020210001",
+      "name": "24시예담동물의료센터",
+      "url": "https://blog.naver.com/24yedamamc",
+      "site": "네이버 블로그",
+      "how": "full+phone",
+      "risk": "blog"
+    },
+    {
+      "id": "h24-311000001020260001",
+      "name": "동물병원 산책: 내과/외과/재활센터",
+      "url": "https://blog.naver.com/walkingamc",
+      "site": "네이버 블로그",
+      "how": "full+phone",
+      "risk": "blog"
+    },
+    {
+      "id": "h24-312000001020240002",
+      "name": "홍제24시모아동물의료센터",
+      "url": "https://blog.naver.com/moa24hong",
+      "site": "네이버 블로그",
+      "how": "full+phone",
+      "risk": "blog"
+    },
+    {
+      "id": "h24-313000001020090001",
+      "name": "웨스턴 동물의료센터",
+      "url": "http://westernamc.com/",
+      "site": "westernamc.com",
+      "how": "full+phone",
+      "risk": ""
+    },
+    {
+      "id": "h24-313000001020100003",
+      "name": "로얄동물메디컬센터w",
+      "url": "https://www.animalw.co.kr/",
+      "site": "animalw.co.kr",
+      "how": "full+phone",
+      "risk": ""
+    },
+    {
+      "id": "h24-314000001020190002",
+      "name": "우리들동물메디컬센터",
+      "url": "http://wooridleclinic.kr/",
+      "site": "wooridleclinic.kr",
+      "how": "full+phone",
+      "risk": ""
+    },
+    {
+      "id": "h24-314000001020220001",
+      "name": "24시월드펫동물메디컬센터",
+      "url": "https://24worldpet.com/",
+      "site": "24worldpet.com",
+      "how": "full+phone",
+      "risk": ""
+    },
+    {
+      "id": "h24-314000001020230004",
+      "name": "24시 로운동물의료센터",
+      "url": "https://blog.naver.com/rounamc1",
+      "site": "네이버 블로그",
+      "how": "full+phone",
+      "risk": "blog"
+    },
+    {
+      "id": "h24-315000001020040003",
+      "name": "24시아프리카동물메디컬센터",
+      "url": "https://blog.naver.com/africaamc",
+      "site": "네이버 블로그",
+      "how": "full+road+number",
+      "risk": "blog"
+    },
+    {
+      "id": "h24-315000001020140004",
+      "name": "강서YD동물의료센터",
+      "url": "https://ydamc.co.kr/",
+      "site": "ydamc.co.kr",
+      "how": "full+phone",
+      "risk": ""
+    },
+    {
+      "id": "h24-315000001020200001",
+      "name": "마곡M동물의료센터",
+      "url": "https://blog.naver.com/mgmamc21",
+      "site": "네이버 블로그",
+      "how": "full+road+number",
+      "risk": "blog"
+    },
+    {
+      "id": "h24-315000001020220001",
+      "name": "24시연동물의료센터",
+      "url": "https://www.yeonamc.com/",
+      "site": "yeonamc.com",
+      "how": "full+phone",
+      "risk": ""
+    },
+    {
+      "id": "h24-315000001020230001",
+      "name": "율동물의료센터",
+      "url": "https://blog.naver.com/yulamc_",
+      "site": "네이버 블로그",
+      "how": "full+phone",
+      "risk": "blog"
+    },
+    {
+      "id": "h24-316000001020210001",
+      "name": "24시 신도림S동물의료센터",
+      "url": "https://blog.ssamc24.com/",
+      "site": "blog.ssamc24.com",
+      "how": "full+phone",
+      "risk": ""
+    },
+    {
+      "id": "h24-316000001020240001",
+      "name": "메리트원 동물의료센터",
+      "url": "https://blog.naver.com/24merit1",
+      "site": "네이버 블로그",
+      "how": "full+phone",
+      "risk": "blog"
+    },
+    {
+      "id": "h24-317000001020130001",
+      "name": "우리동물메디컬센터",
+      "url": "https://blog.naver.com/gcwoori",
+      "site": "네이버 블로그",
+      "how": "full+phone",
+      "risk": "blog"
+    },
+    {
+      "id": "h24-318000001020160001",
+      "name": "경인동물의료센터",
+      "url": "https://giamc.com/",
+      "site": "giamc.com",
+      "how": "full+phone",
+      "risk": ""
+    },
+    {
+      "id": "h24-318000001020180004",
+      "name": "24시 수 동물메디컬센터",
+      "url": "https://www.sooamc.com/",
+      "site": "sooamc.com",
+      "how": "full+phone",
+      "risk": ""
+    },
+    {
+      "id": "h24-318000001020250001",
+      "name": "동물의료센터24인치",
+      "url": "https://amc24in.com/",
+      "site": "amc24in.com",
+      "how": "full+phone",
+      "risk": ""
+    },
+    {
+      "id": "h24-319000001020250002",
+      "name": "24시 데이원 동물의료센터",
+      "url": "https://24dayone.com/",
+      "site": "24dayone.com",
+      "how": "full+phone",
+      "risk": ""
+    },
+    {
+      "id": "h24-320000001020190001",
+      "name": "24시 굿케어동물의료센터",
+      "url": "https://blog.naver.com/goodcare24",
+      "site": "네이버 블로그",
+      "how": "full+phone",
+      "risk": "blog"
+    },
+    {
+      "id": "h24-321000001020150001",
+      "name": "헬릭스동물메디컬센터",
+      "url": "https://www.helix-amc.com/",
+      "site": "helix-amc.com",
+      "how": "full+phone",
+      "risk": "shared-domain"
+    },
+    {
+      "id": "h24-321000001020160003",
+      "name": "VIP동물의료센터 서초동작점",
+      "url": "https://www.vipah.co.kr/kr/",
+      "site": "vipah.co.kr",
+      "how": "brand+road+number",
+      "risk": "partial-name,shared-domain"
+    },
+    {
+      "id": "h24-321000001020250005",
+      "name": "청담 아이윌 동물병원",
+      "url": "https://blog.naver.com/cnukong",
+      "site": "네이버 블로그",
+      "how": "tokens+phone",
+      "risk": "blog,shared-domain"
+    },
+    {
+      "id": "h24-322000001020090002",
+      "name": "예은동물의료센터",
+      "url": "https://www.yeamc.com/",
+      "site": "yeamc.com",
+      "how": "full+phone",
+      "risk": ""
+    },
+    {
+      "id": "h24-322000001020120016",
+      "name": "백산동물병원",
+      "url": "https://blog.naver.com/baeksan_cat",
+      "site": "네이버 블로그",
+      "how": "full+road+number",
+      "risk": "blog"
+    },
+    {
+      "id": "h24-322000001020120018",
+      "name": "래이동물의료센터",
+      "url": "https://blog.naver.com/vetjoe",
+      "site": "네이버 블로그",
+      "how": "full+phone",
+      "risk": "blog"
+    },
+    {
+      "id": "h24-322000001020130003",
+      "name": "24시 청담우리 동물병원",
+      "url": "https://blog.naver.com/cdwoori",
+      "site": "네이버 블로그",
+      "how": "tokens+phone",
+      "risk": "blog"
+    },
+    {
+      "id": "h24-322000001020150004",
+      "name": "치료멍멍동물병원",
+      "url": "https://7500clinic.com/",
+      "site": "7500clinic.com",
+      "how": "full+phone",
+      "risk": ""
+    },
+    {
+      "id": "h24-322000001020210002",
+      "name": "VIP동물의료센터 청담점",
+      "url": "https://www.vipah.co.kr/kr/",
+      "site": "vipah.co.kr",
+      "how": "full+road+number",
+      "risk": "shared-domain"
+    },
+    {
+      "id": "h24-322000001020250006",
+      "name": "온숲 영상·외과 동물의료센터",
+      "url": "https://blog.naver.com/onsoop24",
+      "site": "네이버 블로그",
+      "how": "tokens+road+number",
+      "risk": "blog"
+    },
+    {
+      "id": "h24-323000001020130001",
+      "name": "24시잠실ON동물의료센터",
+      "url": "http://www.24onamc.com/",
+      "site": "24onamc.com",
+      "how": "full+phone",
+      "risk": ""
+    },
+    {
+      "id": "h24-323000001020160004",
+      "name": "송파바로동물병원",
+      "url": "https://blog.naver.com/baroah",
+      "site": "네이버 블로그",
+      "how": "full+phone",
+      "risk": "blog"
+    },
+    {
+      "id": "h24-323000001020180010",
+      "name": "샤인동물메디컬센터",
+      "url": "https://blog.naver.com/shineamc",
+      "site": "네이버 블로그",
+      "how": "full+phone",
+      "risk": "blog"
+    },
+    {
+      "id": "h24-323000001020220007",
+      "name": "24시 스탠다드 동물의료센터",
+      "url": "https://blog.naver.com/24standardamc",
+      "site": "네이버 블로그",
+      "how": "full+phone",
+      "risk": "blog"
+    },
+    {
+      "id": "h24-323000001020220008",
+      "name": "리베동물메디컬센터",
+      "url": "https://www.liebeamc.com/",
+      "site": "liebeamc.com",
+      "how": "full+phone",
+      "risk": ""
+    },
+    {
+      "id": "h24-323000001020240001",
+      "name": "리움동물의료센터",
+      "url": "https://lieumamc.co.kr/",
+      "site": "lieumamc.co.kr",
+      "how": "full+phone",
+      "risk": ""
+    },
+    {
+      "id": "h24-323000001020250003",
+      "name": "페토피아 동물병원",
+      "url": "https://blog.naver.com/petopi",
+      "site": "네이버 블로그",
+      "how": "full+road+number",
+      "risk": "blog"
+    },
+    {
+      "id": "h24-324000001020210002",
+      "name": "24시 로얄동물메디컬센터 강동",
+      "url": "http://royalamcgd.com/",
+      "site": "royalamcgd.com",
+      "how": "full+phone",
+      "risk": ""
+    },
+    {
+      "id": "h24-324000001020220001",
+      "name": "더파크동물의료센터",
+      "url": "https://blog.naver.com/24thepark24",
+      "site": "네이버 블로그",
+      "how": "full+phone",
+      "risk": "blog"
+    },
+    {
+      "id": "h24-329000001020160002",
+      "name": "닥터펫 동물의료센터",
+      "url": "https://blog.naver.com/bsdrpetamc",
+      "site": "네이버 블로그",
+      "how": "full+phone",
+      "risk": "blog"
+    },
+    {
+      "id": "h24-329000001020210001",
+      "name": "24시 온동물의료센터",
+      "url": "https://blog.naver.com/amcon",
+      "site": "네이버 블로그",
+      "how": "full+phone",
+      "risk": "blog"
+    },
+    {
+      "id": "h24-330000001020210003",
+      "name": "24시 리본동물의료센터",
+      "url": "http://rebornamc.com/",
+      "site": "rebornamc.com",
+      "how": "full+phone",
+      "risk": ""
+    },
+    {
+      "id": "h24-330000001020220003",
+      "name": "부산 24시 더휴동물의료센터",
+      "url": "https://thehueamc.com/",
+      "site": "thehueamc.com",
+      "how": "full+phone",
+      "risk": ""
+    },
+    {
+      "id": "h24-331000001020030003",
+      "name": "조양래 동물의료센터",
+      "url": "https://blog.naver.com/animalcl",
+      "site": "네이버 블로그",
+      "how": "full+phone",
+      "risk": "blog"
+    },
+    {
+      "id": "h24-331000001020170001",
+      "name": "UN동물의료센터",
+      "url": "https://unamc24.com/",
+      "site": "unamc24.com",
+      "how": "full+phone",
+      "risk": ""
+    },
+    {
+      "id": "h24-333000001020250002",
+      "name": "해바른동물메디컬센터",
+      "url": "https://blog.naver.com/24haebarun",
+      "site": "네이버 블로그",
+      "how": "full+phone",
+      "risk": "blog"
+    },
+    {
+      "id": "h24-334000001020250001",
+      "name": "24시이솔동물의료센터",
+      "url": "https://blog.naver.com/esol_amc",
+      "site": "네이버 블로그",
+      "how": "full+phone",
+      "risk": "blog"
+    },
+    {
+      "id": "h24-335000001020150003",
+      "name": "제일2차동물메디컬센터",
+      "url": "http://jeil1175.co.kr/main/",
+      "site": "jeil1175.co.kr",
+      "how": "full+phone",
+      "risk": ""
+    },
+    {
+      "id": "h24-335000001020200001",
+      "name": "에이치동물메디컬센터",
+      "url": "http://hamc.kr/",
+      "site": "hamc.kr",
+      "how": "full+phone",
+      "risk": ""
+    },
+    {
+      "id": "h24-335000001020230002",
+      "name": "보담동물의료센터",
+      "url": "http://bodam-amc.com/",
+      "site": "bodam-amc.com",
+      "how": "full+phone",
+      "risk": ""
+    },
+    {
+      "id": "h24-337000001020210001",
+      "name": "부산24시 연산동물의료센터",
+      "url": "https://www.ysamc24.co.kr/",
+      "site": "ysamc24.co.kr",
+      "how": "full+phone",
+      "risk": ""
+    },
+    {
+      "id": "h24-337000001020210002",
+      "name": "뉴로동물의료센터24시",
+      "url": "https://neuroamc.com/",
+      "site": "neuroamc.com",
+      "how": "full+phone",
+      "risk": ""
+    },
+    {
+      "id": "h24-338000001020190003",
+      "name": "센텀동물메디컬센터 24시",
+      "url": "https://camc24.com/",
+      "site": "camc24.com",
+      "how": "full+phone",
+      "risk": ""
+    },
+    {
+      "id": "h24-338000001020260002",
+      "name": "부산 24시 수영동물의료센터",
+      "url": "https://blog.naver.com/24syamc",
+      "site": "네이버 블로그",
+      "how": "full+phone",
+      "risk": "blog"
+    },
+    {
+      "id": "h24-342000001020240002",
+      "name": "24시 파티마동물의료센터",
+      "url": "https://24ftma.com/",
+      "site": "24ftma.com",
+      "how": "full+phone",
+      "risk": ""
+    },
+    {
+      "id": "h24-343000001020210002",
+      "name": "24시알파동물메디컬센터",
+      "url": "https://blog.naver.com/alphaamc",
+      "site": "네이버 블로그",
+      "how": "full+phone",
+      "risk": "blog"
+    },
+    {
+      "id": "h24-344000001020210001",
+      "name": "박순석동물메디컬센터",
+      "url": "https://blog.naver.com/pamc119",
+      "site": "네이버 블로그",
+      "how": "full+road+number",
+      "risk": "blog"
+    },
+    {
+      "id": "h24-345000001019840001",
+      "name": "경북대학교 수의과대학 부속동물병원",
+      "url": "https://blog.naver.com/knuvmth",
+      "site": "네이버 블로그",
+      "how": "full+phone",
+      "risk": "blog"
+    },
+    {
+      "id": "h24-345000001020230003",
+      "name": "플러스동물의료센터",
+      "url": "https://blog.naver.com/plusamc",
+      "site": "네이버 블로그",
+      "how": "full+phone",
+      "risk": "blog"
+    },
+    {
+      "id": "h24-346000001020210002",
+      "name": "본동물메디컬센터 24시수성점",
+      "url": "http://www.boneamc.com/",
+      "site": "boneamc.com",
+      "how": "full+phone",
+      "risk": ""
+    },
+    {
+      "id": "h24-346000001020220001",
+      "name": "시지W동물의료센터",
+      "url": "https://sjwamc.co.kr/",
+      "site": "sjwamc.co.kr",
+      "how": "full+phone",
+      "risk": ""
+    },
+    {
+      "id": "h24-346000001020250001",
+      "name": "24시 황금동물의료센터",
+      "url": "https://www.24goldamc.com/",
+      "site": "24goldamc.com",
+      "how": "full+phone",
+      "risk": ""
+    },
+    {
+      "id": "h24-346000001020250002",
+      "name": "24시 케어동물의료센터",
+      "url": "https://blog.naver.com/dcamc24",
+      "site": "네이버 블로그",
+      "how": "full+phone",
+      "risk": "blog"
+    },
+    {
+      "id": "h24-346000001020250004",
+      "name": "24시 리드동물의료센터",
+      "url": "https://www.24leadamc.com/",
+      "site": "24leadamc.com",
+      "how": "full+phone",
+      "risk": ""
+    },
+    {
+      "id": "h24-347000001020170004",
+      "name": "탑스동물메디컬센터",
+      "url": "http://thetamc.co.kr/",
+      "site": "thetamc.co.kr",
+      "how": "full+phone",
+      "risk": ""
+    },
+    {
+      "id": "h24-347000001020210001",
+      "name": "대구24시바른동물의료센터",
+      "url": "https://bamc365.kr/",
+      "site": "bamc365.kr",
+      "how": "full+phone",
+      "risk": ""
+    },
+    {
+      "id": "h24-347000001020210003",
+      "name": "대구24시라이프동물의료센터",
+      "url": "https://blog.naver.com/lifeamc",
+      "site": "네이버 블로그",
+      "how": "full+phone",
+      "risk": "blog"
+    },
+    {
+      "id": "h24-351050001020200001",
+      "name": "포인트동물의료센터",
+      "url": "http://pointamc.com/",
+      "site": "pointamc.com",
+      "how": "full+phone",
+      "risk": ""
+    },
+    {
+      "id": "h24-351050001020210001",
+      "name": "24시퍼스트동물의료센터",
+      "url": "https://blog.naver.com/24-first",
+      "site": "네이버 블로그",
+      "how": "full+phone",
+      "risk": "blog"
+    },
+    {
+      "id": "h24-352000001020190003",
+      "name": "연수동물메디컬센터",
+      "url": "https://ysamc.co.kr/",
+      "site": "ysamc.co.kr",
+      "how": "full+phone",
+      "risk": ""
+    },
+    {
+      "id": "h24-352000001020200002",
+      "name": "24시송도오케이동물의료센터",
+      "url": "https://blog.naver.com/okay24amc",
+      "site": "네이버 블로그",
+      "how": "full+phone",
+      "risk": "blog"
+    },
+    {
+      "id": "h24-352000001020230002",
+      "name": "24시 송도 온 동물의료센터",
+      "url": "https://blog.naver.com/24hsdonamc",
+      "site": "네이버 블로그",
+      "how": "full+phone",
+      "risk": "blog"
+    },
+    {
+      "id": "h24-352000001020230004",
+      "name": "아인동물의료센터",
+      "url": "https://www.ainamc.com/",
+      "site": "ainamc.com",
+      "how": "full+phone",
+      "risk": ""
+    },
+    {
+      "id": "h24-352000001020230005",
+      "name": "24시 연희동물의료센터",
+      "url": "https://blog.naver.com/yhamc24",
+      "site": "네이버 블로그",
+      "how": "full+road+number",
+      "risk": "blog"
+    },
+    {
+      "id": "h24-353000001020200002",
+      "name": "24시 루센트동물의료센터",
+      "url": "https://lucentamc.co.kr/",
+      "site": "lucentamc.co.kr",
+      "how": "full+phone",
+      "risk": ""
+    },
+    {
+      "id": "h24-354000001020170004",
+      "name": "부평종합동물의료센터",
+      "url": "https://bpanimal.com/",
+      "site": "bpanimal.com",
+      "how": "full+phone",
+      "risk": ""
+    },
+    {
+      "id": "h24-355000001020170004",
+      "name": "시너지동물메디컬센터(인천안과동물병원)",
+      "url": "http://skyahgy.co.kr/",
+      "site": "skyahgy.co.kr",
+      "how": "base+phone",
+      "risk": ""
+    },
+    {
+      "id": "h24-364000001020200001",
+      "name": "더원동물메디컬센터",
+      "url": "https://blog.naver.com/theone_amc_",
+      "site": "네이버 블로그",
+      "how": "full+phone",
+      "risk": "blog"
+    },
+    {
+      "id": "h24-366000001020180001",
+      "name": "24아프리카동물메디컬센터",
+      "url": "http://dj-aamc.co.kr/",
+      "site": "dj-aamc.co.kr",
+      "how": "full+phone",
+      "risk": ""
+    },
+    {
+      "id": "h24-366000001020190002",
+      "name": "타임동물메디컬센터",
+      "url": "https://www.timeamc.com/",
+      "site": "timeamc.com",
+      "how": "full+phone",
+      "risk": ""
+    },
+    {
+      "id": "h24-369000001020250001",
+      "name": "울산 24시 학성동물의료센터",
+      "url": "https://blog.naver.com/24hsamc_",
+      "site": "네이버 블로그",
+      "how": "full+phone",
+      "risk": "blog"
+    },
+    {
+      "id": "h24-370000001020020001",
+      "name": "울산 이승진동물병원",
+      "url": "https://leeamc.com/",
+      "site": "leeamc.com",
+      "how": "full+phone",
+      "risk": ""
+    },
+    {
+      "id": "h24-374000001020150013",
+      "name": "타임즈 동물의료센터",
+      "url": "http://www.24timesamc.com/",
+      "site": "24timesamc.com",
+      "how": "full+phone",
+      "risk": ""
+    },
+    {
+      "id": "h24-374000001020190003",
+      "name": "수원 스카이 동물메디컬센터",
+      "url": "https://www.swskyamc.com/",
+      "site": "swskyamc.com",
+      "how": "full+phone",
+      "risk": ""
+    },
+    {
+      "id": "h24-374000001020190004",
+      "name": "수원24시 바른동물의료센터",
+      "url": "http://www.24barunamc.co.kr/",
+      "site": "24barunamc.co.kr",
+      "how": "full+phone",
+      "risk": ""
+    },
+    {
+      "id": "h24-374000001020200007",
+      "name": "24시 당신의 동물의료센터",
+      "url": "https://youramc.co.kr/",
+      "site": "youramc.co.kr",
+      "how": "full+phone",
+      "risk": ""
+    },
+    {
+      "id": "h24-374000001020220005",
+      "name": "권앤정 24시수원동물메디컬센터",
+      "url": "https://blog.naver.com/24suwonamc",
+      "site": "네이버 블로그",
+      "how": "full+phone",
+      "risk": "blog"
+    },
+    {
+      "id": "h24-378000001020160003",
+      "name": "24시 폴 동물병원",
+      "url": "https://paulah.co.kr/",
+      "site": "paulah.co.kr",
+      "how": "full+phone",
+      "risk": ""
+    },
+    {
+      "id": "h24-378000001020160011",
+      "name": "분당24시동물의료센터",
+      "url": "https://bd24amc.com/",
+      "site": "bd24amc.com",
+      "how": "full+phone",
+      "risk": ""
+    },
+    {
+      "id": "h24-378000001020170011",
+      "name": "미래동물의료센터",
+      "url": "https://miraeamc.co.kr/",
+      "site": "miraeamc.co.kr",
+      "how": "full+phone",
+      "risk": ""
+    },
+    {
+      "id": "h24-378000001020190003",
+      "name": "24시분당리더스동물의료원",
+      "url": "https://leadersamc.co.kr/",
+      "site": "leadersamc.co.kr",
+      "how": "full+phone",
+      "risk": "shared-domain"
+    },
+    {
+      "id": "h24-378000001020190005",
+      "name": "더클래스동물메디컬센터",
+      "url": "https://blog.naver.com/theclassamc",
+      "site": "네이버 블로그",
+      "how": "full+phone",
+      "risk": "blog"
+    },
+    {
+      "id": "h24-378000001020200002",
+      "name": "휴동물의료센터",
+      "url": "https://blog.naver.com/hueanimal",
+      "site": "네이버 블로그",
+      "how": "full+phone",
+      "risk": "blog"
+    },
+    {
+      "id": "h24-378000001020230005",
+      "name": "해마루 동물병원",
+      "url": "http://www.haemaru.co.kr/kr/index.php",
+      "site": "haemaru.co.kr",
+      "how": "full+phone",
+      "risk": ""
+    },
+    {
+      "id": "h24-378000001020260002",
+      "name": "위례24시 한결같은 동물병원",
+      "url": "https://blog.naver.com/wirye_evercare24amc",
+      "site": "네이버 블로그",
+      "how": "full+phone",
+      "risk": "blog"
+    },
+    {
+      "id": "h24-382000001020150001",
+      "name": "의정부 24시 IU 동물병원",
+      "url": "http://www.iuamc.kr/",
+      "site": "iuamc.kr",
+      "how": "tokens+phone",
+      "risk": ""
+    },
+    {
+      "id": "h24-382000001020220001",
+      "name": "24시 해든동물의료센터 민락점",
+      "url": "https://www.hdamc.co.kr/",
+      "site": "hdamc.co.kr",
+      "how": "tokens+phone",
+      "risk": "shared-domain"
+    },
+    {
+      "id": "h24-382000001020240001",
+      "name": "24시 해든동물의료센터 의정부점",
+      "url": "https://www.hdamc.co.kr/",
+      "site": "hdamc.co.kr",
+      "how": "tokens+phone",
+      "risk": "shared-domain"
+    },
+    {
+      "id": "h24-383000001020140003",
+      "name": "다온동물병원",
+      "url": "http://daon24ah.co.kr/",
+      "site": "daon24ah.co.kr",
+      "how": "full+phone",
+      "risk": ""
+    },
+    {
+      "id": "h24-383000001020200001",
+      "name": "안양본동물의료센터",
+      "url": "https://blog.naver.com/ay_bon24amc",
+      "site": "네이버 블로그",
+      "how": "full+phone",
+      "risk": "blog"
+    },
+    {
+      "id": "h24-386000001020000001",
+      "name": "24시 아이동물메디컬센터",
+      "url": "https://blog.naver.com/bbamc5262",
+      "site": "네이버 블로그",
+      "how": "full+road+number",
+      "risk": "blog"
+    },
+    {
+      "id": "h24-386000001020110005",
+      "name": "24시 이지동물의료센터",
+      "url": "https://www.ezamc.kr/",
+      "site": "ezamc.kr",
+      "how": "full+phone",
+      "risk": ""
+    },
+    {
+      "id": "h24-386000001020160004",
+      "name": "24시해든동물메디컬센터",
+      "url": "https://hd24amc.com/",
+      "site": "hd24amc.com",
+      "how": "full+phone",
+      "risk": ""
+    },
+    {
+      "id": "h24-386000001020180001",
+      "name": "비엔동물전문의료센터",
+      "url": "https://bienamc.com/",
+      "site": "bienamc.com",
+      "how": "full+phone",
+      "risk": ""
+    },
+    {
+      "id": "h24-386000001020190001",
+      "name": "TLC 동물의료센터",
+      "url": "https://blog.naver.com/tlcamc",
+      "site": "네이버 블로그",
+      "how": "full+road+number",
+      "risk": "blog"
+    },
+    {
+      "id": "h24-386000001020190002",
+      "name": "24시 웰니스 동물 의료센터",
+      "url": "https://blog.naver.com/vetlove2000",
+      "site": "네이버 블로그",
+      "how": "full+phone",
+      "risk": "blog"
+    },
+    {
+      "id": "h24-390000001020190001",
+      "name": "광명 24 아이디동물의료센터",
+      "url": "https://www.24idamc.com/",
+      "site": "24idamc.com",
+      "how": "tokens+phone",
+      "risk": ""
+    },
+    {
+      "id": "h24-390000001020210002",
+      "name": "24시 모두의동물병원",
+      "url": "https://blog.naver.com/moduamc",
+      "site": "네이버 블로그",
+      "how": "full+road+number",
+      "risk": "blog"
+    },
+    {
+      "id": "h24-390000001020250001",
+      "name": "24시 다시 봄 동물의료센터",
+      "url": "https://rebom-amc.com/",
+      "site": "rebom-amc.com",
+      "how": "full+phone",
+      "risk": ""
+    },
+    {
+      "id": "h24-391000001020130002",
+      "name": "블리스 동물의료센터",
+      "url": "http://blissamc.com/",
+      "site": "blissamc.com",
+      "how": "full+phone",
+      "risk": "shared-domain"
+    },
+    {
+      "id": "h24-391000001020260001",
+      "name": "24시 지제동물의료센터",
+      "url": "http://jijeamc.com/",
+      "site": "jijeamc.com",
+      "how": "full+road+number",
+      "risk": ""
+    },
+    {
+      "id": "h24-391000001020260003",
+      "name": "블리스 동물의료센터",
+      "url": "http://blissamc.com/",
+      "site": "blissamc.com",
+      "how": "full+phone",
+      "risk": "shared-domain"
+    },
+    {
+      "id": "h24-393000001020070002",
+      "name": "24시 아프리카동물병원",
+      "url": "https://24aamc.imweb.me/",
+      "site": "24aamc.imweb.me",
+      "how": "full+phone",
+      "risk": ""
+    },
+    {
+      "id": "h24-394000001020050001",
+      "name": "일산동물의료원",
+      "url": "https://blog.naver.com/iamc2005",
+      "site": "네이버 블로그",
+      "how": "full+phone",
+      "risk": "blog"
+    },
+    {
+      "id": "h24-394000001020100004",
+      "name": "헬릭스동물메디컬센터",
+      "url": "https://www.helix-amc.com/",
+      "site": "helix-amc.com",
+      "how": "full+phone",
+      "risk": "shared-domain"
+    },
+    {
+      "id": "h24-394000001020130002",
+      "name": "일산스마트동물메디컬센터",
+      "url": "https://blog.naver.com/ilsansmartah",
+      "site": "네이버 블로그",
+      "how": "full+phone",
+      "risk": "blog"
+    },
+    {
+      "id": "h24-394000001020130006",
+      "name": "일산시티 동물의료센터",
+      "url": "https://www.cityamc.com/",
+      "site": "cityamc.com",
+      "how": "full+phone",
+      "risk": ""
+    },
+    {
+      "id": "h24-394000001020160004",
+      "name": "24시 나음동물의료센터",
+      "url": "https://blog.naver.com/naum24",
+      "site": "네이버 블로그",
+      "how": "full+phone",
+      "risk": "blog"
+    },
+    {
+      "id": "h24-394000001020170001",
+      "name": "FM 동물메디컬센터",
+      "url": "http://fmamc.kr/",
+      "site": "fmamc.kr",
+      "how": "full+phone",
+      "risk": "shared-domain"
+    },
+    {
+      "id": "h24-394000001020170006",
+      "name": "24일산우리동물병원",
+      "url": "https://blog.naver.com/wooriamc24",
+      "site": "네이버 블로그",
+      "how": "full+phone",
+      "risk": "blog"
+    },
+    {
+      "id": "h24-398000001020170003",
+      "name": "24시 더케어 동물의료센터",
+      "url": "https://www.thecare24.com/",
+      "site": "thecare24.com",
+      "how": "full+phone",
+      "risk": ""
+    },
+    {
+      "id": "h24-399000001020200005",
+      "name": "하랑동물의료센터",
+      "url": "https://blog.naver.com/24harangamc",
+      "site": "네이버 블로그",
+      "how": "full+phone",
+      "risk": "blog"
+    },
+    {
+      "id": "h24-399000001020210003",
+      "name": "24시 위너스동물의료센터",
+      "url": "https://blog.naver.com/winners24ah",
+      "site": "네이버 블로그",
+      "how": "full+phone",
+      "risk": "blog"
+    },
+    {
+      "id": "h24-399000001020230002",
+      "name": "24시 공감365동물의료센터",
+      "url": "https://gonggam365.co.kr/",
+      "site": "gonggam365.co.kr",
+      "how": "full+phone",
+      "risk": ""
+    },
+    {
+      "id": "h24-399000001020250008",
+      "name": "24시다산원동물의료센터",
+      "url": "https://www.dasanoneamc.com/",
+      "site": "dasanoneamc.com",
+      "how": "full+phone",
+      "risk": ""
+    },
+    {
+      "id": "h24-400000001020250001",
+      "name": "24시하나린동물의료센터",
+      "url": "https://blog.naver.com/hanarin_amc",
+      "site": "네이버 블로그",
+      "how": "full+road+number",
+      "risk": "blog"
+    },
+    {
+      "id": "h24-401000001020200004",
+      "name": "24시 위드유 동물의료센터",
+      "url": "https://blog.naver.com/withuamc",
+      "site": "네이버 블로그",
+      "how": "full+road+number",
+      "risk": "blog"
+    },
+    {
+      "id": "h24-404000001020210005",
+      "name": "24시 와이즈 동물메디컬센터",
+      "url": "https://www.wiseamc.com/",
+      "site": "wiseamc.com",
+      "how": "full+phone",
+      "risk": ""
+    },
+    {
+      "id": "h24-404000001020210006",
+      "name": "다나을동물병원",
+      "url": "https://blog.naver.com/danaeulah",
+      "site": "네이버 블로그",
+      "how": "full+phone",
+      "risk": "blog"
+    },
+    {
+      "id": "h24-406000001020250003",
+      "name": "24시 마이동물의료센터",
+      "url": "https://24myamc.com/",
+      "site": "24myamc.com",
+      "how": "full+phone",
+      "risk": ""
+    },
+    {
+      "id": "h24-407000001020230005",
+      "name": "바른동물병원",
+      "url": "https://blog.naver.com/br7920",
+      "site": "네이버 블로그",
+      "how": "full+phone",
+      "risk": "blog"
+    },
+    {
+      "id": "h24-409000001020240002",
+      "name": "에프엠(FM)동물메디컬센터 김포점",
+      "url": "http://fmamc.kr/",
+      "site": "fmamc.kr",
+      "how": "tokens+phone",
+      "risk": "shared-domain"
+    },
+    {
+      "id": "h24-409000001020250001",
+      "name": "김포24시힐동물의료센터",
+      "url": "https://blog.naver.com/kp24heal",
+      "site": "네이버 블로그",
+      "how": "full+phone",
+      "risk": "blog"
+    },
+    {
+      "id": "h24-452000001020210001",
+      "name": "아산아이윌24시동물메디컬센터",
+      "url": "https://blog.naver.com/cnukong",
+      "site": "네이버 블로그",
+      "how": "full+phone",
+      "risk": "blog,shared-domain"
+    },
+    {
+      "id": "h24-452000001020250008",
+      "name": "24시 리엔동물의료센터",
+      "url": "https://blog.naver.com/lien_amc",
+      "site": "네이버 블로그",
+      "how": "full+phone",
+      "risk": "blog"
+    },
+    {
+      "id": "h24-464100001020150001",
+      "name": "메이동물메디컬센터",
+      "url": "https://blog.naver.com/maymedical",
+      "site": "네이버 블로그",
+      "how": "full+phone",
+      "risk": "blog"
+    },
+    {
+      "id": "h24-467100001020070001",
+      "name": "군산24시 제일동물병원",
+      "url": "https://blog.naver.com/ks24amc",
+      "site": "네이버 블로그",
+      "how": "full+phone",
+      "risk": "blog"
+    },
+    {
+      "id": "h24-502000001020220001",
+      "name": "화이트동물메디컬센터",
+      "url": "https://blog.naver.com/whiteamc",
+      "site": "네이버 블로그",
+      "how": "full+phone",
+      "risk": "blog"
+    },
+    {
+      "id": "h24-502000001020230001",
+      "name": "24시 포항 이음동물의료센터",
+      "url": "https://www.eumamc.com/",
+      "site": "eumamc.com",
+      "how": "tokens+phone",
+      "risk": ""
+    },
+    {
+      "id": "h24-513000001020260002",
+      "name": "24시 바로척동물의료센터",
+      "url": "https://blog.naver.com/brc_amc_",
+      "site": "네이버 블로그",
+      "how": "full+phone",
+      "risk": "blog"
+    },
+    {
+      "id": "h24-535000001020160001",
+      "name": "다독다독동물병원",
+      "url": "https://blog.naver.com/dadogdadogah",
+      "site": "네이버 블로그",
+      "how": "full+phone",
+      "risk": "blog"
+    },
+    {
+      "id": "h24-535000001020250001",
+      "name": "김해 24시 르엘동물의료센터",
+      "url": "https://blog.naver.com/lelamc",
+      "site": "네이버 블로그",
+      "how": "full+road+number",
+      "risk": "blog"
+    },
+    {
+      "id": "h24-537000001020140002",
+      "name": "24시 더나은 동물메디컬센터",
+      "url": "http://thenaeun75.dothome.co.kr/",
+      "site": "thenaeun75.dothome.co.kr",
+      "how": "full+phone",
+      "risk": "no-image"
+    },
+    {
+      "id": "h24-554000001020120001",
+      "name": "24시 모란동물 메디컬센터",
+      "url": "https://blog.naver.com/kimsh8774",
+      "site": "네이버 블로그",
+      "how": "full+phone",
+      "risk": "blog"
+    },
+    {
+      "id": "h24-554000001020160004",
+      "name": "온바른동물의료센터",
+      "url": "https://blog.naver.com/24onbarun-amc",
+      "site": "네이버 블로그",
+      "how": "full+road+number",
+      "risk": "blog"
+    },
+    {
+      "id": "h24-554000001020250003",
+      "name": "레이어 동물메디컬 센터",
+      "url": "https://layeranimalmedical.imweb.me/",
+      "site": "layeranimalmedical.imweb.me",
+      "how": "full+phone",
+      "risk": ""
+    },
+    {
+      "id": "h24-559000001020210001",
+      "name": "24시 양주 힐 동물의료센터",
+      "url": "https://blog.naver.com/24healamc",
+      "site": "네이버 블로그",
+      "how": "full+road+number",
+      "risk": "blog"
+    },
+    {
+      "id": "h24-562000001020170003",
+      "name": "용인24시 아이온동물메디컬센터",
+      "url": "https://blog.naver.com/eyeon_amc_24",
+      "site": "네이버 블로그",
+      "how": "full+phone",
+      "risk": "blog"
+    },
+    {
+      "id": "h24-563000001020190004",
+      "name": "24시 블레스동물메디컬센터",
+      "url": "https://blessamc.com/",
+      "site": "blessamc.com",
+      "how": "full+phone",
+      "risk": ""
+    },
+    {
+      "id": "h24-564000001020120002",
+      "name": "24시 서울YES동물병원",
+      "url": "https://blog.naver.com/seoulyes24",
+      "site": "네이버 블로그",
+      "how": "full+phone",
+      "risk": "blog"
+    },
+    {
+      "id": "h24-564000001020210001",
+      "name": "경기동물의료원",
+      "url": "https://blog.naver.com/gg_vmc",
+      "site": "네이버 블로그",
+      "how": "full+phone",
+      "risk": "blog"
+    },
+    {
+      "id": "h24-566000001020220001",
+      "name": "나우동물메디컬센터 신불당본원",
+      "url": "https://www.nowamc.co.kr/",
+      "site": "nowamc.co.kr",
+      "how": "brand+phone",
+      "risk": "partial-name"
+    },
+    {
+      "id": "h24-572500001020102001",
+      "name": "충북대학교 동물병원",
+      "url": "https://www.cbuanimal.co.kr/",
+      "site": "cbuanimal.co.kr",
+      "how": "full+road+number",
+      "risk": "no-image"
+    },
+    {
+      "id": "h24-572500001020132001",
+      "name": "고려동물메디컬센터",
+      "url": "https://vetgate.co.kr/",
+      "site": "vetgate.co.kr",
+      "how": "full+phone",
+      "risk": ""
+    },
+    {
+      "id": "h24-573000001020240003",
+      "name": "24시청주다옴동물의료센터",
+      "url": "https://blog.naver.com/24daomamc",
+      "site": "네이버 블로그",
+      "how": "full+road+number",
+      "risk": "blog"
+    },
+    {
+      "id": "h24-577000001020150005",
+      "name": "메타 동물의료센터",
+      "url": "https://blog.naver.com/metaamc",
+      "site": "네이버 블로그",
+      "how": "full+phone",
+      "risk": "blog"
+    },
+    {
+      "id": "h24-577000001020170002",
+      "name": "24시동탄윌동물의료센터",
+      "url": "https://blog.naver.com/24dongtanwill",
+      "site": "네이버 블로그",
+      "how": "full+phone",
+      "risk": "blog"
+    },
+    {
+      "id": "h24-577000001020180003",
+      "name": "24시동탄시티동물의료센터",
+      "url": "https://www.dtctamc.com/",
+      "site": "dtctamc.com",
+      "how": "full+phone",
+      "risk": ""
+    },
+    {
+      "id": "h24-577000001020250009",
+      "name": "24시동탄리더스동물의료원",
+      "url": "https://leadersamc.co.kr/",
+      "site": "leadersamc.co.kr",
+      "how": "full+phone",
+      "risk": "shared-domain"
+    },
+    {
+      "id": "h24-578500001020240001",
+      "name": "더블리스동물의료센터",
+      "url": "https://blog.naver.com/theblissah",
+      "site": "네이버 블로그",
+      "how": "full+road+number",
+      "risk": "blog"
+    },
+    {
+      "id": "h24-579500001020220001",
+      "name": "벤지동물병원",
+      "url": "https://blog.naver.com/benjianimalhospital",
+      "site": "네이버 블로그",
+      "how": "full+phone",
+      "risk": "blog"
+    },
+    {
+      "id": "h24-580500001020210001",
+      "name": "24시노아동물메디컬센터",
+      "url": "https://noahamc.co.kr/",
+      "site": "noahamc.co.kr",
+      "how": "full+phone",
+      "risk": ""
+    },
+    {
+      "id": "h24-581500001020240001",
+      "name": "24시김승현외과동물메디컬센터",
+      "url": "https://blog.naver.com/kshsamc",
+      "site": "네이버 블로그",
+      "how": "full+phone",
+      "risk": "blog"
+    },
+    {
+      "id": "h24-582000001019860001",
+      "name": "전남대학교 동물병원",
+      "url": "https://cnuvmth.jnu.ac.kr/cnuvmth/index.do",
+      "site": "cnuvmth.jnu.ac.kr",
+      "how": "full+phone",
+      "risk": "no-image"
+    },
+    {
+      "id": "h24-582500001020160001",
+      "name": "광주동물메디컬센터",
+      "url": "https://blog.naver.com/gamc5230075",
+      "site": "네이버 블로그",
+      "how": "full+phone",
+      "risk": "blog"
+    },
+    {
+      "id": "h24-582500001020170002",
+      "name": "공감동물메디컬센터",
+      "url": "https://blog.naver.com/empathy24ah",
+      "site": "네이버 블로그",
+      "how": "full+phone",
+      "risk": "blog"
+    },
+    {
+      "id": "h24-582500001020240003",
+      "name": "24시 바덴동물메디컬",
+      "url": "https://blog.naver.com/badenamc",
+      "site": "네이버 블로그",
+      "how": "full+road+number",
+      "risk": "blog"
+    },
+    {
+      "id": "h24-651000001020200004",
+      "name": "브이동물메디컬센터",
+      "url": "https://blog.naver.com/vamc7575",
+      "site": "네이버 블로그",
+      "how": "full+phone",
+      "risk": "blog"
+    },
+    {
+      "id": "h24-651000001020250001",
+      "name": "제주24시숨동물의료센터",
+      "url": "https://jejusamc.com/",
+      "site": "jejusamc.com",
+      "how": "full+phone",
+      "risk": ""
+    },
+    {
+      "id": "h24-x5",
+      "name": "24시 품 동물의료센터",
+      "url": "https://blog.naver.com/poomamc",
+      "site": "네이버 블로그",
+      "how": "full+phone",
+      "risk": "blog"
+    },
+    {
+      "id": "kbizin-107",
+      "name": "어반도그",
+      "url": "https://blog.naver.com/urban_dog",
+      "site": "네이버 블로그",
+      "how": "full+phone",
+      "risk": "blog"
+    },
+    {
+      "id": "kbizin-131",
+      "name": "펫인쥬카페",
+      "url": "https://blog.naver.com/petinzoo12",
+      "site": "네이버 블로그",
+      "how": "full+phone",
+      "risk": "blog,no-image"
+    },
+    {
+      "id": "kbizin-18",
+      "name": "밀크북",
+      "url": "https://blog.naver.com/imilkbook",
+      "site": "네이버 블로그",
+      "how": "full+road+number",
+      "risk": "blog"
+    },
+    {
+      "id": "kbizin-188",
+      "name": "인솔커피 상수점",
+      "url": "https://www.insolecoffee.com/",
+      "site": "insolecoffee.com",
+      "how": "full+phone",
+      "risk": ""
+    },
+    {
+      "id": "kbizin-200",
+      "name": "케슬리 샌드위치",
+      "url": "https://blog.naver.com/ghkdud8537",
+      "site": "네이버 블로그",
+      "how": "full+phone",
+      "risk": "blog"
+    },
+    {
+      "id": "kbizin-208",
+      "name": "루프독",
+      "url": "https://blog.naver.com/roofdog",
+      "site": "네이버 블로그",
+      "how": "full+road+number",
+      "risk": "blog"
+    },
+    {
+      "id": "kbizin-210",
+      "name": "펫티 애견카페",
+      "url": "http://pet-t.co.kr/",
+      "site": "pet-t.co.kr",
+      "how": "full+road+number",
+      "risk": ""
+    },
+    {
+      "id": "kbizin-227",
+      "name": "디어도그",
+      "url": "https://023039690.tshome.co.kr/",
+      "site": "023039690.tshome.co.kr",
+      "how": "full+phone",
+      "risk": ""
+    },
+    {
+      "id": "kbizin-23",
+      "name": "안성팜랜드 파라다이스독",
+      "url": "https://www.nhasfarmland.com/mobile/contents/dog_1.php",
+      "site": "nhasfarmland.com",
+      "how": "brand+phone",
+      "risk": "partial-name"
+    },
+    {
+      "id": "kbizin-281",
+      "name": "슈슈퍼피",
+      "url": "https://blog.naver.com/bacardi93",
+      "site": "네이버 블로그",
+      "how": "full+phone",
+      "risk": "blog"
+    },
+    {
+      "id": "kbizin-288",
+      "name": "장안숲 므로",
+      "url": "https://blog.naver.com/jangan_forest",
+      "site": "네이버 블로그",
+      "how": "full+road+number",
+      "risk": "blog"
+    },
+    {
+      "id": "kbizin-292",
+      "name": "힐링독",
+      "url": "https://blog.naver.com/healingd",
+      "site": "네이버 블로그",
+      "how": "full+phone",
+      "risk": "blog"
+    },
+    {
+      "id": "kbizin-299",
+      "name": "아이러브독도 카페",
+      "url": "https://blog.naver.com/mymaxbarbie",
+      "site": "네이버 블로그",
+      "how": "tokens+phone",
+      "risk": "blog"
+    },
+    {
+      "id": "kbizin-313",
+      "name": "도기온",
+      "url": "https://blog.naver.com/doggyon",
+      "site": "네이버 블로그",
+      "how": "full+phone",
+      "risk": "blog"
+    },
+    {
+      "id": "kbizin-386",
+      "name": "코코네 애견카페",
+      "url": "https://dogcafe.dododo.co.kr/",
+      "site": "dogcafe.dododo.co.kr",
+      "how": "tokens+phone",
+      "risk": ""
+    },
+    {
+      "id": "kbizin-397",
+      "name": "테라로사 커피공장 강릉본점",
+      "url": "https://terarosa.com/",
+      "site": "terarosa.com",
+      "how": "brand+road+number",
+      "risk": "partial-name"
+    },
+    {
+      "id": "kbizin-401",
+      "name": "너나우리 펜션 카페",
+      "url": "http://hu5294.s31.hdweb.co.kr/",
+      "site": "hu5294.s31.hdweb.co.kr",
+      "how": "full+road+number",
+      "risk": "no-image"
+    },
+    {
+      "id": "kbizin-419",
+      "name": "카페 산",
+      "url": "https://www.sann.co.kr/",
+      "site": "sann.co.kr",
+      "how": "full+road+number",
+      "risk": ""
+    },
+    {
+      "id": "kbizin-43",
+      "name": "플루프",
+      "url": "https://blog.naver.com/floof_",
+      "site": "네이버 블로그",
+      "how": "full+road+number",
+      "risk": "blog"
+    },
+    {
+      "id": "kbizin-461",
+      "name": "뚜드림",
+      "url": "https://01034023808.tshome.co.kr/html/sub/menu.php",
+      "site": "01034023808.tshome.co.kr",
+      "how": "full+road+number",
+      "risk": ""
+    },
+    {
+      "id": "kbizin-472",
+      "name": "레인바우 세종연서점",
+      "url": "http://www.rainbau.com/page/page17",
+      "site": "rainbau.com",
+      "how": "brand+road+number",
+      "risk": "partial-name"
+    },
+    {
+      "id": "kbizin-493",
+      "name": "1723 카페",
+      "url": "https://blog.naver.com/cafe1723",
+      "site": "네이버 블로그",
+      "how": "tokens+phone",
+      "risk": "blog"
+    },
+    {
+      "id": "kbizin-503",
+      "name": "춘운서옥",
+      "url": "http://www.cwhanok-stay.com/",
+      "site": "cwhanok-stay.com",
+      "how": "full+road+number",
+      "risk": ""
+    },
+    {
+      "id": "kbizin-58",
+      "name": "슈룹독",
+      "url": "https://blog.naver.com/shuroopdog222",
+      "site": "네이버 블로그",
+      "how": "full+road+number",
+      "risk": "blog"
+    },
+    {
+      "id": "kbizin-71",
+      "name": "개털깎는남자",
+      "url": "https://blog.naver.com/ash11015",
+      "site": "네이버 블로그",
+      "how": "full+phone",
+      "risk": "blog"
+    },
+    {
+      "id": "tour-1119452",
+      "name": "동락공원",
+      "url": "https://www.gumi.go.kr/life/contents.do?mid=0307000000",
+      "site": "gumi.go.kr",
+      "how": "full+road+number",
+      "risk": "public-body"
+    },
+    {
+      "id": "tour-126133",
+      "name": "경상감영공원",
+      "url": "https://tour.daegu.go.kr/index.do?menu_id=00002942&menu_link=%2Ffront%2Ftour%2FtourMapsView.do%3FtourId%3DKOATTR_128",
+      "site": "tour.daegu.go.kr",
+      "how": "full+road+number",
+      "risk": "public-body"
+    },
+    {
+      "id": "tour-126317",
+      "name": "순천 고인돌 공원",
+      "url": "https://www.dolmenpark.kr/",
+      "site": "dolmenpark.kr",
+      "how": "full+road+number",
+      "risk": ""
+    },
+    {
+      "id": "tour-126455",
+      "name": "한림공원",
+      "url": "https://hallimpark.com/",
+      "site": "hallimpark.com",
+      "how": "full+road+number",
+      "risk": ""
+    },
+    {
+      "id": "tour-126532",
+      "name": "올림픽공원",
+      "url": "https://www.ksponco.or.kr/olympicpark/",
+      "site": "ksponco.or.kr",
+      "how": "full+road+number",
+      "risk": "public-body"
+    },
+    {
+      "id": "tour-126838",
+      "name": "뿌리공원",
+      "url": "https://www.djjunggu.go.kr/hyo/sub03_01_01.do",
+      "site": "djjunggu.go.kr",
+      "how": "full+road+number",
+      "risk": "public-body"
+    },
+    {
+      "id": "tour-127487",
+      "name": "경주엑스포대공원",
+      "url": "http://www.cultureexpo.or.kr/open.content/ko/",
+      "site": "cultureexpo.or.kr",
+      "how": "full+road+number",
+      "risk": "public-body,no-image"
+    },
+    {
+      "id": "tour-127515",
+      "name": "대왕암공원",
+      "url": "https://daewangam.donggu.ulsan.kr/",
+      "site": "daewangam.donggu.ulsan.kr",
+      "how": "full+road+number",
+      "risk": "shared-domain"
+    },
+    {
+      "id": "tour-127644",
+      "name": "울산대공원",
+      "url": "http://www.uic.or.kr/ulsanpark/",
+      "site": "uic.or.kr",
+      "how": "full+road+number",
+      "risk": "public-body"
+    },
+    {
+      "id": "tour-129439",
+      "name": "개화예술공원",
+      "url": "http://www.gaehwapark.co.kr/default/",
+      "site": "gaehwapark.co.kr",
+      "how": "full+road+number",
+      "risk": ""
+    },
+    {
+      "id": "tour-129453",
+      "name": "울산체육공원",
+      "url": "https://www.ulsannamgu.go.kr/tour/board/tourSights2/152766/view.do",
+      "site": "ulsannamgu.go.kr",
+      "how": "full+road+number",
+      "risk": "public-body"
+    },
+    {
+      "id": "tour-138661",
+      "name": "샬레리조트",
+      "url": "https://chaletresort.kr/",
+      "site": "chaletresort.kr",
+      "how": "full+road+number",
+      "risk": ""
+    },
+    {
+      "id": "tour-1906334",
+      "name": "동대문역사문화공원",
+      "url": "http://www.ddp.or.kr/?menuno=304",
+      "site": "ddp.or.kr",
+      "how": "full+road+number",
+      "risk": "public-body"
+    },
+    {
+      "id": "tour-1946955",
+      "name": "세종호수공원",
+      "url": "https://www.sjfmc.or.kr/sjpark/sub01_01_01.do",
+      "site": "sjfmc.or.kr",
+      "how": "full+road+number",
+      "risk": "public-body"
+    },
+    {
+      "id": "tour-1990092",
+      "name": "고성 최필간고택",
+      "url": "https://cafe.naver.com/maesaoldhouse",
+      "site": "네이버 카페",
+      "how": "full+road+number",
+      "risk": "blog"
+    },
+    {
+      "id": "tour-2464201",
+      "name": "포천아트밸리 (한탄강 유네스코 세계지질공원)",
+      "url": "https://artvalley.pcfac.or.kr/",
+      "site": "artvalley.pcfac.or.kr",
+      "how": "base+road+number",
+      "risk": "public-body,no-image"
+    },
+    {
+      "id": "tour-252561",
+      "name": "절영해안산책로",
+      "url": "https://www.yeongdo.go.kr/tour/01462/02205.web?amode=view&idx=2160",
+      "site": "yeongdo.go.kr",
+      "how": "full+road+number",
+      "risk": "public-body"
+    },
+    {
+      "id": "tour-2557807",
+      "name": "송도 구름산책로",
+      "url": "https://www.bsseogu.go.kr/tour/board/view.bsseogu?boardId=BBS_0000078&menuCd=DOM_000000304011000000&startPage=1&dataSid=597",
+      "site": "bsseogu.go.kr",
+      "how": "full+locality+number",
+      "risk": "public-body"
+    },
+    {
+      "id": "tour-2603352",
+      "name": "세인트존스 호텔",
+      "url": "https://new.stjohns.co.kr/",
+      "site": "new.stjohns.co.kr",
+      "how": "full+road+number",
+      "risk": ""
+    },
+    {
+      "id": "tour-2603467",
+      "name": "헤세의 정원",
+      "url": "https://www.hessegarden.com/",
+      "site": "hessegarden.com",
+      "how": "full+road+number",
+      "risk": ""
+    },
+    {
+      "id": "tour-2603489",
+      "name": "인천대공원 반려동물 놀이터",
+      "url": "https://itour.incheon.go.kr/ssst/ssst/detail.do?cotId=APD21112609182004174",
+      "site": "itour.incheon.go.kr",
+      "how": "full+road+number",
+      "risk": "public-body"
+    },
+    {
+      "id": "tour-2612261",
+      "name": "대동하늘공원",
+      "url": "https://www.donggu.go.kr/dg/tour/82/5/sights",
+      "site": "donggu.go.kr",
+      "how": "full+road+number",
+      "risk": "public-body,no-image,shared-domain"
+    },
+    {
+      "id": "tour-2665662",
+      "name": "사니다카페",
+      "url": "https://blog.naver.com/sanida1125",
+      "site": "네이버 블로그",
+      "how": "full+road+number",
+      "risk": "blog"
+    },
+    {
+      "id": "tour-2701396",
+      "name": "서남산한옥",
+      "url": "https://www.hanokstaysns.com/",
+      "site": "hanokstaysns.com",
+      "how": "full+road+number",
+      "risk": ""
+    },
+    {
+      "id": "tour-2705418",
+      "name": "해운대 영무파라드호텔",
+      "url": "https://ymparade.kr/kor/index.do",
+      "site": "ymparade.kr",
+      "how": "full+road+number",
+      "risk": ""
+    },
+    {
+      "id": "tour-2707444",
+      "name": "가영당",
+      "url": "https://www.gayoungdang.com/",
+      "site": "gayoungdang.com",
+      "how": "full+road+number",
+      "risk": ""
+    },
+    {
+      "id": "tour-2728939",
+      "name": "대왕암공원 출렁다리",
+      "url": "https://daewangam.donggu.ulsan.kr/Pgswaybridge.do",
+      "site": "daewangam.donggu.ulsan.kr",
+      "how": "full+road+number",
+      "risk": "shared-domain"
+    },
+    {
+      "id": "tour-2767888",
+      "name": "달빛축제공원",
+      "url": "https://www.insiseol.or.kr/park/songdo/facility/moonlight.jsp",
+      "site": "insiseol.or.kr",
+      "how": "full+locality+number",
+      "risk": "public-body"
+    },
+    {
+      "id": "tour-2778200",
+      "name": "당사해양낚시공원",
+      "url": "https://www.bukgu.ulsan.kr/lay1/S1T203C310/contents.do/",
+      "site": "bukgu.ulsan.kr",
+      "how": "full+road+number",
+      "risk": "shared-domain"
+    },
+    {
+      "id": "tour-2778214",
+      "name": "화동못수변공원",
+      "url": "https://www.bukgu.ulsan.kr/lay1/S1T203C309/contents.do/",
+      "site": "bukgu.ulsan.kr",
+      "how": "full+locality+number",
+      "risk": "shared-domain"
+    },
+    {
+      "id": "tour-2804347",
+      "name": "스테이 앤드 스튜디오 여여재",
+      "url": "http://yeoyeojae.com/default/",
+      "site": "yeoyeojae.com",
+      "how": "full+road+number",
+      "risk": "no-image"
+    },
+    {
+      "id": "tour-2822473",
+      "name": "기박산성 의병 역사공원",
+      "url": "https://www.bukgu.ulsan.kr/lay1/S1T203C2168/contents.do",
+      "site": "bukgu.ulsan.kr",
+      "how": "full+road+number",
+      "risk": "shared-domain"
+    },
+    {
+      "id": "tour-2823571",
+      "name": "여수 유탑 마리나 호텔&리조트",
+      "url": "https://www.utopmarina.com/",
+      "site": "utopmarina.com",
+      "how": "full+road+number",
+      "risk": ""
+    },
+    {
+      "id": "tour-2836602",
+      "name": "카페 앙 그랑",
+      "url": "https://engr.co.kr/",
+      "site": "engr.co.kr",
+      "how": "full+road+number",
+      "risk": ""
+    },
+    {
+      "id": "tour-2930334",
+      "name": "광교호수공원 반려견 놀이터",
+      "url": "https://www.suwon.go.kr/sw-www/sw-visitsuwon/sw-visitsuwon-01/sw-visitsuwon-01-03.jsp",
+      "site": "suwon.go.kr",
+      "how": "tokens+road+number",
+      "risk": "public-body"
+    },
+    {
+      "id": "tour-3102031",
+      "name": "소산당",
+      "url": "http://sosandang.staynt.co.kr/",
+      "site": "sosandang.staynt.co.kr",
+      "how": "full+road+number",
+      "risk": ""
+    },
+    {
+      "id": "tour-3438560",
+      "name": "잔원유림 풀빌라",
+      "url": "https://blog.naver.com/janwonurim",
+      "site": "네이버 블로그",
+      "how": "full+road+number",
+      "risk": "blog"
+    },
+    {
+      "id": "tour-3438590",
+      "name": "중정별채",
+      "url": "http://jungjeong.net/",
+      "site": "jungjeong.net",
+      "how": "full+road+number",
+      "risk": ""
+    },
+    {
+      "id": "tour-3438936",
+      "name": "빅토리아 베이커리 가든",
+      "url": "https://victoriabakerygarden.imweb.me/34",
+      "site": "victoriabakerygarden.imweb.me",
+      "how": "full+road+number",
+      "risk": ""
+    },
+    {
+      "id": "tour-3443019",
+      "name": "팜바라기 cafe",
+      "url": "https://www.goesan.go.kr/organic/contents.do?key=1846",
+      "site": "goesan.go.kr",
+      "how": "brand+road+number",
+      "risk": "partial-name,public-body,no-image"
+    },
+    {
+      "id": "tour-3511367",
+      "name": "골드마운틴하우스 (유한회사진도휴식)",
+      "url": "https://blog.naver.com/goldmountainhouse",
+      "site": "네이버 블로그",
+      "how": "base+road+number",
+      "risk": "blog"
+    },
+    {
+      "id": "tour-3532734",
+      "name": "메리도그하우스",
+      "url": "https://merrydoghaus.com/",
+      "site": "merrydoghaus.com",
+      "how": "full+road+number",
+      "risk": ""
+    },
+    {
+      "id": "tour-3532750",
+      "name": "해우당",
+      "url": "https://www.haewoodang.com/",
+      "site": "haewoodang.com",
+      "how": "full+road+number",
+      "risk": "no-image"
+    },
+    {
+      "id": "tour-3532762",
+      "name": "전망대펜션",
+      "url": "http://www.mujugaja.com/",
+      "site": "mujugaja.com",
+      "how": "full+road+number",
+      "risk": ""
+    },
+    {
+      "id": "tour-3533005",
+      "name": "슬로우인풀빌라",
+      "url": "https://blog.naver.com/slowpool",
+      "site": "네이버 블로그",
+      "how": "full+road+number",
+      "risk": "blog"
+    },
+    {
+      "id": "tour-3534477",
+      "name": "코스테",
+      "url": "http://www.costes.co.kr/",
+      "site": "costes.co.kr",
+      "how": "full+road+number",
+      "risk": ""
+    },
+    {
+      "id": "tour-3536383",
+      "name": "기억스테이(ㄱstay), 메모리스테이",
+      "url": "http://memorystay.co.kr/",
+      "site": "memorystay.co.kr",
+      "how": "brand+road+number",
+      "risk": "partial-name"
+    },
+    {
+      "id": "tour-3536898",
+      "name": "페리아902",
+      "url": "http://feria902-pension.co.kr/",
+      "site": "feria902-pension.co.kr",
+      "how": "full+road+number",
+      "risk": ""
+    },
+    {
+      "id": "tour-3537760",
+      "name": "안목을높이다",
+      "url": "http://www.xn--f90b2yp4ozylvmcji.com/intro.php",
+      "site": "xn--f90b2yp4ozylvmcji.com",
+      "how": "full+road+number",
+      "risk": "no-image"
+    },
+    {
+      "id": "tour-3544316",
+      "name": "사담관광농원캠핑",
+      "url": "https://3821.campingt.me/3821/home/index",
+      "site": "3821.campingt.me",
+      "how": "full+road+number",
+      "risk": "platform"
+    },
+    {
+      "id": "tour-945477",
+      "name": "우암사적공원",
+      "url": "https://www.donggu.go.kr/dg/tour/83/6/sights",
+      "site": "donggu.go.kr",
+      "how": "full+road+number",
+      "risk": "public-body,no-image,shared-domain"
+    },
+    {
+      "id": "tour-951444",
+      "name": "홀리데이인&스위트 알펜시아 평창",
+      "url": "https://www.alpensia.com/main.do",
+      "site": "alpensia.com",
+      "how": "tokens+road+number",
+      "risk": ""
+    }
+  ]
+}

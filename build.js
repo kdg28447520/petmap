@@ -91,6 +91,23 @@ function makeMeta({ title, description, url, image, alt, type }) {
     `<meta name="twitter:image" content="${escapeHtml(image)}">`,
   ].join("\n    ");
 }
+function sameLink(a, b) {
+  try { return new URL(a).href.replace(/\/$/, "") === new URL(b).href.replace(/\/$/, ""); }
+  catch (_) { return false; }
+}
+function loadOfficialMap() {
+  const file = path.join(ROOT, "posters", "places", "SOURCES.json");
+  if (!fs.existsSync(file)) return {};
+  const parsed = JSON.parse(fs.readFileSync(file, "utf8"));
+  if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) throw new Error("posters/places/SOURCES.json 형식이 아닙니다.");
+  const map = {};
+  for (const [id, row] of Object.entries(parsed)) {
+    if (!row || typeof row.url !== "string" || !/^https?:\/\//i.test(row.url)) continue;
+    const poster = path.join(ROOT, "posters", "places", id + ".webp");
+    map[id] = { url: row.url, site: String(row.site || ""), image: String(row.image || ""), poster: fs.existsSync(poster) };
+  }
+  return map;
+}
 function phoneHref(phone) {
   const digits = String(phone || "").replace(/\D/g, "");
   return digits.length >= 9 ? "tel:" + digits : "";
@@ -105,7 +122,8 @@ function jsonLdFor(place) {
     geo: { "@type": "GeoCoordinates", latitude: place.lat, longitude: place.lng },
   };
   if (place.tel) data.telephone = place.tel;
-  if (place.homepage) data.url = place.homepage;
+  if (place.official && place.official.url) data.url = place.official.url;
+  else if (place.homepage) data.url = place.homepage;
   if (place.hours) data.additionalProperty = { "@type": "PropertyValue", name: "진료시간", value: place.hours };
   if (place.tour && tourapi.isSizedImage(place.tour.image)) data.image = place.tour.image.url;
   return safeJson(data);
@@ -125,6 +143,8 @@ function makePlacePage(place, css, updatedAt, thin) {
   const tel = phoneHref(place.tel);
   const isHospital = place.category === "hospital";
   const officialUrl = place.homepage || "";
+  const official = place.official && place.official.url ? place.official : null;
+  const sameOfficial = official && officialUrl && sameLink(official.url, officialUrl);
   const mapUrl = `https://map.kakao.com/link/to/${encodeURIComponent(place.name)},${place.lat},${place.lng}`;
   const search = tourapi.mapLinks(place);
   const detail = place.tour || null;
@@ -143,15 +163,20 @@ function makePlacePage(place, css, updatedAt, thin) {
   const actions = [
     tel ? `<a class="call-btn${isHospital ? " call-btn--emg" : ""}" href="${escapeHtml(tel)}">${isHospital ? "지금 전화하기" : "전화 걸기"}</a>` : "",
     `<a class="site-btn" href="${escapeHtml(mapUrl)}" target="_blank" rel="noopener">길찾기</a>`,
-    officialUrl ? `<a class="site-btn" href="${escapeHtml(officialUrl)}" target="_blank" rel="noopener">${place.source === "gocamping" ? "고캠핑 상세 보기" : "공식 사이트"}</a>` : "",
+    officialUrl && !(sameOfficial && place.source !== "gocamping") ? `<a class="site-btn" href="${escapeHtml(officialUrl)}" target="_blank" rel="noopener">${place.source === "gocamping" ? "고캠핑 상세 보기" : "공식 사이트"}</a>` : "",
+    official ? `<a class="site-btn" href="${escapeHtml(official.url)}" target="_blank" rel="noopener">공식 홈페이지/블로그</a>` : "",
   ].filter(Boolean).join("\n");
   const mapSearch = [
     `<a class="site-btn" href="${escapeHtml(search.kakao)}" target="_blank" rel="noopener">카카오맵에서 보기</a>`,
     `<a class="site-btn" href="${escapeHtml(search.naver)}" target="_blank" rel="noopener">네이버 지도에서 보기</a>`,
   ].join("\n");
-  const photoHtml = photo
+  const pawHtml = `<div class="pd-photo" aria-hidden="true"><svg class="pd-photo-paw" width="84" height="84" viewBox="0 0 24 24"><path d="M12 13.2c2.9 0 5.6 2.3 5.6 4.7 0 1.5-1.1 2.5-2.7 2.5-1 0-1.8-.4-2.9-.4s-1.9.4-2.9.4c-1.6 0-2.7-1-2.7-2.5 0-2.4 2.7-4.7 5.6-4.7ZM6.2 8.1c1 .3 1.5 1.7 1.1 3-.4 1.4-1.5 2.2-2.5 1.9-1-.3-1.5-1.7-1.1-3 .4-1.3 1.5-2.2 2.5-1.9Zm11.6 0c1-.3 2.1.6 2.5 1.9.4 1.3-.1 2.7-1.1 3-1 .3-2.1-.5-2.5-1.9-.4-1.3.1-2.7 1.1-3ZM9.3 3.6c1.1.1 1.9 1.4 1.8 2.9-.1 1.4-1 2.6-2.1 2.5C7.9 8.9 7.1 7.6 7.2 6.2c.1-1.5 1-2.7 2.1-2.6Zm5.4 0c1.1-.1 2 1.1 2.1 2.6.1 1.4-.7 2.7-1.8 2.8-1.1.1-2-1.1-2.1-2.5-.1-1.5.7-2.8 1.8-2.9Z"/></svg><span class="pd-photo-cap">${escapeHtml(cat.label)}</span></div>`;
+  const officialPhoto = official && official.poster
+    ? `<figure class="pd-official"><img src="/posters/places/${encodeURIComponent(place.id)}.webp" width="480" height="270" alt="${escapeHtml(place.name)}" loading="lazy" decoding="async"><figcaption class="pd-photo-credit">이미지 출처: ${escapeHtml(official.site || "")}</figcaption></figure>`
+    : "";
+  const photoHtml = officialPhoto || (photo
     ? `<figure class="pd-figure"><img src="${escapeHtml(photo.url)}" width="${Math.round(Number(photo.width))}" height="${Math.round(Number(photo.height))}" alt="${escapeHtml(photo.alt || place.name)}" loading="lazy" decoding="async"><figcaption class="pd-caption">${escapeHtml(tourapi.imageCaption(photo))}</figcaption></figure>`
-    : `<div class="pd-photo" aria-hidden="true"><svg class="pd-photo-paw" width="84" height="84" viewBox="0 0 24 24"><path d="M12 13.2c2.9 0 5.6 2.3 5.6 4.7 0 1.5-1.1 2.5-2.7 2.5-1 0-1.8-.4-2.9-.4s-1.9.4-2.9.4c-1.6 0-2.7-1-2.7-2.5 0-2.4 2.7-4.7 5.6-4.7ZM6.2 8.1c1 .3 1.5 1.7 1.1 3-.4 1.4-1.5 2.2-2.5 1.9-1-.3-1.5-1.7-1.1-3 .4-1.3 1.5-2.2 2.5-1.9Zm11.6 0c1-.3 2.1.6 2.5 1.9.4 1.3-.1 2.7-1.1 3-1 .3-2.1-.5-2.5-1.9-.4-1.3.1-2.7 1.1-3ZM9.3 3.6c1.1.1 1.9 1.4 1.8 2.9-.1 1.4-1 2.6-2.1 2.5C7.9 8.9 7.1 7.6 7.2 6.2c.1-1.5 1-2.7 2.1-2.6Zm5.4 0c1.1-.1 2 1.1 2.1 2.6.1 1.4-.7 2.7-1.8 2.8-1.1.1-2-1.1-2.1-2.5-.1-1.5.7-2.8 1.8-2.9Z"/></svg><span class="pd-photo-cap">${escapeHtml(cat.label)}</span></div>`;
+    : pawHtml);
   const overviewHtml = overview ? `<p class="pd-overview">${escapeHtml(overview)}</p>` : "";
   const petHtml = petRules.length
     ? `<h2 class="pd-sec-title">반려동물 동반 조건</h2><div class="pd-card pd-pet"><dl style="margin:0">${petRules.map((rule) => `<div class="pd-row"><dt>${escapeHtml(rule.label)}</dt><dd>${escapeHtml(rule.value)}</dd></div>`).join("")}</dl></div><p class="pd-caption">동반 조건은 한국관광공사 TourAPI 반려동물 동반여행 정보(detailPetTour2)입니다. 방문 전 업체에 다시 확인하세요.</p>`
@@ -354,6 +379,7 @@ function copyAssets() {
   }
   if (fs.existsSync(path.join(ROOT, "data"))) fs.cpSync(path.join(ROOT, "data"), path.join(OUT, "data"), { recursive: true });
   if (fs.existsSync(path.join(ROOT, "og"))) fs.cpSync(path.join(ROOT, "og"), path.join(OUT, "og"), { recursive: true });
+  if (fs.existsSync(path.join(ROOT, "posters"))) fs.cpSync(path.join(ROOT, "posters"), path.join(OUT, "posters"), { recursive: true });
 }
 function mainCss(html) {
   const blocks = [...html.matchAll(/<style\b[^>]*>([\s\S]*?)<\/style>/gi)];
@@ -454,9 +480,11 @@ async function build() {
   fs.writeFileSync(path.join(OUT, "places.json"), JSON.stringify({ updatedAt, places: publishedPlaces }), "utf8");
   fs.mkdirSync(path.join(OUT, "place"), { recursive: true });
   fs.writeFileSync(path.join(OUT, "place", "place.css"), css, "utf8");
+  const officialMap = loadOfficialMap();
   const indexablePlaces = [];
   let thinCount = 0;
   for (const place of valid) {
+    place.official = officialMap[place.id] || null;
     const thin = isThinPlace(place);
     if (thin) thinCount += 1;
     else indexablePlaces.push(place);
@@ -482,6 +510,21 @@ async function build() {
     throw new Error("장소 페이지에 카카오맵·네이버 지도 검색 링크가 없습니다.");
   }
   if (sampleHtml.includes("pd-overview") || sampleHtml.includes("pd-figure")) throw new Error("contentid가 없는 장소에 관광 개요나 사진을 넣었습니다.");
+  let officialPages = 0;
+  let officialImages = 0;
+  for (const [id, row] of Object.entries(officialMap)) {
+    const page = path.join(OUT, "place", id + ".html");
+    if (!fs.existsSync(page)) throw new Error("공식 출처가 있는 장소 페이지가 없습니다: " + id);
+    const html = fs.readFileSync(page, "utf8");
+    if (!html.includes("공식 홈페이지/블로그") || !html.includes(row.url)) throw new Error("공식 홈페이지/블로그 버튼이 없습니다: " + id);
+    officialPages += 1;
+    if (row.poster) {
+      if (!html.includes("이미지 출처: " + row.site) || !html.includes("/posters/places/" + encodeURIComponent(id) + ".webp")) throw new Error("공식 이미지 캡션이 없습니다: " + id);
+      if (!fs.existsSync(path.join(OUT, "posters", "places", id + ".webp"))) throw new Error("포스터 파일이 배포물에 없습니다: " + id);
+      officialImages += 1;
+    }
+  }
+  log(`공식 홈페이지/블로그 ${officialPages}곳, 대표 이미지 ${officialImages}곳`);
   if (!sampleHtml.includes('name="robots" content="noindex, follow"')) throw new Error("정보가 얇은 장소가 색인 대상이 되었습니다.");
   log(`전체 HTML: ${htmlCount}, OG PNG: 5, 장소 반영 전 sitemap URL: ${sitemapUrls.length}`);
   if (thinCount + indexablePlaces.length !== valid.length) throw new Error("얇은 장소 분류 수가 전체 장소 수와 다릅니다.");
