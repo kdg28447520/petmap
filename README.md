@@ -20,7 +20,9 @@ node build.js
 REPORT_EMAIL=help@example.com node build.js
 ```
 
-장소 상세의 사진·개요·반려동물 동반 조건은 한국관광공사 TourAPI(국문 관광정보 서비스, KorService2)에서 빌드할 때만 받습니다. 브라우저가 이 API를 호출하지 않고, 결과는 `data/tourapi-cache.json`과 정적 HTML에 남습니다. 인증키가 없으면 그 세 항목을 지어 넣지 않으며, 사진·개요·동반 조건이 모두 있는 장소만 색인하고 사이트맵에 넣습니다. 모든 장소에는 상호와 주소로 만든 카카오맵·네이버 지도 검색 링크를 붙입니다.
+장소 상세의 사진·개요·반려동물 동반 조건은 한국관광공사 TourAPI(국문 관광정보 서비스, KorService2)에서 빌드할 때만 받습니다. 브라우저가 이 API를 호출하지 않고, 결과는 `data/tourapi-cache.json`과 정적 HTML에 남습니다. 인증키는 `process.env.TOURAPI_SERVICE_KEY`만 읽습니다. 키가 없으면 네트워크 호출을 건너뛰고 캐시만 쓰며, 키 값은 로그에 남기지 않습니다. 사진 응답의 `cpyrhtDivCd`가 `Type1` 또는 `Type3`일 때만 이미지를 넣습니다. 값이 없거나 다른 유형이면 좌표 지도를 씁니다. 제3유형은 `object-fit: contain`과 `#F2F2F2` 배경으로 원본 비율을 유지하고, 사진 아래에 출처·라이선스 문구와 api.visitkorea.or.kr 링크를 붙입니다. 사진은 공유 이미지(OG)나 로고로 합성하지 않습니다. 모든 장소에는 상호와 주소로 만든 카카오맵·네이버 지도 검색 링크를 붙입니다.
+
+색인 여부는 `index-rule.js`만 결정합니다. `build.js`, `guides.js`, 브라우저 지도(`index.html` → `/index-rule.js`)가 이 모듈을 같이 씁니다. 장소 보강 원본은 `data/enrichment/places.json` 한 파일입니다. 키는 장소 ID입니다. 색인하려면 `petAccess`가 `allowed`이고 필수 칸 `indoorOutdoor`(실내/실외), `sizeLimit`(무게·크기 제한), `extraFee`(추가 요금), `checkedOn`(YYYY-MM-DD), `checkedSource`(확인 출처)가 채워져야 합니다. `restricted`·`unverified`·빈 `petAccess`는 색인하지 않습니다. 이름에 `국립공원`이 있는 장소는 값을 채워도 출입 제한입니다. 선택 칸 `leash`, `cat`, `petCount`, `cage`, `petMenu`, `largeDog`는 타일만 만들고 색인 조건에는 들어가지 않습니다. 다섯 필수 칸이 모두 있고, 값이 `미확인`·`확인 중`·`정보 없음`이 아니며, 보강 문장과 관광 개요를 합친 길이가 24자 이상일 때 그 페이지는 자동으로 `index`가 됩니다. 광고 단위는 같은 레코드를 `adsAllowed()`로 따로 판단합니다. `accessNotice()`가 있는 장소(국립공원 등)는 광고 단위를 넣지 않습니다. 나머지는 `noindex, follow`입니다. 사이트맵에는 색인 대상인 `/place/` URL만 넣습니다. `example: true`, `publish: false`, ID가 `EXAMPLE`으로 시작하는 행은 게시하지 않습니다. 저장소의 `EXAMPLE-DO-NOT-PUBLISH` 행은 그 예시이며 배포 폴더로 복사하지 않습니다. 필드 설명은 `data/enrichment/SCHEMA.md`에 있습니다. 광고 스크립트와 `ads.txt`는 그대로 둡니다. 모든 상세에는 `/contact.html?place=장소ID`로 가는 `정보 정정 요청` 링크가 있습니다. 가이드 본문이 그 장소를 링크하면 상세에 `관련 가이드`가 붙습니다.
 
 인증키 환경변수 이름은 `TOURAPI_SERVICE_KEY`입니다. [한국관광공사_국문 관광정보 서비스_GW](https://www.data.go.kr/data/15101578/openapi.do)에서 활용신청을 하면 개발계정은 자동승인됩니다. 마이페이지의 인증키 중 디코딩된 일반 인증키를 넣습니다.
 
@@ -44,7 +46,15 @@ node build.js --sri
 - `dist/place/{id}.html`: 장소별 정적 상세 페이지
 - `dist/place/place.css`: 기존 지도 상세화면의 스타일 규칙을 추출한 공통 스타일
 - `dist/og/default.png`, `stay.png`, `food.png`, `park.png`, `hospital.png`: 1200×630 공유 이미지
-- `dist/sitemap.xml`: 메인 페이지와 모든 정상 장소 URL, 한국 날짜 기준 `lastmod`
+- `dist/sitemap.xml`: 메인 페이지, 가이드·안내 페이지, 색인 대상 `/place/` URL. 한국 날짜 기준 `lastmod`
+
+## 광고 자리
+
+애드센스 스크립트와 `ads.txt`는 바꾸지 않습니다. 빈 `.ad-slot`과 그 안의 `<ins>`는 HTML에 그대로 두고 높이만 0으로 접습니다. `data-ad-status="filled"`일 때만 위아래 여백과 ‘광고’ 표시가 생기고, 광고 250px을 포함한 자리 높이는 308px입니다.
+
+펫맵의 첫 광고는 홈 지도 아래 장소 목록의 6번째 카드 뒤입니다. 그 위치가 첫 화면 안이면 더 아래 카드 뒤로, 목록이 짧으면 목록 뒤로 옮겨 첫 화면에는 두지 않습니다. 지역 가이드는 두 번째 코스 뒤, 그 외 가이드는 세 번째 내용 절 뒤이며, 그래도 첫 화면 안이면 더 아래로 내립니다. 헤더 바로 아래나 지도 위에는 두지 않습니다.
+
+홈은 검색·지역·종류 필터를 지도 바로 위에 두고, 지도 높이는 화면의 40%(`40dvh`)입니다. 지도 아래 ‘강원, 지도에 담긴 곳’은 서버 HTML 글자 목록입니다. 운영자 사진과 문장이 없으면 관리자 메모 칸은 넣지 않습니다. 홈 글꼴은 직접 제공하는 DoHyeon과 Gothic A1(400·700) 두 가족입니다.
 - `dist/robots.txt`: Sitemap 선언
 - `dist/places.json`: `updatedAt`과 정규화한 장소 데이터
 - `dist/data/`: 지도 앱이 읽는 원본 데이터 조각
@@ -59,7 +69,15 @@ cd dist
 python3 -m http.server 8080
 ```
 
-저장소의 `vercel.json`은 `node build.js`를 실행하고 `dist`를 정적 출력 디렉터리로 배포하도록 설정되어 있습니다. GitHub 기본 브랜치에 반영되면 Vercel이 새 빌드를 배포합니다. 배포 후 다음 주소를 확인합니다.
+저장소의 `vercel.json`은 `node build.js && node guides.js`를 실행하고 `dist`를 정적 출력 디렉터리로 배포하도록 설정되어 있습니다. `petmap.kr` 호스트는 `https://www.petmap.kr`로 301합니다. `ads.txt`만은 리디렉션에서 빼 두어 파일 내용과 게시 경로를 바꾸지 않습니다. `http://www.petmap.kr`이 배포까지 그대로 들어오면 같은 파일의 두 번째 규칙이 `https://www.petmap.kr`로 301합니다.
+
+HTTP를 HTTPS로 올리는 첫 단계는 Vercel 가장자리에서 처리됩니다. 대시보드에서 다음을 유지합니다.
+
+- Production 도메인의 기본 호스트는 `www.petmap.kr`이고, `petmap.kr`은 `www.petmap.kr`로 301합니다.
+- 도메인 설정에서 HTTP→HTTPS 리디렉션이 켜져 있습니다. Vercel 프로젝트는 이 리디렉션이 기본값입니다.
+- 배포 후 `curl -sI http://petmap.kr/`, `curl -sI http://www.petmap.kr/`, `curl -sI https://petmap.kr/`의 `Location`이 `https://www.petmap.kr/`인지 확인합니다. HTTP를 HTTPS로 올리는 가장자리 응답은 308일 수 있습니다. `vercel.json`에 적힌 호스트 규칙(apex → www, 앱에 도달한 http www → https www)은 301입니다. 포트 80이 막힌 환경에서는 이 확인을 할 수 없습니다.
+
+GitHub 기본 브랜치에 반영되면 Vercel이 새 빌드를 배포합니다. 배포 후 다음 주소를 확인합니다.
 
 - `https://petmap.kr/`
 - `https://petmap.kr/place/tour-2707444.html` (예시)

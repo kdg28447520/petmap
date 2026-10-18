@@ -22,6 +22,16 @@ const PET_FIELDS = [
   ["relaAcdntRiskMtr2", "주의사항"],
   ["relaAcdntRiskMtr3", "주의사항"],
 ];
+// detailPetTour2 fields shown as returned. Empty stays empty so the page can
+// print the visit-before-you-go line. Names are checked on the first live call.
+const VERBATIM_PET_FIELDS = [
+  ["acmpyTypeCd", "동반 구분"],
+  ["acmpyPsblCpam", "동반 가능 동물"],
+  ["acmpyNeedMtr", "동반 시 필요사항"],
+  ["etcAcmpyInfo", "기타 동반 정보"],
+];
+const PET_EMPTY = "정보 없음 — 방문 전 업체에 확인하세요";
+let petFieldNamesNoted = false;
 
 function contentIdOf(place) {
   if (!place || place.source !== "tourapi") return "";
@@ -71,15 +81,37 @@ function readableApiText(value) {
   return text;
 }
 
-function licensePhrase(code) {
+function licenseKind(code) {
   const compact = String(code || "").toLowerCase().replace(/\s+/g, "");
-  if (compact === "type1" || compact === "1" || compact.includes("제1유형")) return "공공누리 제1유형(출처표시)";
-  if (compact === "type3" || compact === "3" || compact.includes("제3유형")) return "공공누리 제3유형(출처표시·변경금지)";
-  return "공공누리 제1유형 또는 제3유형(출처표시)";
+  if (!compact) return "";
+  if (compact === "type3" || compact === "3" || compact.includes("제3유형")) return "type3";
+  if (compact === "type1" || compact === "1" || compact.includes("제1유형")) return "type1";
+  return "";
 }
 
-function imageCaption(image) {
-  return "사진: 한국관광공사 · " + licensePhrase(image && image.licenseCode) + ". 한국관광공사 국문 관광정보 서비스에서 받은 관광 사진입니다.";
+function escapeHtml(value) {
+  return String(value == null ? "" : value).replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[char]);
+}
+
+function photoName(image, fallbackName) {
+  return plainText((image && (image.imgname || image.alt)) || fallbackName) || "관광 사진";
+}
+
+function imageCaption(image, fallbackName) {
+  const kind = licenseKind(image && image.licenseCode);
+  if (!kind) return "";
+  const name = photoName(image, fallbackName);
+  if (kind === "type3") return "사진: ‘" + name + "’ ⓒ 한국관광공사 · 공공누리 제3유형(출처표시+변경금지) · 원본 그대로 게재 · api.visitkorea.or.kr";
+  return "사진: ‘" + name + "’ ⓒ 한국관광공사 · 공공누리 제1유형(출처표시) · api.visitkorea.or.kr";
+}
+
+function captionHtml(image, fallbackName) {
+  const kind = licenseKind(image && image.licenseCode);
+  if (!kind) return "";
+  const name = escapeHtml(photoName(image, fallbackName));
+  const link = '<a href="https://api.visitkorea.or.kr" target="_blank" rel="noopener">api.visitkorea.or.kr</a>';
+  if (kind === "type3") return "사진: ‘" + name + "’ ⓒ 한국관광공사 · 공공누리 제3유형(출처표시+변경금지) · 원본 그대로 게재 · " + link;
+  return "사진: ‘" + name + "’ ⓒ 한국관광공사 · 공공누리 제1유형(출처표시) · " + link;
 }
 
 function isSizedImage(image) {
@@ -87,6 +119,10 @@ function isSizedImage(image) {
   const width = Math.round(Number(image.width));
   const height = Math.round(Number(image.height));
   return Number.isFinite(width) && Number.isFinite(height) && width >= 1 && height >= 1 && width <= 8000 && height <= 8000;
+}
+
+function isUsablePhoto(image) {
+  return isSizedImage(image) && Boolean(licenseKind(image.licenseCode));
 }
 
 function petRulesFromItem(item) {
@@ -103,9 +139,56 @@ function petRulesFromItem(item) {
   return rules;
 }
 
+function verbatimApiText(value) {
+  return plainText(value);
+}
+
+function petConditionsFromItem(item) {
+  return VERBATIM_PET_FIELDS.map(([key, label]) => ({
+    key,
+    label,
+    value: verbatimApiText(item && item[key]),
+  }));
+}
+
+function notePetFieldNames(item, log) {
+  if (petFieldNamesNoted || !item || typeof item !== "object") return;
+  petFieldNamesNoted = true;
+  const missing = VERBATIM_PET_FIELDS.map(([key]) => key).filter((key) => !Object.prototype.hasOwnProperty.call(item, key));
+  if (missing.length) {
+    log("detailPetTour2 응답에 없는 필드: " + missing.join(", ") + ". 응답 키: " + Object.keys(item).join(", "));
+    return;
+  }
+  log("detailPetTour2 필드 확인: " + VERBATIM_PET_FIELDS.map(([key]) => key).join(", "));
+}
+
 function isRich(detail) {
   if (!detail) return false;
-  return Boolean(plainText(detail.overview) && isSizedImage(detail.image) && Array.isArray(detail.petRules) && detail.petRules.some((rule) => plainText(rule.value)));
+  return Boolean(plainText(detail.overview) && isUsablePhoto(detail.image) && Array.isArray(detail.petRules) && detail.petRules.some((rule) => plainText(rule.value)));
+}
+
+function licensedImage(imageItem, commonItem) {
+  const itemCode = plainText(imageItem && imageItem.cpyrhtDivCd);
+  const itemUrl = imageUrl(imageItem && (imageItem.originimgurl || imageItem.smallimageurl));
+  if (licenseKind(itemCode) && itemUrl) {
+    return {
+      url: itemUrl,
+      licenseCode: itemCode,
+      alt: plainText((imageItem && imageItem.imgname) || (commonItem && commonItem.title)) || "",
+      imgname: plainText(imageItem && imageItem.imgname) || "",
+    };
+  }
+  const commonCode = plainText(commonItem && commonItem.cpyrhtDivCd);
+  const commonUrl = imageUrl((commonItem && (commonItem.firstimage || commonItem.firstimage2)) || "");
+  if (licenseKind(commonCode) && commonUrl) {
+    return {
+      url: commonUrl,
+      licenseCode: commonCode,
+      alt: plainText(commonItem && commonItem.title) || "",
+      imgname: plainText(commonItem && commonItem.title) || "",
+    };
+  }
+  return null;
 }
 
 function mapLinks(place) {
@@ -155,21 +238,22 @@ function imageSize(buffer) {
 
 function normalizeDetail(contentId, common, imageItem, petItem, size) {
   const commonItem = common || {};
-  const photoUrl = imageUrl((imageItem && (imageItem.originimgurl || imageItem.smallimageurl)) || commonItem.firstimage || commonItem.firstimage2);
-  const measured = photoUrl && size ? size : null;
-  const image = photoUrl && measured ? {
-    url: photoUrl,
-    width: measured.width,
-    height: measured.height,
-    licenseCode: plainText(imageItem && imageItem.cpyrhtDivCd),
-    alt: plainText((imageItem && imageItem.imgname) || commonItem.title) || "",
+  const picked = licensedImage(imageItem, commonItem);
+  const image = picked && size ? {
+    url: picked.url,
+    width: size.width,
+    height: size.height,
+    licenseCode: picked.licenseCode,
+    alt: picked.alt,
+    imgname: picked.imgname,
   } : null;
   return {
     contentId: String(contentId),
     overview: plainText(commonItem.overview),
     homepage: httpUrl(commonItem.homepage),
-    image: image && isSizedImage(image) ? image : null,
+    image: image && isUsablePhoto(image) ? image : null,
     petRules: petRulesFromItem(petItem),
+    petConditions: petConditionsFromItem(petItem),
     fetchedAt: new Date().toISOString(),
     complete: true,
   };
@@ -237,10 +321,11 @@ async function fetchOne(contentId, key) {
   ]);
   const common = commonItems[0] || {};
   const imageItem = imageItems[0] || null;
-  const photo = imageUrl((imageItem && (imageItem.originimgurl || imageItem.smallimageurl)) || common.firstimage || common.firstimage2);
+  if (petItems[0]) notePetFieldNames(petItems[0], (message) => console.log("[petmap] " + message));
+  const picked = licensedImage(imageItem, common);
   let size = null;
-  if (photo) {
-    try { size = await measureImage(photo); }
+  if (picked) {
+    try { size = await measureImage(picked.url); }
     catch (error) { size = null; }
   }
   return normalizeDetail(contentId, common, imageItem, petItems[0] || null, size);
@@ -284,7 +369,8 @@ async function loadOrFetch({ places, cachePath, serviceKey, refresh, log }) {
       fetched += 1;
     } catch (error) {
       failed += 1;
-      log("TourAPI " + contentId + " 건너뜀: " + error.message);
+      const message = String(error && error.message || error);
+      log("TourAPI " + contentId + " 건너뜀: " + (serviceKey && message.includes(serviceKey) ? "응답을 기록하지 않습니다." : message));
     }
   });
   if (fetched) writeCache(cachePath, cached);
@@ -303,7 +389,7 @@ function summarize(places) {
     const detail = place.tour;
     if (plainText(place.homepage) && !place.homepageFromTour) existingHomepages += 1;
     if (!detail) continue;
-    if (isSizedImage(detail.image)) images += 1;
+    if (isUsablePhoto(detail.image)) images += 1;
     if (plainText(detail.overview)) overviews += 1;
     if (place.homepageFromTour) apiHomepages += 1;
     if (Array.isArray(detail.petRules) && detail.petRules.length) petRules += 1;
@@ -326,11 +412,26 @@ function selfCheck() {
   if (homepage !== "https://www.gayoungdang.com/") throw new Error("홈페이지 추출");
   const rules = petRulesFromItem({ acmpyNeedMtr: "목줄 또는 이동장", acmpyTypeCd: "01", relaAcdntRiskMtr1: "없음" });
   if (rules.length !== 1 || rules[0].label !== "동반 시 필요사항") throw new Error("동반 조건 정리");
+  const conditions = petConditionsFromItem({ acmpyNeedMtr: "목줄 또는 이동장", acmpyTypeCd: "01", acmpyPsblCpam: "", etcAcmpyInfo: "없음" });
+  if (conditions.length !== 4 || conditions[0].value !== "01" || conditions[1].value !== "" || conditions[2].value !== "목줄 또는 이동장" || conditions[3].value !== "없음") throw new Error("동반 조건 원문");
   const rich = { overview: "펜션 소개", image: { url: "https://tong.visitkorea.or.kr/cms/resource/a.jpg", width: 640, height: 480, licenseCode: "Type1" }, petRules: rules };
   if (!isRich(rich)) throw new Error("풍부한 상세 판정");
   if (isRich({ ...rich, petRules: [] })) throw new Error("동반 조건 없는 페이지는 색인하지 않습니다");
   if (!imageCaption(rich.image).includes("공공누리 제1유형")) throw new Error("라이선스 문구");
-  if (imageCaption({ licenseCode: "" }).includes("제1유형 또는 제3유형") !== true) throw new Error("유형 미상 문구");
+  if (imageCaption({ licenseCode: "" }) !== "") throw new Error("유형이 없는 사진에는 캡션을 붙이지 않습니다");
+  if (licenseKind("Type1") !== "type1" || licenseKind("Type3") !== "type3" || licenseKind("") !== "" || licenseKind("Type2") !== "") throw new Error("cpyrhtDivCd 분류");
+  const bare = { url: "https://tong.visitkorea.or.kr/cms/resource/a.jpg", width: 640, height: 480, licenseCode: "" };
+  if (isUsablePhoto(bare) || isUsablePhoto({ ...bare, licenseCode: "Type2" })) throw new Error("허용되지 않은 사진을 사용합니다");
+  if (!isUsablePhoto(rich.image)) throw new Error("제1유형 사진을 사용하지 않습니다");
+  const type3 = { url: "https://tong.visitkorea.or.kr/cms/resource/b.jpg", width: 900, height: 300, licenseCode: "Type3", imgname: "해변&사진" };
+  const html = captionHtml(type3, "장소명");
+  if (!html.includes("공공누리 제3유형(출처표시+변경금지)") || !html.includes("원본 그대로 게재") || !html.includes('href="https://api.visitkorea.or.kr"') || !html.includes("해변&amp;사진")) throw new Error("제3유형 캡션");
+  if (captionHtml({ licenseCode: "", alt: "없음" }, "장소명") !== "") throw new Error("유형 없는 캡션 HTML");
+  if (!captionHtml({ licenseCode: "Type1", imgname: "" }, "장소명").includes("장소명")) throw new Error("사진 이름이 없으면 장소명을 씁니다");
+  const commonOnly = licensedImage(null, { firstimage: "https://tong.visitkorea.or.kr/cms/resource/c.jpg", cpyrhtDivCd: "" });
+  if (commonOnly) throw new Error("cpyrhtDivCd 없는 firstimage를 사용합니다");
+  const typed = licensedImage({ originimgurl: "https://tong.visitkorea.or.kr/cms/resource/d.jpg", cpyrhtDivCd: "Type3", imgname: "정원" }, { firstimage: "https://tong.visitkorea.or.kr/cms/resource/e.jpg" });
+  if (!typed || typed.licenseCode !== "Type3" || !typed.url.endsWith("/d.jpg")) throw new Error("제3유형 사진 선택");
   console.log("[petmap] tourapi self-check ok");
 }
 
@@ -340,8 +441,14 @@ module.exports = {
   httpUrl,
   imageUrl,
   imageCaption,
+  captionHtml,
+  licenseKind,
   isSizedImage,
+  isUsablePhoto,
   isRich,
+  VERBATIM_PET_FIELDS,
+  PET_EMPTY,
+  petConditionsFromItem,
   mapLinks,
   imageSize,
   readCache,
