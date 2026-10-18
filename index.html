@@ -1460,6 +1460,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
         line-height: 1.65;
       }
       .static-directory h2 { font-size: 20px; margin: 22px 0 8px; }
+      .static-directory p { margin: 8px 0 0; }
       .static-directory ul { margin: 0; padding-left: 18px; }
       .static-directory li { margin: 4px 0; }
       .static-directory a { color: var(--brand-text); font-weight: 700; }
@@ -1659,7 +1660,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
     <div class="toolbar">
       <label class="search-box">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 2a8 8 0 1 0 4.9 14.3l5 5 1.5-1.4-5-5A8 8 0 0 0 10 2Zm0 2a6 6 0 1 1 0 12 6 6 0 0 1 0-12Z"/></svg>
-        <input id="search" type="search" placeholder="이름 검색 (예: 와인바, 펜션)" autocomplete="off" />
+        <input id="search" type="search" placeholder="장소 이름 검색" autocomplete="off" />
         <button class="search-clear" id="searchClear" type="button" aria-label="검색어 지우기">×</button>
       </label>
     </div>
@@ -1695,6 +1696,10 @@ svg.leaflet-image-layer.leaflet-interactive path {
     </main>
 
     <section class="page-detail" id="pageDetail" aria-label="장소 상세"></section>
+
+    <section class="static-directory" aria-label="수록 범위">
+      <!--SITE_SCOPE-->
+    </section>
 
     <section id="staticDirectory" class="static-directory" aria-label="시·도별 장소와 가이드">
       <!--STATIC_DIRECTORY-->

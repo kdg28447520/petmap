@@ -1,5 +1,5 @@
 {
-  "criteria": "인기 점수 = TourAPI 장소 3점 + posters/places/SOURCES.json 공식 주소 2점 + homepage 1점 + 24시 병원 1점. 동점은 id 오름차순으로 상위 100곳. 이름에 국립공원·도립공원·군립공원·자연휴양림·해수욕장이 있으면 100곳 밖이어도 출입 안내 레코드를 덧붙인다. TourAPI 키가 없어 detailPetTour는 채우지 못했다. 공식 문장으로 확인한 값은 국립공원(공원 카드)뿐이고 나머지는 미확인이다. 국립공원은 출입 제한이라 값을 채워도 색인하지 않는다.",
+  "criteria": "인기 점수 = TourAPI 장소 3점 + posters/places/SOURCES.json 공식 주소 2점 + homepage 1점 + 24시 병원 1점. 동점은 id 오름차순으로 상위 100곳. 이름에 국립공원·도립공원·군립공원·자연휴양림·해수욕장이 있으면 100곳 밖이어도 출입 안내 레코드를 덧붙인다. TourAPI 키가 없어 detailPetTour는 채우지 못했다. 공식 문장으로 확인한 값은 국립공원(공원 카드)뿐이고 나머지는 미확인이다. 국립공원은 출입 제한이라 값을 채워도 색인하지 않는다. PR #10과 같은 다섯 필드는 content/place-enrichment.json에 두고, 국립공원 sizeLimit은 미확인으로 고정한다.",
   "checkedOn": "2026-10-18",
   "places": {
     "tour-1119452": {

@@ -184,6 +184,33 @@ function loadEnrichment() {
   if (!parsed || typeof parsed.places !== "object") throw new Error("data/place-enrichment.json 형식이 아닙니다.");
   return parsed;
 }
+function assertReviewEnrichment(editorial) {
+  const file = path.join(ROOT, "content", "place-enrichment.json");
+  if (!fs.existsSync(file)) throw new Error("content/place-enrichment.json 이 없습니다.");
+  const review = JSON.parse(fs.readFileSync(file, "utf8"));
+  const ids = Object.keys(editorial.places || {});
+  const reviewPlaces = review && review.places;
+  if (!reviewPlaces || ids.length !== Object.keys(reviewPlaces).length) throw new Error("보강 파일의 장소 수가 다릅니다.");
+  const unconfirmed = new Set(["미확인", "미확인.", "확인 불가", "알 수 없음"]);
+  for (const id of ids) {
+    const src = editorial.places[id];
+    const row = reviewPlaces[id];
+    if (!row) throw new Error("리뷰 형식 보강에 없는 장소: " + id);
+    for (const key of ["indoorOutdoor", "sizeLimit", "extraFee", "checkedOn", "checkedSource"]) {
+      if (typeof row[key] !== "string" || !row[key]) throw new Error("보강 필드 누락 " + id + " " + key);
+    }
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(row.checkedOn)) throw new Error("확인일 형식 " + id);
+    if (row.indoorOutdoor !== src.indoorOutdoor || row.extraFee !== src.extraFee || row.checkedOn !== src.checkedOn || row.checkedSource !== src.source) {
+      throw new Error("리뷰 형식 보강이 편집 파일과 다릅니다: " + id);
+    }
+    const limit = accessNotice(src.name) && accessNotice(src.name).tone === "limit";
+    if (limit && row.sizeLimit !== "미확인") throw new Error("국립공원 sizeLimit이 채워져 있습니다: " + id);
+    if (!limit && row.sizeLimit !== src.weightLimit) throw new Error("sizeLimit 별칭이 다릅니다: " + id);
+    const values = ["indoorOutdoor", "sizeLimit", "extraFee", "checkedOn", "checkedSource"].map((key) => row[key]);
+    const filled = values.every((value) => value && !unconfirmed.has(value)) && /실내|실외|야외/.test(row.indoorOutdoor);
+    if (limit && filled) throw new Error("국립공원이 PR #10 규칙으로 색인됩니다: " + id);
+  }
+}
 const REGION_SHORT = { "서울특별시": "서울", "부산광역시": "부산", "대구광역시": "대구", "인천광역시": "인천", "광주광역시": "광주", "대전광역시": "대전", "울산광역시": "울산", "세종특별자치시": "세종", "경기도": "경기", "강원특별자치도": "강원", "충청북도": "충북", "충청남도": "충남", "전북특별자치도": "전북", "전라남도": "전남", "경상북도": "경북", "경상남도": "경남", "제주특별자치도": "제주" };
 function shortRegionName(address) {
   const full = regionOf(address);
@@ -219,6 +246,23 @@ function staticDirectoryHtml(places) {
     ["/guides/national-park-beach-rules.html", "국립공원·해수욕장 동반 규정"]
   ].map(([href, label]) => `<li><a href="${href}">${escapeHtml(label)}</a></li>`).join("");
   return `<h2>시·도별 수록 장소</h2><ul class="region-counts">${regionList}</ul><h2>대표 장소</h2><ul class="static-places">${rows}</ul><h2>읽어 볼 가이드</h2><ul class="static-guides">${guides}</ul>`;
+}
+function siteScopeHtml(places) {
+  const counts = new Map();
+  for (const place of places) counts.set(shortRegionName(place.addr), (counts.get(shortRegionName(place.addr)) || 0) + 1);
+  const regions = [...counts.keys()].sort((a, b) => a.localeCompare(b, "ko"));
+  const regionSentence = regions.map((name) => `${name} ${counts.get(name).toLocaleString("ko-KR")}곳`).join(", ");
+  const stay = places.filter((place) => place.category === "stay").length;
+  const food = places.filter((place) => place.category === "food").length;
+  const park = places.filter((place) => place.category === "park").length;
+  const hospital = places.filter((place) => place.category === "hospital").length;
+  const hospitalPhone = places.filter((place) => place.category === "hospital" && String(place.tel || "").trim()).length;
+  const nationalPark = places.filter((place) => /국립공원/.test(place.name || "")).length;
+  const forest = places.filter((place) => /자연휴양림/.test(place.name || "")).length;
+  const beachName = places.filter((place) => /해수욕장/.test(place.name || "")).length;
+  const beachSentence = beachName === 0 ? "장소 이름에 해수욕장이 들어간 카드는 없습니다." : `장소 이름에 해수욕장이 들어간 카드는 ${beachName.toLocaleString("ko-KR")}곳이며 출입은 미확인입니다.`;
+  const n = places.length.toLocaleString("ko-KR");
+  return `<h2>수록 범위와 확인일</h2><p>2026-10-18 장소 파일에는 ${n}곳이 있습니다. 숙박 ${stay.toLocaleString("ko-KR")}곳, 음식점·카페 ${food.toLocaleString("ko-KR")}곳, 산책·공원 ${park.toLocaleString("ko-KR")}곳, 24시간 동물병원 ${hospital.toLocaleString("ko-KR")}곳입니다. 병원 카드 가운데 전화가 적힌 행은 ${hospitalPhone.toLocaleString("ko-KR")}곳이고, 한 곳은 번호가 비어 있습니다. 이 숫자는 카드의 개수입니다. 그날 영업 중이라는 뜻도, 반려동물 입장이 된다는 뜻도 아닙니다.</p><h2>시·도 분포</h2><p>열일곱 시·도를 파일에서 세면 다음과 같습니다. ${escapeHtml(regionSentence)}. 합은 ${n}곳입니다. 경기와 서울이 많다고 그 지역이 더 안전하거나 동반이 더 쉽다고 적지 않습니다.</p><h2>읽으면 안 되는 추천</h2><p>이름에 국립공원이 들어간 ${nationalPark.toLocaleString("ko-KR")}곳은 동반 장소로 색인하지 않습니다. 페이지에는 출입 제한 안내와 국립공원공단 출처만 붙입니다. 가지산도립공원과 신불산군립공원은 같은 날 울산시·밀양시·양산시 공지에서 허용이나 금지를 확인하지 못해 미확인입니다. 자연휴양림 이름 ${forest.toLocaleString("ko-KR")}곳도 관리소 문장이 없으면 미확인입니다. ${beachSentence} 주소에 해수욕장 길이 있어도 그 음식점이나 숙소를 해변 금지 구역으로 단정하지 않습니다.</p><h2>아직 비어 있는 칸</h2><p>실내·실외, 무게, 추가 요금은 공식 문장으로 확인한 국립공원 안내 외에는 미확인입니다. TourAPI 상세 캐시는 data/tourapi-cache.json에 두고, 환경 변수 TOURAPI_SERVICE_KEY가 있을 때만 빌드가 그 파일을 채웁니다. 이번 생성에는 키가 없어 새 동반 문장을 받지 않았습니다. 없는 체중이나 요금은 만들지 않습니다. 지도의 지역·유형 필터와 <a href="/guides/">여행 가이드</a>에서 카드를 고른 뒤, 전화나 관리기관 공지로 빈칸을 확인하면 됩니다. 출처는 한국관광공사 TourAPI, 한국문화정보원 애견동반 카페, 고캠핑 반려견 동반 캠핑장, maruvet·vet24 24시 목록입니다. 대표 장소 서른 곳의 링크와 가이드 여섯 편의 링크는 아래 정적 목록에도 있습니다. 스크립트가 장소 파일을 읽으면 그 목록은 접히고, 이 문단은 남습니다.</p>`;
 }
 function makePlacePage(place, css, updatedAt, thin) {
   const cat = CATEGORIES[place.category];
@@ -578,6 +622,8 @@ async function build() {
   let main = makeMainMeta(rawIndex).replace(/데이터 기준일: \d{4}-\d{2}-\d{2}/, "데이터 기준일: " + updatedAt);
   if (USE_SRI) main = await withSri(main);
   if (!main.includes("<!--STATIC_DIRECTORY-->")) throw new Error("정적 장소 목록 위치가 없습니다.");
+  if (!main.includes("<!--SITE_SCOPE-->")) throw new Error("수록 범위 문단 위치가 없습니다.");
+  main = main.replace("<!--SITE_SCOPE-->", siteScopeHtml(valid));
   main = main.replace("<!--STATIC_DIRECTORY-->", staticDirectoryHtml(valid));
   fs.writeFileSync(path.join(OUT, "index.html"), main, "utf8");
   const publishedPlaces = valid.map((place) => {
@@ -591,6 +637,7 @@ async function build() {
   fs.writeFileSync(path.join(OUT, "place", "place.css"), css, "utf8");
   const officialMap = loadOfficialMap();
   const enrichmentFile = loadEnrichment();
+  assertReviewEnrichment(enrichmentFile);
   const indexablePlaces = [];
   let thinCount = 0;
   for (const place of valid) {
