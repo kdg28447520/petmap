@@ -108,7 +108,7 @@ function jsonLdFor(place) {
   if (place.tel) data.telephone = place.tel;
   if (place.homepage) data.url = place.homepage;
   if (place.hours) data.additionalProperty = { "@type": "PropertyValue", name: "진료시간", value: place.hours };
-  if (place.tour && tourapi.isSizedImage(place.tour.image)) data.image = place.tour.image.url;
+  if (place.tour && tourapi.isUsablePhoto(place.tour.image)) data.image = place.tour.image.url;
   return safeJson(data);
 }
 function reportLink() {
@@ -482,6 +482,20 @@ function staticMapSvg(place) {
   </g>
 </svg>`;
 }
+function photoFigureHtml(photo, placeName) {
+  const kind = tourapi.licenseKind(photo && photo.licenseCode);
+  if (kind !== "type1" && kind !== "type3") return "";
+  const type3 = kind === "type3";
+  const caption = tourapi.captionHtml(photo, placeName);
+  const frame = type3 ? ' class="pd-figure pd-figure--type3" style="background:#F2F2F2"' : ' class="pd-figure"';
+  const fit = type3 ? ' style="object-fit:contain;background:#F2F2F2;width:100%;height:240px"' : "";
+  return `<figure${frame}><img src="${escapeHtml(photo.url)}" width="${Math.round(Number(photo.width))}" height="${Math.round(Number(photo.height))}" alt="${escapeHtml(photo.alt || photo.imgname || placeName)}" loading="lazy" decoding="async"${fit}><figcaption class="pd-caption">${caption}</figcaption></figure>`;
+}
+function placeCreditHtml(place, updatedAt) {
+  const fromTour = place && (place.source === "tourapi" || tourapi.contentIdOf(place) || (place.tour && tourapi.isUsablePhoto(place.tour.image)));
+  if (!fromTour) return "";
+  return `<p class="place-credit">정보 출처: <a href="https://api.visitkorea.or.kr" target="_blank" rel="noopener">한국관광공사 TourAPI</a> 「반려동물 동반여행 서비스」 · 데이터 기준일 ${escapeHtml(updatedAt)} · 반려동물 동반 조건은 바뀔 수 있으니 방문 전 업체에 확인해 주세요.</p>`;
+}
 function staticMapHtml(place) {
   const lat = Number(place.lat);
   const lng = Number(place.lng);
@@ -622,7 +636,7 @@ function makePlacePage(place, css, updatedAt, thin) {
   const search = tourapi.mapLinks(place);
   const detail = place.tour || null;
   const overview = detail ? displayValue(detail.overview) : "";
-  const photo = detail && tourapi.isSizedImage(detail.image) ? detail.image : null;
+  const photo = detail && tourapi.isUsablePhoto(detail.image) ? detail.image : null;
   const address = displayValue(place.addr);
   const hours = displayValue(place.hours);
   const source = displayValue(sourceFor(place));
@@ -634,9 +648,7 @@ function makePlacePage(place, css, updatedAt, thin) {
     hours ? `<div class="pd-row"><dt>${isHospital ? "진료시간" : "운영시간"}</dt><dd>${escapeHtml(hours)}</dd></div>` : "",
     source ? `<div class="pd-row"><dt>출처</dt><dd>${escapeHtml(source)}</dd></div>` : "",
   ].filter(Boolean).join("\n");
-  const photoHtml = photo
-    ? `<figure class="pd-figure"><img src="${escapeHtml(photo.url)}" width="${Math.round(Number(photo.width))}" height="${Math.round(Number(photo.height))}" alt="${escapeHtml(photo.alt || place.name)}" loading="lazy" decoding="async"><figcaption class="pd-caption">${escapeHtml(tourapi.imageCaption(photo))}</figcaption></figure>`
-    : staticMapHtml(place);
+  const photoHtml = photo ? photoFigureHtml(photo, place.name) : staticMapHtml(place);
   const overviewHtml = notice ? "" : (overview ? `<p class="pd-overview">${escapeHtml(overview)}</p>` : "");
   const enrich = notice ? "" : enrichmentHtml(place);
   const correction = enrich ? "" : `<p class="pd-correct">${correctionButton(place)}</p>`;
@@ -693,6 +705,7 @@ function makePlacePage(place, css, updatedAt, thin) {
           <!--RELATED_GUIDES-->
           ${nearbyHtml(place)}
           ${warning}
+          ${placeCreditHtml(place, updatedAt)}
           ${reportLink()}
           <p><a class="pd-back" href="/">← 목록으로 돌아가기</a></p>
         </div>
@@ -721,6 +734,8 @@ function makePlacePage(place, css, updatedAt, thin) {
       <a href="/contact.html">문의</a>
       <a href="/terms.html">이용안내</a>
     </nav>
+    <p class="data-credit">장소·반려동물 동반 정보 출처: <a href="https://api.visitkorea.or.kr" target="_blank" rel="noopener">한국관광공사 TourAPI</a> 「반려동물 동반여행 서비스」(<a href="https://www.data.go.kr/data/15135102/openapi.do" target="_blank" rel="noopener">공공데이터포털</a>). 사진은 공공누리 제1유형(출처표시)·제3유형(출처표시+변경금지) 조건에 따라 한국관광공사의 공공저작물을 이용했습니다 (<a href="https://contest.visitkorea.or.kr/kor/helpDesk/copyrightGuide.kto" target="_blank" rel="noopener">한국관광공사 저작권정책</a>). 댕냥이와 함께는 한국관광공사와 제휴하거나 후원받는 사이트가 아닙니다.</p>
+    <p>© 2026 댕냥이와 함께 · 운영 김동곤 · <a href="mailto:kdg2844@gmail.com">kdg2844@gmail.com</a> · 공공데이터 기반 안내 · 방문 전 해당 업체에 직접 확인해 주세요.</p>
     <p>데이터 기준일: ${escapeHtml(updatedAt)}</p>
   </footer>
 </body>
@@ -758,6 +773,24 @@ function assertEnrichmentPolicy() {
   const thinPage = makePlacePage(base, "", "2026-10-18", true);
   if (!thinPage.includes('content="noindex, follow"') || hasAdUnit(thinPage) || !thinPage.includes('href="/contact.html?place=policy-check"') || thinPage.includes('class="enr"') || thinPage.includes("예시") || thinPage.includes("pd-photo-paw") || !thinPage.includes("/place/maps/policy-check.svg")) {
     throw new Error("얇은 장소 페이지에 광고 단위가 있거나 정정 링크가 없습니다.");
+  }
+  const unlicensed = { ...base, id: "policy-nophoto", source: "tourapi", tour: { overview: "개요 문장입니다. 반려동물과 함께 머물 수 있습니다.", image: { url: "https://tong.visitkorea.or.kr/cms/resource/a.jpg", width: 640, height: 480, licenseCode: "" } } };
+  const unlicensedPage = makePlacePage(unlicensed, "", "2026-10-18", true);
+  if (unlicensedPage.includes("pd-figure") || unlicensedPage.includes("tong.visitkorea") || !unlicensedPage.includes('class="pd-snap"') || !unlicensedPage.includes("api.visitkorea.or.kr") || !unlicensedPage.includes("반려동물 동반여행 서비스")) {
+    throw new Error("cpyrhtDivCd가 없는 사진을 넣었거나 TourAPI 출처가 빠졌습니다.");
+  }
+  const type3Place = { ...base, id: "policy-type3", source: "tourapi", tour: { image: { url: "https://tong.visitkorea.or.kr/cms/resource/b.jpg", width: 900, height: 300, licenseCode: "Type3", imgname: "해변 산책", alt: "해변 산책" } } };
+  const type3Page = makePlacePage(type3Place, "", "2026-10-18", true);
+  const type3Og = (type3Page.match(/property="og:image" content="([^"]+)"/) || [])[1] || "";
+  if (!type3Page.includes("pd-figure--type3") || !type3Page.includes("object-fit:contain") || !type3Page.includes("#F2F2F2") || !type3Page.includes("원본 그대로 게재") || !type3Page.includes('href="https://api.visitkorea.or.kr"') || type3Page.includes('class="pd-snap"') || type3Og.includes("visitkorea")) {
+    throw new Error("제3유형 사진 표시가 맞지 않습니다.");
+  }
+  const type1Page = photoFigureHtml({ url: "https://tong.visitkorea.or.kr/cms/resource/c.jpg", width: 640, height: 480, licenseCode: "Type1", imgname: "" }, "장소명");
+  if (!type1Page.includes("제1유형") || type1Page.includes("pd-figure--type3") || type1Page.includes("object-fit:contain") || !type1Page.includes("장소명")) {
+    throw new Error("제1유형 사진 캡션이 맞지 않습니다.");
+  }
+  if (photoFigureHtml({ url: "https://tong.visitkorea.or.kr/cms/resource/d.jpg", width: 10, height: 10, licenseCode: "Type2" }, "장소명")) {
+    throw new Error("Type1·Type3가 아닌 사진을 사용합니다.");
   }
   const withRule = { ...base, id: "policy-rule", tour: { petRules: [{ label: "동반 시 필요사항", value: "목줄 착용" }] } };
   const rulePage = makePlacePage(withRule, "", "2026-10-18", true);
@@ -1030,12 +1063,12 @@ async function build() {
       const pageHtml = makePlacePage(place, css, updatedAt, thin);
       fs.writeFileSync(filename, pageHtml, "utf8");
       const detail = place.tour || null;
-      const photo = detail && tourapi.isSizedImage(detail.image) ? detail.image : null;
+      const photo = detail && tourapi.isUsablePhoto(detail.image) ? detail.image : null;
       if (!photo) fs.writeFileSync(path.join(OUT, "place", "maps", place.id + ".svg"), staticMapSvg(place), "utf8");
     }
     catch (error) { skipped.push(`${place.id}: ${place.name} — 페이지 생성 실패 (${error.message})`); }
   }
-  const pageUrls = indexablePlaces.map((p) => `${BASE_URL}/place/${encodeURIComponent(p.id)}.html`);
+  const pageUrls = valid.map((p) => `${BASE_URL}/place/${encodeURIComponent(p.id)}.html`);
   const sitemapUrls = [BASE_URL + "/", ...pageUrls];
   fs.writeFileSync(path.join(OUT, "sitemap.xml"), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${sitemapUrls.map((url) => `  <url><loc>${escapeXml(url)}</loc><lastmod>${todayDate()}</lastmod></url>`).join("\n")}\n</urlset>\n`, "utf8");
   fs.writeFileSync(path.join(OUT, "robots.txt"), `User-agent: *\nAllow: /\nSitemap: ${BASE_URL}/sitemap.xml\n`, "utf8");
@@ -1044,7 +1077,7 @@ async function build() {
   const builtPages = valid.filter((p) => fs.existsSync(path.join(OUT, "place", p.id + ".html"))).length;
   log(`데이터 기준일: ${updatedAt}`);
   log(`장소 정적 페이지 생성: ${builtPages}/${valid.length}`);
-  log(`얇은 장소 noindex·사이트맵 제외: ${thinCount}곳, 보강이 채워져 색인하는 장소: ${indexablePlaces.length}곳`);
+  log(`얇은 장소 noindex: ${thinCount}곳, 보강이 채워져 색인하는 장소: ${indexablePlaces.length}곳, 사이트맵 장소 URL: ${pageUrls.length}곳`);
   const sitemapXml = fs.readFileSync(path.join(OUT, "sitemap.xml"), "utf8");
   for (const place of valid) {
     const pagePath = path.join(OUT, "place", place.id + ".html");
@@ -1052,7 +1085,7 @@ async function build() {
     const filled = indexRule.isIndexable(place);
     const url = `${BASE_URL}/place/${encodeURIComponent(place.id)}.html`;
     const inSitemap = sitemapXml.includes(`<loc>${url}</loc>`);
-    if (filled !== inSitemap) throw new Error("사이트맵과 보강 색인 기준이 다릅니다: " + place.id);
+    if (!inSitemap) throw new Error("사이트맵에 장소 URL이 없습니다: " + place.id);
     const hasAdUnit = /<ins\b[^>]*\bclass="adsbygoogle"/.test(page);
     if (filled && (page.includes("noindex") || !hasAdUnit)) throw new Error("보강된 장소가 noindex이거나 광고 단위가 없습니다: " + place.id);
     if (!filled && (!page.includes('content="noindex, follow"') || hasAdUnit)) throw new Error("보강되지 않은 장소가 색인되거나 광고 단위가 있습니다: " + place.id);
@@ -1084,7 +1117,7 @@ async function build() {
       throw new Error("출입 제한·미확인 장소가 동반 가능 장소로 게시되었습니다: " + place.id);
     }
     if (homeHtml.includes("/place/" + encodeURIComponent(place.id) + ".html")) throw new Error("홈 대표 목록에 출입 제한·미확인 장소가 있습니다: " + place.id);
-    if (sitemapXml.includes("/place/" + encodeURIComponent(place.id) + ".html")) throw new Error("사이트맵에 출입 제한·미확인 장소가 있습니다: " + place.id);
+    if (!sitemapXml.includes("/place/" + encodeURIComponent(place.id) + ".html")) throw new Error("사이트맵에 출입 제한·미확인 장소가 없습니다: " + place.id);
   }
   if (skipped.length) {
     console.warn(`[petmap] 건너뛴 장소 ${skipped.length}건:`);

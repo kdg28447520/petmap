@@ -20,9 +20,9 @@ node build.js
 REPORT_EMAIL=help@example.com node build.js
 ```
 
-장소 상세의 사진·개요·반려동물 동반 조건은 한국관광공사 TourAPI(국문 관광정보 서비스, KorService2)에서 빌드할 때만 받습니다. 브라우저가 이 API를 호출하지 않고, 결과는 `data/tourapi-cache.json`과 정적 HTML에 남습니다. 인증키가 없으면 그 세 항목을 지어 넣지 않습니다. 모든 장소에는 상호와 주소로 만든 카카오맵·네이버 지도 검색 링크를 붙입니다.
+장소 상세의 사진·개요·반려동물 동반 조건은 한국관광공사 TourAPI(국문 관광정보 서비스, KorService2)에서 빌드할 때만 받습니다. 브라우저가 이 API를 호출하지 않고, 결과는 `data/tourapi-cache.json`과 정적 HTML에 남습니다. 인증키는 `process.env.TOURAPI_SERVICE_KEY`만 읽습니다. 키가 없으면 네트워크 호출을 건너뛰고 캐시만 쓰며, 키 값은 로그에 남기지 않습니다. 사진 응답의 `cpyrhtDivCd`가 `Type1` 또는 `Type3`일 때만 이미지를 넣습니다. 값이 없거나 다른 유형이면 좌표 지도를 씁니다. 제3유형은 `object-fit: contain`과 `#F2F2F2` 배경으로 원본 비율을 유지하고, 사진 아래에 출처·라이선스 문구와 api.visitkorea.or.kr 링크를 붙입니다. 사진은 공유 이미지(OG)나 로고로 합성하지 않습니다. 모든 장소에는 상호와 주소로 만든 카카오맵·네이버 지도 검색 링크를 붙입니다.
 
-색인 여부는 `index-rule.js`만 결정합니다. `build.js`, `guides.js`, 브라우저 지도(`index.html` → `/index-rule.js`)가 이 모듈을 같이 씁니다. 장소 보강 원본은 `data/enrichment/places.json` 한 파일입니다. 키는 장소 ID입니다. 색인하려면 `petAccess`가 `allowed`이고 필수 칸 `indoorOutdoor`(실내/실외), `sizeLimit`(무게·크기 제한), `extraFee`(추가 요금), `checkedOn`(YYYY-MM-DD), `checkedSource`(확인 출처)가 채워져야 합니다. `restricted`·`unverified`·빈 `petAccess`는 색인하지 않습니다. 이름에 `국립공원`이 있는 장소는 값을 채워도 출입 제한입니다. 선택 칸 `leash`, `cat`, `petCount`, `cage`, `petMenu`, `largeDog`는 타일만 만들고 색인 조건에는 들어가지 않습니다. 다섯 필수 칸이 모두 있고, 값이 `미확인`·`확인 중`·`정보 없음`이 아니며, 보강 문장과 관광 개요를 합친 길이가 24자 이상일 때 그 페이지는 자동으로 `index`, 사이트맵, 광고 단위를 갖습니다. 나머지는 `noindex, follow`이고 광고 단위(`ins.adsbygoogle`)를 넣지 않습니다. `example: true`, `publish: false`, ID가 `EXAMPLE`으로 시작하는 행은 게시하지 않습니다. 저장소의 `EXAMPLE-DO-NOT-PUBLISH` 행은 그 예시이며 배포 폴더로 복사하지 않습니다. 필드 설명은 `data/enrichment/SCHEMA.md`에 있습니다. 광고 스크립트와 `ads.txt`는 그대로 둡니다. 모든 상세에는 `/contact.html?place=장소ID`로 가는 `정보 정정 요청` 링크가 있습니다. 가이드 본문이 그 장소를 링크하면 상세에 `관련 가이드`가 붙습니다.
+색인 여부는 `index-rule.js`만 결정합니다. `build.js`, `guides.js`, 브라우저 지도(`index.html` → `/index-rule.js`)가 이 모듈을 같이 씁니다. 장소 보강 원본은 `data/enrichment/places.json` 한 파일입니다. 키는 장소 ID입니다. 색인하려면 `petAccess`가 `allowed`이고 필수 칸 `indoorOutdoor`(실내/실외), `sizeLimit`(무게·크기 제한), `extraFee`(추가 요금), `checkedOn`(YYYY-MM-DD), `checkedSource`(확인 출처)가 채워져야 합니다. `restricted`·`unverified`·빈 `petAccess`는 색인하지 않습니다. 이름에 `국립공원`이 있는 장소는 값을 채워도 출입 제한입니다. 선택 칸 `leash`, `cat`, `petCount`, `cage`, `petMenu`, `largeDog`는 타일만 만들고 색인 조건에는 들어가지 않습니다. 다섯 필수 칸이 모두 있고, 값이 `미확인`·`확인 중`·`정보 없음`이 아니며, 보강 문장과 관광 개요를 합친 길이가 24자 이상일 때 그 페이지는 자동으로 `index`와 광고 단위를 갖습니다. 나머지는 `noindex, follow`이고 광고 단위(`ins.adsbygoogle`)를 넣지 않습니다. 사이트맵에는 색인 여부와 관계없이 만들어진 모든 `/place/` URL을 넣습니다. `example: true`, `publish: false`, ID가 `EXAMPLE`으로 시작하는 행은 게시하지 않습니다. 저장소의 `EXAMPLE-DO-NOT-PUBLISH` 행은 그 예시이며 배포 폴더로 복사하지 않습니다. 필드 설명은 `data/enrichment/SCHEMA.md`에 있습니다. 광고 스크립트와 `ads.txt`는 그대로 둡니다. 모든 상세에는 `/contact.html?place=장소ID`로 가는 `정보 정정 요청` 링크가 있습니다. 가이드 본문이 그 장소를 링크하면 상세에 `관련 가이드`가 붙습니다.
 
 인증키 환경변수 이름은 `TOURAPI_SERVICE_KEY`입니다. [한국관광공사_국문 관광정보 서비스_GW](https://www.data.go.kr/data/15101578/openapi.do)에서 활용신청을 하면 개발계정은 자동승인됩니다. 마이페이지의 인증키 중 디코딩된 일반 인증키를 넣습니다.
 
@@ -46,7 +46,7 @@ node build.js --sri
 - `dist/place/{id}.html`: 장소별 정적 상세 페이지
 - `dist/place/place.css`: 기존 지도 상세화면의 스타일 규칙을 추출한 공통 스타일
 - `dist/og/default.png`, `stay.png`, `food.png`, `park.png`, `hospital.png`: 1200×630 공유 이미지
-- `dist/sitemap.xml`: 메인 페이지와 모든 정상 장소 URL, 한국 날짜 기준 `lastmod`
+- `dist/sitemap.xml`: 메인 페이지, 가이드·안내 페이지, 그리고 모든 `/place/` URL. 한국 날짜 기준 `lastmod`
 - `dist/robots.txt`: Sitemap 선언
 - `dist/places.json`: `updatedAt`과 정규화한 장소 데이터
 - `dist/data/`: 지도 앱이 읽는 원본 데이터 조각
