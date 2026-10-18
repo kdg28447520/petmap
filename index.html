@@ -1451,6 +1451,39 @@ svg.leaflet-image-layer.leaflet-interactive path {
         display: none;
       }
       .empty.show { display: block; }
+      .static-directory {
+        max-width: 920px;
+        margin: 0 auto;
+        padding: 8px 16px 36px;
+        color: var(--ink);
+        font-size: 16px;
+        line-height: 1.65;
+      }
+      .static-directory h2 { font-size: 20px; margin: 22px 0 8px; }
+      .static-directory ul { margin: 0; padding-left: 18px; }
+      .static-directory li { margin: 4px 0; }
+      .static-directory a { color: var(--brand-text); font-weight: 700; }
+      .static-directory[hidden] { display: none; }
+      .pd-fix {
+        display: inline-flex;
+        align-items: center;
+        min-height: 44px;
+        margin-top: 16px;
+        padding: 8px 14px;
+        border-radius: 999px;
+        border: 1.5px solid var(--line);
+        color: var(--ink);
+        font-weight: 700;
+        text-decoration: none;
+        background: var(--surface);
+      }
+      .pd-enrich .pd-row dt { width: 92px; }
+      .pd-related ul { margin: 8px 0 0; padding-left: 18px; }
+      .pd-related a { color: var(--brand-text); font-weight: 700; }
+      .pd-warn p { margin: 8px 0 0; font-weight: 500; }
+      .pd-warn ul { margin: 8px 0 0; padding-left: 18px; font-weight: 500; }
+      .pd-warn li { margin: 4px 0; }
+      .pd-warn a { color: inherit; }
 
       footer {
         padding: 14px 16px calc(14px + env(safe-area-inset-bottom));
@@ -1635,7 +1668,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
       <section class="map-wrap" aria-label="지도">
         <div id="map"></div>
         <div class="map-fallback">
-          <p>지도를 불러올 수 없어요.<br />오른쪽(모바일은 아래) 목록에서 장소를 확인해 주세요.</p>
+          <p></p>
         </div>
       </section>
 
@@ -1657,13 +1690,15 @@ svg.leaflet-image-layer.leaflet-interactive path {
         </div>
         <div class="list-head"><b>장소 목록</b><span id="resultCount"></span></div>
         <div class="list" id="list"></div>
-        <div class="empty" id="empty">
-          조건에 맞는 장소가 없어요.<br />지역, 유형, 검색어를 바꿔 보세요.
-        </div>
+        <div class="empty" id="empty"></div>
       </aside>
     </main>
 
     <section class="page-detail" id="pageDetail" aria-label="장소 상세"></section>
+
+    <section id="staticDirectory" class="static-directory" aria-label="시·도별 장소와 가이드">
+      <!--STATIC_DIRECTORY-->
+    </section>
 
     <footer>
       <nav class="trust-nav" aria-label="안내">
@@ -1907,6 +1942,8 @@ svg.leaflet-image-layer.leaflet-interactive path {
               return true;
             });
             dataReady = true;
+            var staticDir = document.getElementById("staticDirectory");
+            if (staticDir) staticDir.hidden = true;
             fillRegionSelect();
             regionFilterEl.value = state.region;
             if (regionFilterEl.value !== state.region) state.region = "";
@@ -2087,8 +2124,18 @@ svg.leaflet-image-layer.leaflet-interactive path {
         }
 
         /* ---------- list (시·도 그룹 + 페이지 번호, 한 페이지 20곳) ---------- */
+        function accessLabel(name) {
+          var text = String(name || "");
+          if (text.indexOf("북한산국립공원") !== -1) return "반려동물 출입 제한(시범 탐방로 2구간만 예약제 허용)";
+          if (text.indexOf("국립공원") !== -1) return "반려동물 출입 제한(장애인 보조견 제외, 공단 시범 장소만 예외)";
+          if (text.indexOf("도립공원") !== -1 || text.indexOf("군립공원") !== -1) return "반려동물 출입 여부 미확인(관리사무소 확인 필요)";
+          if (text.indexOf("자연휴양림") !== -1) return "반려동물 출입 여부 미확인(휴양림 관리소 확인 필요)";
+          if (text.indexOf("해수욕장") !== -1) return "반려동물 출입 여부 미확인(관리기관 확인 필요)";
+          return "";
+        }
         function rowHtml(p) {
           var meta = [];
+          var access = accessLabel(p.name);
           if (distSortActive && userLoc) meta.push("내 위치에서 " + fmtDist(distKm(userLoc, p)));
           if (p.hours) meta.push(esc(p.hours));
           if (p.phone) meta.push(esc(fmtPhone(p.phone)));
@@ -2096,6 +2143,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
               '<span class="row-top"><span class="row-name">' + esc(p.name) + "</span>" +
               '<span class="badge"><span class="dot dot--' + p.cat + '"></span>' + esc(CATS[p.cat].label) + "</span></span>" +
               (p.address ? '<span class="row-addr" style="display:block">' + esc(p.address) + "</span>" : "") +
+              (access ? '<span class="row-addr" style="display:block">' + esc(access) + "</span>" : "") +
               (meta.length ? '<span class="row-meta"><span>' + meta.join("</span><span>") + "</span></span>" : "") +
             "</span>";
         }
@@ -2150,7 +2198,13 @@ svg.leaflet-image-layer.leaflet-interactive path {
           }
           if (totalPages > 1) frag.appendChild(buildPager(totalPages));
           listEl.appendChild(frag);
-          emptyEl.classList.toggle("show", dataReady && current.length === 0);
+          if (dataReady && current.length === 0) {
+            emptyEl.textContent = "선택한 조건의 결과가 없습니다. 지역이나 유형을 바꿔 보세요.";
+            emptyEl.classList.add("show");
+          } else {
+            emptyEl.textContent = "";
+            emptyEl.classList.remove("show");
+          }
           countEl.textContent = dataReady ? resultPhrase() : "";
         }
 
@@ -2489,6 +2543,8 @@ svg.leaflet-image-layer.leaflet-interactive path {
 
         function mountMap() {
           if (typeof L === "undefined") {
+            var fallback = document.querySelector(".map-fallback p");
+            if (fallback) fallback.textContent = "지도 타일을 표시하지 못했습니다. 아래 장소 목록을 이용해 주세요.";
             document.body.classList.add("no-map");
             return;
           }

@@ -6,6 +6,7 @@
  */
 const fs=require("node:fs");
 const path=require("node:path");
+const {accessNotice}=require("./access-rules");
 const ROOT=__dirname, OUT=path.join(ROOT,"dist");
 const BASE="https://www.petmap.kr";
 const updated="2026-10-14";
@@ -28,13 +29,34 @@ function layout(title,desc,url,html,structured){
  return '<!doctype html><html lang="ko"><head>'+meta+'<style>'+css+'</style>'+(structured?'<script type="application/ld+json">'+JSON.stringify(structured).replace(/</g,"\\u003c")+'</script>':'')+'</head><body>'+chrome+'<div class="shell">'+html+'</div>'+trustFooter+'</body></html>';
 }
 function write(name,html){const p=path.join(OUT,name);fs.mkdirSync(path.dirname(p),{recursive:true});fs.writeFileSync(p,html,"utf8");}
-function getPlaces(g){
+function pickGuidePlaces(g){
  const terms=g.regionKeys||[];
- return all.filter(p=>(!g.categories||g.categories.includes(p.category))&&(!terms.length||terms.some(s=>(p.addr||"").includes(s)))).slice(0,8);
+ const matched=all.filter(p=>(!g.categories||g.categories.includes(p.category))&&(!terms.length||terms.some(s=>(p.addr||"").includes(s))));
+ const shown=[];
+ const limited=[];
+ for(const p of matched){
+  const notice=accessNotice(p.name);
+  if(notice&&notice.tone==="limit") limited.push(p);
+  else if(shown.length<8) shown.push(p);
+ }
+ return {shown, limited};
+}
+function conditionCell(p){
+ const notice=accessNotice(p.name);
+ return notice?notice.label:"업체 확인";
 }
 function itemTable(places){
- const rows=places.map(p=>'<tr><td><a href="/place/'+encodeURIComponent(p.id)+'.html">'+esc(p.name)+'</a></td><td>'+esc(p.addr||"주소 재확인")+'</td><td>'+esc(({stay:"숙박",food:"음식점·카페",park:"산책·놀이터",hospital:"동물병원"})[p.category]||"장소")+'</td><td>업체 확인</td></tr>').join("");
- return '<div class="table-scroll"><table><thead><tr><th>장소명</th><th>주소</th><th>유형</th><th>동반 조건·요금</th></tr></thead><tbody>'+rows+'</tbody></table></div><p class="subtle">표의 장소는 사이트 수록 데이터에서 지역·카테고리 기준으로 추린 예시이며, 추천 순위나 최신 운영 보증이 아닙니다. 자세한 사항은 각 시설에 확인하세요.</p>';
+ const rows=places.map(p=>'<tr><td><a href="/place/'+encodeURIComponent(p.id)+'.html">'+esc(p.name)+'</a></td><td>'+esc(p.addr||"주소 재확인")+'</td><td>'+esc(({stay:"숙박",food:"음식점·카페",park:"산책·놀이터",hospital:"동물병원"})[p.category]||"장소")+'</td><td>'+esc(conditionCell(p))+'</td></tr>').join("");
+ return '<div class="table-scroll"><table><thead><tr><th>장소명</th><th>주소</th><th>유형</th><th>동반 조건·요금</th></tr></thead><tbody>'+rows+'</tbody></table></div><p class="subtle">표의 장소는 사이트 수록 데이터에서 지역·카테고리 기준으로 추린 예시이며, 추천 순위나 최신 운영 보증이 아닙니다. 국립공원 이름은 이 표에서 빼고 아래 주의에 둡니다. 도립공원·군립공원·자연휴양림은 확인되지 않으면 미확인으로 적습니다.</p>';
+}
+function limitNote(places){
+ if(!places.length) return "";
+ const items=places.map(p=>{
+  const notice=accessNotice(p.name);
+  const links=(notice.sources||[]).map(href=>'<a href="'+esc(href)+'" target="_blank" rel="noopener">'+esc(href)+'</a>').join(" · ");
+  return '<li><a href="/place/'+encodeURIComponent(p.id)+'.html">'+esc(p.name)+'</a> — '+esc(notice.label)+(links?" · "+links:"")+'</li>';
+ }).join("");
+ return '<div class="note"><strong>일반 예시에서 뺀 국립공원 이름</strong><ul>'+items+'</ul><p>국립공원은 장애인 보조견을 빼면 출입이 제한됩니다. 북한산은 예약이 되는 시범 탐방로 2구간만 예외로 안내되어 있습니다. 링크의 공고와 예약 페이지를 보세요.</p></div>';
 }
 function compareTable(g){
  const opts=[
@@ -56,12 +78,12 @@ function faqPairs(g){
  return [g.faq1||common[0],g.faq2||common[1],g.faq3||common[2],g.faq4||common[3]];
 }
 function makeGuide(g,idx){
- const url="/guides/"+g.id+".html", places=getPlaces(g), intro=esc(g.lead), details=g.route||[];
+ const url="/guides/"+g.id+".html", picked=pickGuidePlaces(g), places=picked.shown, intro=esc(g.lead), details=g.route||[];
  const imgcat=(g.categories||[]).includes("stay")?"stay":(g.categories||[]).includes("hospital")?"hospital":(g.categories||[]).includes("park")?"park":"food";
  const image='<figure class="figure"><img src="/og/'+imgcat+'.png" width="1200" height="630" alt="'+esc(g.title)+' 관련 반려동물 지도 일러스트"><figcaption>반려동물 동반 정보는 현장 운영 조건에 따라 달라집니다.</figcaption></figure>';
  const first=sec("어떤 순서로 준비하면 좋을까요?",para(g.context)+para(g.detail)+para("먼저 이동 수단과 체류 시간을 정하고, 산책·식사·휴식 시간을 분리해 보세요. 사람에게는 짧은 이동이어도 반려동물에게는 냄새와 소음이 낯선 긴 외출일 수 있습니다. 예약 가능한 장소만 연결하고, 당일 취소나 우천 시 대안도 하나씩 마련하는 편이 좋습니다."));
  const second=sec(g.routeTitle||"추천 일정과 동선",'<ol class="bullets">'+details.map(x=>'<li>'+esc(x)+'</li>').join("")+'</ol>'+para(g.routeAfter)+image);
- const third=sec("지도에 수록된 실제 장소 확인하기",para("다음은 댕냥이와 함께 장소 데이터에서 이 글과 관련된 장소를 골라 보여주는 표입니다. 주소·유형을 우선 확인하고, 영업시간과 동반 가능 범위가 중요한 경우 반드시 출발 전에 문의하세요.")+(places.length?itemTable(places):para("현재 지도 데이터에서 이 주제와 일치하는 장소를 충분히 찾지 못했습니다. 전국 지도에서 지역명을 입력하고 다른 카테고리도 함께 살펴보세요."))+para(g.placesTip||"검색 결과는 시점에 따라 달라질 수 있습니다. 직접 확인한 조건이 기존 정보와 다르면 문의·정정 경로를 통해 알려주세요."));
+ const third=sec("지도에 수록된 실제 장소 확인하기",para("다음은 댕냥이와 함께 장소 데이터에서 이 글과 관련된 장소를 골라 보여주는 표입니다. 주소·유형을 우선 확인하고, 영업시간과 동반 가능 범위가 중요한 경우 반드시 출발 전에 문의하세요.")+(places.length?itemTable(places):para("현재 지도 데이터에서 이 주제와 일치하는 장소를 충분히 찾지 못했습니다. 전국 지도에서 지역명을 입력하고 다른 카테고리도 함께 살펴보세요."))+limitNote(picked.limited)+para(g.placesTip||"검색 결과는 시점에 따라 달라질 수 있습니다. 직접 확인한 조건이 기존 정보와 다르면 문의·정정 경로를 통해 알려주세요."));
  const fourth=sec("예약·이용 전에 비교할 조건",para(g.priceGuide)+compareTable(g)+para("요금은 평일·주말, 시즌, 반려견 크기, 객실 형태에 따라 달라집니다. 이 문서에는 검증하지 못한 금액을 임의로 넣지 않았습니다. 가격이나 주차 가능 여부를 표시하지 않은 곳은 공식 예약화면 또는 업체 전화가 가장 정확합니다."));
  const fifth=sec(g.cautionTitle||"현장에서 꼭 챙길 안전·펫티켓",para(g.safety)+'<ul class="checklist">'+g.checks.map(x=>'<li>'+esc(x)+'</li>').join("")+'</ul>'+para("비상용 물과 배변봉투는 이동 거리와 관계없이 챙기는 편이 안전합니다. 더위·추위·습도 때문에 걷기 힘들어한다면 동선을 바로 줄이세요. 강아지가 낯선 곳을 힘들어하는 경우 사진이나 방문 개수보다 안정된 휴식이 우선입니다."));
  const sixth=sec("자주 묻는 질문",'<dl>'+faqPairs(g).map(pair=>'<dt>'+esc(pair[0])+'</dt><dd>'+esc(pair[1])+'</dd>').join("")+'</dl>');
@@ -91,24 +113,57 @@ function patchMap(){
  }
  fs.writeFileSync(file,html,"utf8");
 }
+function patchRelatedGuides(){
+ const mentions=new Map();
+ const dir=path.join(OUT,"guides");
+ for(const name of fs.readdirSync(dir)){
+  if(!name.endsWith(".html")||name==="index.html") continue;
+  const html=fs.readFileSync(path.join(dir,name),"utf8");
+  const gid=name.slice(0,-5);
+  const title=(html.match(/<article[\s\S]*?<h1>([\s\S]*?)<\/h1>/)||[,"여행 가이드"])[1];
+  const ids=[...html.matchAll(/href="\/place\/([^"]+)\.html"/g)].map(match=>decodeURIComponent(match[1]));
+  for(const pid of ids){
+   if(!mentions.has(pid)) mentions.set(pid,[]);
+   const list=mentions.get(pid);
+   if(!list.some(item=>item.id===gid)) list.push({id:gid,title});
+  }
+ }
+ let patched=0;
+ const needle='<p><a class="pd-back" href="/">← 목록으로 돌아가기</a></p>';
+ for(const [pid, guides] of mentions){
+  const file=path.join(OUT,"place",pid+".html");
+  if(!fs.existsSync(file)) continue;
+  let html=fs.readFileSync(file,"utf8");
+  if(html.includes('class="pd-related"')||!html.includes(needle)) continue;
+  const items=guides.map(g=>'<li><a href="/guides/'+g.id+'.html">'+g.title+'</a></li>').join("");
+  const block='<section class="pd-related"><h2 class="pd-sec-title">관련 가이드</h2><ul>'+items+'</ul></section>\n      ';
+  fs.writeFileSync(file,html.replace(needle, block+needle),"utf8");
+  patched++;
+ }
+ console.log("[petmap guides] related guides on",patched,"place pages");
+}
 function guideCard(g,index,total,blurb){
  return '<a class="guide-card" href="/guides/'+g.id+'.html"><small>'+esc(g.group)+' · '+(index+1)+'/'+total+'</small><b>'+esc(g.title)+'</b><small>'+esc(blurb)+'</small></a>';
 }
 function build(){
  if(!Array.isArray(data)||data.length!==20)throw Error("기존 여행 가이드 항목 수가 20개가 아닙니다.");
- if(!Array.isArray(longGuides)||longGuides.length!==12)throw Error("새 가이드 항목 수가 12개가 아닙니다.");
+ if(!Array.isArray(longGuides)||longGuides.length!==17)throw Error("새 가이드 항목 수가 17개가 아닙니다.");
  const total=data.length+longGuides.length;
- const longCards=longGuides.map((g,i)=>guideCard(g,i,longGuides.length,g.description)).join("");
+ const ruleGuides=longGuides.filter(g=>g.group!=="준비와 확인");
+ const practicalGuides=longGuides.filter(g=>g.group==="준비와 확인");
+ const ruleCards=ruleGuides.map((g,i)=>guideCard(g,i,ruleGuides.length,g.description)).join("");
+ const practicalCards=practicalGuides.map((g,i)=>guideCard(g,i,practicalGuides.length,g.description)).join("");
  const cardList=data.map((g,i)=>guideCard(g,i,data.length,g.summary)).join("");
- const cover='<article class="article"><h1>반려동물 동반 여행 가이드 '+total+'편</h1><p class="lede">장소 파일에서 센 지역 분포, 열차·버스·항공·자가용의 공식 규정, 그리고 기존의 지역·테마 글을 한 목록에 모았습니다. 규정 숫자는 출처 페이지에 있는 것만 적습니다.</p><h2>데이터와 규정 '+longGuides.length+'편</h2><div class="guide-cards">'+longCards+'</div><h2>지역·테마·실용 '+data.length+'편</h2><div class="guide-cards">'+cardList+'</div></article>';
+ const cover='<article class="article"><h1>반려동물 동반 여행 가이드 '+total+'편</h1><p class="lede">장소 파일에서 센 지역 분포, 열차·버스·항공·자가용의 공식 규정, 그리고 기존의 지역·테마 글을 한 목록에 모았습니다. 규정 숫자는 출처 페이지에 있는 것만 적습니다.</p><h2>데이터와 규정 '+ruleGuides.length+'편</h2><div class="guide-cards">'+ruleCards+'</div><h2>준비와 확인 '+practicalGuides.length+'편</h2><div class="guide-cards">'+practicalCards+'</div><h2>지역·테마·실용 '+data.length+'편</h2><div class="guide-cards">'+cardList+'</div></article>';
  write("guides/index.html",layout("반려동물 동반 여행 가이드 "+total+"편","반려동물 동반 여행의 지역 분포, 교통 규정, 지역별·테마별 가이드 "+total+"편.","/guides/",cover));
  for(let i=0;i<data.length;i++)write("guides/"+data[i].id+".html",makeGuide(data[i],i));
  for(const g of longGuides)write("guides/"+g.id+".html",makeLongGuide(g));
  legal("댕냥이와 함께 소개","/about.html","반려동물 동반 전국 지도 서비스의 데이터 출처, 운영 원칙과 정보 이용 방법 안내.",'<p>댕냥이와 함께(petmap.kr)는 반려동물 보호자가 전국의 동반 숙박·카페·음식점·산책 공간과 야간 동물병원을 탐색하도록 돕는 정보 지도입니다. 편집 목적은 장소를 쉽게 비교하고 방문 전에 확인할 사항을 분명하게 알려드리는 것입니다.</p><h2>데이터는 어떻게 마련하나요?</h2><p>장소 정보는 한국관광공사 TourAPI, 공공 관광·문화 데이터, 고캠핑 및 외부 병원 안내 목록을 바탕으로 정리합니다. 데이터 수록과 실제 동반 허용·예약 가능·24시간 응급진료 가능 여부는 동일하지 않습니다. 운영시간, 추가요금, 병원 당직 여부 등은 업체에 직접 확인해 주세요.</p><h2>편집 원칙</h2><p>광고·제휴 여부와 관계없이 실제 여행 준비에 도움이 되는 정보를 우선합니다. 확인되지 않은 가격이나 체중 제한을 사실처럼 표기하지 않고, 오류를 발견한 이용자의 정정 제안을 받습니다. 본 사이트는 수의학적 진단, 예약 대행 또는 현장 이용 허가를 제공하지 않습니다.</p><h2>자료·정정 요청</h2><p>오류·폐업·동반 조건 변경 등이 있다면 <a href="/contact.html">문의·정정 안내</a>를 이용해 주세요. 여행 참고 자료는 <a href="/guides/">여행 가이드</a>에서 확인할 수 있습니다.</p><h2>운영자</h2><p>댕냥이와 함께는 김동곤이 운영합니다. 문의는 <a href="mailto:kdg2844@gmail.com">kdg2844@gmail.com</a>으로 보내 주세요.</p>');
  legal("개인정보처리방침","/privacy.html","petmap.kr의 위치정보·쿠키·Google AdSense 및 개인정보 취급 안내.",'<p>댕냥이와 함께는 지도 검색 기능을 제공하는 웹사이트입니다. 아래 내용은 현재 공개된 웹사이트 코드 기반의 안내이며, 외부 서비스 정책과 사이트 기능 변경 시 수정될 수 있습니다.</p><h2>위치정보</h2><p>웹 브라우저에서 이용자가 위치 접근을 허용하면 주변 장소 표시를 위해 브라우저가 제공하는 위치정보를 이용할 수 있습니다. 사용자는 브라우저 권한 설정에서 접근을 거절하거나 철회할 수 있습니다. 위치 권한을 허용하지 않아도 지역명 검색을 이용할 수 있습니다.</p><h2>기술 서비스와 접속정보</h2><p>사이트는 지도 타일(OpenStreetMap 관련 타일 서비스) 및 화면 작동을 위한 외부 라이브러리 제공 서버와 통신할 수 있습니다. 외부 서버는 접속 과정에서 IP 주소 등 기술적 접속정보를 처리할 수 있으므로 각 제공자의 개인정보처리방침을 확인해 주세요. 웹 호스팅 제공자 또한 접속·오류 로그를 처리할 수 있습니다.</p><h2>광고·쿠키</h2><p>댕냥이와 함께는 Google AdSense 광고 스크립트를 사용합니다. 광고 심사가 끝나면 페이지에 Google 광고가 표시될 수 있습니다. 스크립트가 실행되는 동안 Google과 광고 파트너는 광고를 게재하고, 같은 광고가 너무 자주 나오지 않게 조정하고, 노출과 클릭을 측정하기 위해 쿠키와 유사한 기술(웹 비콘, 광고 식별자 등)을 기기에 저장하거나 읽을 수 있습니다.</p><p>이 과정에서 쿠키 식별자, IP 주소, 브라우저 종류, 방문한 페이지, 대략적인 위치, 광고를 보거나 클릭한 기록이 처리될 수 있습니다. 같은 정보를 바탕으로 이용자에게 맞춘 광고가 나올 수도 있습니다. 맞춤 광고는 <a href="https://adssettings.google.com/" target="_blank" rel="noopener">Google 광고 설정</a>에서 끄거나 조정할 수 있고, 브라우저 설정에서 서드파티 쿠키를 차단하거나 이미 저장된 쿠키를 삭제할 수도 있습니다.</p><p>이 사이트는 회원가입으로 이름이나 연락처를 수집하지 않으며, AdSense 쿠키를 자체 서버에 저장하거나 판매하지 않습니다. Google이 파트너 사이트에서 데이터를 어떻게 이용하는지는 <a href="https://policies.google.com/technologies/partner-sites" target="_blank" rel="noopener">Google의 파트너 사이트 데이터 이용 안내</a>에서 확인할 수 있습니다.</p><h2>문의 및 정책 변경</h2><p>장소 정보나 개인정보 관련 문의는 <a href="/contact.html">문의·정정 페이지</a>에 기재된 공식 안내 경로를 이용해 주세요. 운영자는 김동곤이며, 개인정보 관련 요청은 <a href="mailto:kdg2844@gmail.com">kdg2844@gmail.com</a>으로 보내 주세요. 이 방침은 2026년 10월 17일에 Google AdSense 쿠키 안내와 운영자 연락처를 반영해 고쳤습니다.</p>',"2026-10-17");
- legal("문의·장소 정보 정정","/contact.html","petmap.kr 동반 시설 정보 오류, 운영시간 변경 및 개인정보 관련 문의 접수 안내.",'<p>반려동물 동반 규정·영업 여부·병원 진료시간 변경을 발견했다면 근거와 함께 알려 주세요. 정확한 정보를 제공하기 위해 업소 공식 공지 또는 전화 확인 등 검증 가능한 자료가 있으면 도움이 됩니다.</p><h2>정보 정정 제안</h2><p>현재 확인 가능한 공개 정정 창구는 프로젝트 GitHub 이슈입니다. GitHub 로그인이 필요할 수 있으며 문의가 공개될 수 있으므로 전화번호·주소 등 개인정보나 민감한 정보를 기재하지 마세요.</p><p><a href="https://github.com/kdg28447520/petmap/issues/new" target="_blank" rel="noopener">→ GitHub에서 장소 정보 정정 제안하기</a></p><h2>제안 시 유용한 정보</h2><ul><li>장소명과 지도 상세 페이지 URL</li><li>바뀐 항목(운영시간·동반 허용·폐업 등)</li><li>근거 자료의 공개 URL 또는 확인 일자</li></ul><h2>운영자</h2><p>운영자는 김동곤입니다. 장소 정보 정정과 개인정보 관련 문의는 <a href="mailto:kdg2844@gmail.com">kdg2844@gmail.com</a>으로 보내 주세요.</p><h2>개인정보 관련 요청</h2><p>본 사이트는 별도 회원가입 화면을 제공하지 않습니다. 개인정보 요청은 위 이메일로 보내 주세요. GitHub 공개 이슈에는 개인 정보를 올리지 마세요.</p>');
+ legal("문의·장소 정보 정정","/contact.html","petmap.kr 동반 시설 정보 오류, 운영시간 변경 및 개인정보 관련 문의 접수 안내.",'<p>반려동물 동반 규정·영업 여부·병원 진료시간 변경을 발견했다면 근거와 함께 알려 주세요. 정확한 정보를 제공하기 위해 업소 공식 공지 또는 전화 확인 등 검증 가능한 자료가 있으면 도움이 됩니다.</p><p id="placeFixNote">장소 상세의 정보 정정 요청은 이 페이지 주소에 place 값을 붙여 들어옵니다. 장소 ID가 보이면 그 상세 페이지와 무엇이 다른지 함께 적어 주세요.</p><script>(function(){var id=new URLSearchParams(location.search).get("place");var el=document.getElementById("placeFixNote");if(!id||!/^[A-Za-z0-9_-]+$/.test(id)||!el)return;var p=document.createElement("p");p.textContent="정정 대상 장소 ID: "+id;el.insertAdjacentElement("afterend",p);})();</script><h2>정보 정정 제안</h2><p>현재 확인 가능한 공개 정정 창구는 프로젝트 GitHub 이슈입니다. GitHub 로그인이 필요할 수 있으며 문의가 공개될 수 있으므로 전화번호·주소 등 개인정보나 민감한 정보를 기재하지 마세요.</p><p><a href="https://github.com/kdg28447520/petmap/issues/new" target="_blank" rel="noopener">→ GitHub에서 장소 정보 정정 제안하기</a></p><h2>제안 시 유용한 정보</h2><ul><li>장소명과 지도 상세 페이지 URL</li><li>바뀐 항목(운영시간·동반 허용·폐업 등)</li><li>근거 자료의 공개 URL 또는 확인 일자</li></ul><h2>운영자</h2><p>운영자는 김동곤입니다. 장소 정보 정정과 개인정보 관련 문의는 <a href="mailto:kdg2844@gmail.com">kdg2844@gmail.com</a>으로 보내 주세요.</p><h2>개인정보 관련 요청</h2><p>본 사이트는 별도 회원가입 화면을 제공하지 않습니다. 개인정보 요청은 위 이메일로 보내 주세요. GitHub 공개 이슈에는 개인 정보를 올리지 마세요.</p>');
  legal("이용 안내·면책","/terms.html","petmap.kr 지도 데이터와 반려동물 동반 장소 이용 시 주의사항.",'<p>댕냥이와 함께의 지도와 가이드는 여행·외출 참고용 정보입니다. 등록 여부가 반려동물의 입장 허가 또는 병원의 당일 진료 가능 여부를 뜻하지 않습니다.</p><h2>시설 정보 확인</h2><p>운영시간·예약·요금·반려동물 조건은 시설과 시기에 따라 달라질 수 있습니다. 숙박은 객실별 규정, 캠핑은 사이트별 규정, 음식점은 실내·야외 허용 범위를 별도 확인해 주세요. 의학적 응급상황은 지체하지 말고 병원에 먼저 전화하세요.</p><h2>자료 출처와 권리</h2><p>일부 장소 정보는 공공·민간 제공 자료에서 유래하며, 각 출처의 이용조건을 따릅니다. 본 웹사이트의 편집 설명과 가이드를 무단으로 대량 복제·재배포하지 마세요. 잘못된 정보는 <a href="/contact.html">정정 요청</a>할 수 있습니다.</p>');
  patchMap();
+ patchRelatedGuides();
  const urls=[["/guides/",LONG_DATE],["/about.html",updated],["/privacy.html","2026-10-17"],["/contact.html",updated],["/terms.html",updated],...data.map(g=>["/guides/"+g.id+".html",updated]),...longGuides.map(g=>["/guides/"+g.id+".html",LONG_DATE])];
  const site=path.join(OUT,"sitemap.xml");let xml=fs.readFileSync(site,"utf8");
  const fresh=urls.filter(([p])=>!xml.includes("<loc>"+BASE+p+"</loc>"));
@@ -166,13 +221,14 @@ function assertPublished(){
     htmlCount++;
     const html=fs.readFileSync(filename,"utf8");
     const url=pageUrl(filename);
+    const rel="/"+path.relative(OUT,filename).split(path.sep).join("/");
     if(!html.includes(scriptSrc)||!html.includes('crossorigin="anonymous"')||!html.includes('name="google-adsense-account"'))missingScript++;
     const blocked=html.includes('name="robots" content="noindex, follow"');
     if(blocked){
      noindex++;
      if(locs.has(url))problems.push("noindex인데 사이트맵에 있음: "+url);
+     if(/<ins\b[^>]*\badsbygoogle/.test(html))problems.push("noindex 페이지에 광고 단위: "+rel);
     }else if(!locs.has(url))problems.push("색인 대상인데 사이트맵에 없음: "+url);
-    const rel="/"+path.relative(OUT,filename).split(path.sep).join("/");
     if(blocked && !rel.startsWith("/place/"))problems.push("장소가 아닌 페이지가 noindex: "+rel);
    }
   }
@@ -242,6 +298,29 @@ function assertPublished(){
  }
  const home=fs.readFileSync(path.join(OUT,"index.html"),"utf8");
  if(!home.includes('href="/guides/"'))problems.push("지도 화면 메뉴에 가이드 링크가 없습니다.");
+ if(home.includes("지도를 불러올 수 없어요")||home.includes("조건에 맞는 장소가 없어요"))problems.push("홈 HTML에 빈 상태 문구가 남아 있습니다.");
+ const homePlaceLinks=[...home.matchAll(/href="\/place\/[^"]+\.html"/g)].length;
+ if(homePlaceLinks<30)problems.push("홈 정적 장소 링크 "+homePlaceLinks);
+ const seoulGuide=fs.readFileSync(path.join(OUT,"guides","seoul-pet-cafes-walks.html"),"utf8");
+ if(!seoulGuide.includes("반려동물 출입 제한(시범 탐방로 2구간만 예약제 허용)"))problems.push("서울 가이드에 북한산 제한 문구가 없습니다.");
+ const seoulTables=[...seoulGuide.matchAll(/<tbody>[\s\S]*?<\/tbody>/g)].map(match=>match[0]).join("");
+ if(seoulTables.includes("북한산국립공원"))problems.push("서울 가이드 표에 북한산이 일반 행으로 남아 있습니다.");
+ for(const gid of ["large-dog-welcome-places","pet-transport-ktx-bus-airplane","pet-travel-packing-list","rainy-day-indoor-pets","senior-dog-travel-care"]){
+  const page=fs.readFileSync(path.join(OUT,"guides",gid+".html"),"utf8");
+  if(!page.includes("가지산도립공원")||!page.includes("반려동물 출입 여부 미확인(관리사무소 확인 필요)"))problems.push(gid+" 가지산 미확인 표시가 없습니다.");
+ }
+ let tableRows=0, tableLinks=0;
+ for(const g of data){
+  const page=fs.readFileSync(path.join(OUT,"guides",g.id+".html"),"utf8");
+  const body=(page.match(/<tbody>[\s\S]*?<\/tbody>/)||[""])[0];
+  tableRows+=[...body.matchAll(/<tr>/g)].length;
+  tableLinks+=[...body.matchAll(/href="\/place\//g)].length;
+ }
+ if(!tableRows||tableLinks/tableRows<0.9)problems.push("가이드 표 장소 링크 "+tableLinks+"/"+tableRows);
+ const bukhanPage=fs.readFileSync(path.join(OUT,"place","tour-127220.html"),"utf8");
+ if(!bukhanPage.includes("관련 가이드")||bukhanPage.includes('name="robots" content="noindex, follow"'))problems.push("북한산 상세의 관련 가이드 또는 색인 상태가 잘못되었습니다.");
+ const gajiPage=fs.readFileSync(path.join(OUT,"place","tour-126027.html"),"utf8");
+ if(!gajiPage.includes("관련 가이드")||!gajiPage.includes('name="robots" content="noindex, follow"')||/<ins\b[^>]*\badsbygoogle/.test(gajiPage))problems.push("가지산 상세의 관련 가이드·noindex·광고 단위를 확인하세요.");
  if(problems.length||missingScript){
   throw new Error("[petmap check] "+problems.slice(0,12).join(" | ")+(missingScript?(" missingScript="+missingScript):""));
  }
