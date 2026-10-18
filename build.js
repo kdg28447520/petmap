@@ -115,6 +115,197 @@ function reportLink() {
   const subject = encodeURIComponent("댕냥이와 함께 장소 정보 수정 제안");
   return `<p class="pd-report"><a href="mailto:${escapeHtml(REPORT_EMAIL)}?subject=${subject}">정보가 다르면 알려주세요</a></p>`;
 }
+function correctionLink(place) {
+  return `<p class="pd-correct"><a href="/contact.html?place=${encodeURIComponent(place.id)}">정보 정정 요청</a></p>`;
+}
+const ENRICHMENT_FIELDS = [
+  { id: "indoorOutdoor", keys: ["indoorOutdoor", "실내실외", "실내/실외"], label: "실내/실외" },
+  { id: "sizeLimit", keys: ["sizeLimit", "weightLimit", "무게제한", "무게·크기 제한"], label: "무게·크기 제한" },
+  { id: "extraFee", keys: ["extraFee", "추가 요금", "추가요금"], label: "추가 요금" },
+  { id: "checkedOn", keys: ["checkedOn", "확인일"], label: "확인일" },
+  { id: "checkedSource", keys: ["checkedSource", "sourceNote", "확인 출처", "출처", "source"], label: "확인 출처" },
+];
+const UNCONFIRMED = new Set(["미확인", "미확인.", "확인 불가", "알 수 없음"]);
+const INDEX_BODY_MIN = 24;
+const INDOOR_ICON = '<svg class="pd-ico" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M2 7.2 8 2.5l6 4.7V14H2V7.2Zm2 .6V12h8V7.8L8 4.7 4 7.8Z"/></svg>';
+const OUTDOOR_ICON = '<svg class="pd-ico" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 1.5 9.2 6H14l-3.8 2.8 1.5 4.7L8 10.7 4.3 13.5l1.5-4.7L2 6h4.8L8 1.5Z"/></svg>';
+const AD_UNIT = '<aside class="ad-slot" aria-label="광고"><p class="ad-slot-label">광고</p><ins class="adsbygoogle" style="display:block;width:100%;min-height:250px" data-ad-client="ca-pub-4533404826925371" data-ad-format="auto" data-full-width-responsive="true"></ins></aside>';
+const REGION_ORDER = [
+  "서울특별시", "경기도", "인천광역시", "강원특별자치도",
+  "대전광역시", "세종특별자치시", "충청북도", "충청남도",
+  "전북특별자치도", "광주광역시", "전라남도",
+  "경상북도", "경상남도", "부산광역시", "대구광역시", "울산광역시",
+  "제주특별자치도",
+];
+const REGION_SHORT = {
+  "서울특별시": "서울", "경기도": "경기", "인천광역시": "인천", "강원특별자치도": "강원",
+  "대전광역시": "대전", "세종특별자치시": "세종", "충청북도": "충북", "충청남도": "충남",
+  "전북특별자치도": "전북", "광주광역시": "광주", "전라남도": "전남",
+  "경상북도": "경북", "경상남도": "경남", "부산광역시": "부산", "대구광역시": "대구", "울산광역시": "울산",
+  "제주특별자치도": "제주",
+};
+const HOME_GUIDE_IDS = [
+  "seoul-pet-cafes-walks",
+  "gyeonggi-daytrip-pets",
+  "gangwon-overnight-with-dog",
+  "jeju-pet-flight-guide",
+  "busan-pet-beach-cafe",
+  "korea-pet-map-counts",
+];
+function loadEnrichmentMap() {
+  const file = path.join(ROOT, "content", "place-enrichment.json");
+  if (!fs.existsSync(file)) return {};
+  const parsed = JSON.parse(fs.readFileSync(file, "utf8"));
+  const rows = parsed && parsed.places ? parsed.places : parsed;
+  if (Array.isArray(rows)) {
+    const map = {};
+    for (const row of rows) if (row && row.id) map[String(row.id)] = row;
+    return map;
+  }
+  return rows && typeof rows === "object" ? rows : {};
+}
+function enrichmentValue(record, keys) {
+  if (!record) return "";
+  for (const key of keys) {
+    if (record[key] == null) continue;
+    const text = displayValue(record[key]);
+    if (text) return text;
+  }
+  return "";
+}
+function normalizeEnrichment(record) {
+  if (!record || typeof record !== "object") return null;
+  const normalized = {};
+  let any = false;
+  for (const field of ENRICHMENT_FIELDS) {
+    const value = enrichmentValue(record, field.keys);
+    if (!value) continue;
+    normalized[field.id] = value;
+    any = true;
+  }
+  return any ? normalized : null;
+}
+function enrichmentRows(place) {
+  const record = place && place.enrichment;
+  return ENRICHMENT_FIELDS.map((field) => ({ id: field.id, label: field.label, value: enrichmentValue(record, [field.id]) }));
+}
+function isFilledEnrichment(place) {
+  const rows = enrichmentRows(place);
+  if (rows.some((row) => !row.value || UNCONFIRMED.has(row.value))) return false;
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(rows.find((row) => row.id === "checkedOn").value)) return false;
+  if (!/실내|실외|야외/.test(rows.find((row) => row.id === "indoorOutdoor").value)) return false;
+  const overview = place.tour && displayValue(place.tour.overview) || "";
+  const pet = place.tour && Array.isArray(place.tour.petRules) ? place.tour.petRules.map((rule) => displayValue(rule.value)).join("") : "";
+  const body = (rows.map((row) => row.value).join("") + overview + pet).replace(/\s/g, "");
+  return Array.from(body).length >= INDEX_BODY_MIN;
+}
+function enrichIcons(value) {
+  const indoor = /실내/.test(value);
+  const outdoor = /실외|야외/.test(value);
+  return (indoor ? INDOOR_ICON : "") + (outdoor ? OUTDOOR_ICON : "");
+}
+function enrichmentHtml(place) {
+  const rows = enrichmentRows(place).filter((row) => row.value);
+  if (!rows.length) return "";
+  const items = rows.map((row) => {
+    const icons = row.id === "indoorOutdoor" ? enrichIcons(row.value) : "";
+    return `<div class="pd-row"><dt>${escapeHtml(row.label)}</dt><dd>${icons}${escapeHtml(row.value)}</dd></div>`;
+  }).join("");
+  const checked = rows.find((row) => row.id === "checkedOn");
+  const badge = checked ? `<p class="pd-checked"><span class="pd-badge">확인일 ${escapeHtml(checked.value)}</span></p>` : "";
+  return `<h2 class="pd-sec-title">보강 정보</h2><div class="pd-card pd-enrich"><dl style="margin:0">${items}</dl></div>${badge}`;
+}
+function homeGuideLinks() {
+  const guides = JSON.parse(fs.readFileSync(path.join(ROOT, "content", "guides.json"), "utf8"));
+  const longs = JSON.parse(fs.readFileSync(path.join(ROOT, "content", "long-guides.json"), "utf8"));
+  const byId = new Map([...guides, ...longs].map((guide) => [guide.id, guide]));
+  return HOME_GUIDE_IDS.map((id) => {
+    const guide = byId.get(id);
+    if (!guide) throw new Error("홈에 넣을 가이드가 없습니다: " + id);
+    return guide;
+  });
+}
+function pickRepresentatives(places) {
+  const byRegion = new Map();
+  for (const place of places) {
+    const region = regionOf(place.addr);
+    if (!byRegion.has(region)) byRegion.set(region, []);
+    byRegion.get(region).push(place);
+  }
+  for (const list of byRegion.values()) list.sort((a, b) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0));
+  const picked = [];
+  const seen = new Set();
+  for (const region of REGION_ORDER) {
+    const list = byRegion.get(region) || [];
+    const chosen = [];
+    for (const category of ["food", "stay", "park", "hospital"]) {
+      const found = list.find((place) => place.category === category && !seen.has(place.id));
+      if (!found) continue;
+      chosen.push(found);
+      if (chosen.length >= 2) break;
+    }
+    for (const place of list) {
+      if (chosen.length >= 2) break;
+      if (!chosen.includes(place)) chosen.push(place);
+    }
+    for (const place of chosen) {
+      seen.add(place.id);
+      picked.push(place);
+    }
+  }
+  if (picked.length < 30) {
+    for (const place of places.slice().sort((a, b) => (a.id < b.id ? -1 : 1))) {
+      if (picked.length >= 30) break;
+      if (seen.has(place.id)) continue;
+      seen.add(place.id);
+      picked.push(place);
+    }
+  }
+  return picked;
+}
+function crawlCatalogHtml(places) {
+  const counts = new Map();
+  for (const place of places) {
+    const region = regionOf(place.addr);
+    counts.set(region, (counts.get(region) || 0) + 1);
+  }
+  const regions = REGION_ORDER.filter((region) => counts.has(region));
+  for (const region of counts.keys()) if (!regions.includes(region)) regions.push(region);
+  const regionItems = regions.map((region) => {
+    const href = "/?region=" + encodeURIComponent(REGION_SHORT[region] || region);
+    return `<li><a href="${href}">${escapeHtml(region)} <span>${counts.get(region)}곳</span></a></li>`;
+  }).join("");
+  const reps = pickRepresentatives(places);
+  const placeItems = reps.map((place) => {
+    const category = CATEGORIES[place.category];
+    return `<li><a href="/place/${encodeURIComponent(place.id)}.html">${escapeHtml(place.name)}</a> <span>${escapeHtml(regionOf(place.addr))} · ${escapeHtml(category.label)}</span></li>`;
+  }).join("");
+  const guideItems = homeGuideLinks().map((guide) => `<li><a href="/guides/${encodeURIComponent(guide.id)}.html">${escapeHtml(guide.title)}</a></li>`).join("");
+  return `<div class="crawl-catalog-inner"><h2>시·도별 장소 수</h2><ul class="region-counts">${regionItems}</ul><h2>대표 장소</h2><p class="crawl-note">지도가 열리지 않아도 상세 페이지로 이동할 수 있어요. 수록 ${places.length.toLocaleString("ko-KR")}곳 가운데 시·도마다 고른 ${reps.length}곳입니다.</p><ul class="rep-places">${placeItems}</ul><h2>여행 가이드</h2><ul class="guide-links">${guideItems}</ul></div>`;
+}
+function injectCrawlCatalog(html, places) {
+  if (!html.includes("<!--CRAWL_CATALOG-->")) throw new Error("홈 HTML에 정적 목록 위치가 없습니다.");
+  const next = html.replace("<!--CRAWL_CATALOG-->", crawlCatalogHtml(places));
+  const forbidden = (next.match(/불러올 수 없어요|조건에 맞는 장소가 없어요/g) || []).length;
+  if (forbidden) throw new Error("홈 서버 HTML에 빈 상태 문구가 있습니다: " + forbidden);
+  const placeLinks = (next.match(/href="\/place\/[^"]+\.html"/g) || []).length;
+  const guideLinks = (next.match(/href="\/guides\/[^"]+\.html"/g) || []).length;
+  if (placeLinks < 30) throw new Error("홈 장소 링크가 30개 미만입니다: " + placeLinks);
+  if (guideLinks < 6) throw new Error("홈 가이드 링크가 6개 미만입니다: " + guideLinks);
+  if (!next.includes("시·도별 장소 수")) throw new Error("홈에 시·도별 장소 수가 없습니다.");
+  log(`홈 정적 목록: 시·도 ${new Set(places.map((place) => regionOf(place.addr))).size}곳, 장소 링크 ${placeLinks}, 가이드 링크 ${guideLinks}`);
+  return next;
+}
+function assertNoindexWithoutAds(htmlFiles) {
+  const problems = [];
+  for (const file of htmlFiles) {
+    const html = fs.readFileSync(file, "utf8");
+    const noindex = html.includes('name="robots" content="noindex, follow"');
+    const hasUnit = /<ins\b[^>]*\bclass="adsbygoogle"/.test(html);
+    if (noindex && hasUnit) problems.push(path.relative(OUT, file));
+  }
+  if (problems.length) throw new Error("noindex 페이지에 광고 단위가 있습니다: " + problems.slice(0, 8).join(", "));
+}
 function makePlacePage(place, css, updatedAt, thin) {
   const cat = CATEGORIES[place.category];
   const region = regionOf(place.addr);
@@ -191,9 +382,13 @@ function makePlacePage(place, css, updatedAt, thin) {
       ${overviewHtml}
       <div class="pd-card"><dl style="margin:0">${rows}</dl></div>
       ${petHtml}
+      ${enrichmentHtml(place)}
+      <!--RELATED_GUIDES-->
+      ${thin ? "" : AD_UNIT}
       <div class="pd-actions">${actions}</div>
       <div class="pd-maps">${mapSearch}</div>
       ${warning}
+      ${correctionLink(place)}
       ${reportLink()}
       <p class="pd-source-date">데이터 기준일: ${escapeHtml(updatedAt)}</p>
       ${source ? `<p class="pd-source-note">${escapeHtml(source)}</p>` : ""}
@@ -217,24 +412,29 @@ function sourceFor(place) {
   if (place.source === "gocamping") return "고캠핑(gocamping.or.kr) · 반려견동반 캠핑장";
   return "한국관광공사 TourAPI · 반려동물 동반 여행 정보";
 }
-// Public-data card fields. Anything else with real prose can keep a place page indexed.
-const PUBLIC_DATA_FIELDS = new Set(["id", "name", "category", "addr", "tel", "hours", "lat", "lng", "source", "homepage", "verified24h"]);
-const EDITORIAL_MIN_CHARS = 180;
-function editorialText(place) {
-  const parts = [];
-  for (const [key, value] of Object.entries(place)) {
-    if (PUBLIC_DATA_FIELDS.has(key) || typeof value !== "string") continue;
-    const text = value.replace(/\s+/g, " ").trim();
-    if (text) parts.push(text);
-  }
-  return parts.join(" ");
-}
-// Thin: the page only repeats the public-data card (name, address, phone, hours, source).
-// Hours are empty ("정보 없음") or the single token "24시간", and there is no original write-up.
-// Those pages stay on the site for visitors, but are noindex and left out of the sitemap.
+// Index only places whose enrichment block is filled and whose visible body
+// clears INDEX_BODY_MIN. Everything else stays on the site as noindex,follow
+// and is left out of the sitemap. TourAPI detail alone does not index a page.
 function isThinPlace(place) {
-  if (tourapi.isRich(place.tour)) return false;
-  return Array.from(editorialText(place)).length < EDITORIAL_MIN_CHARS;
+  return !isFilledEnrichment(place);
+}
+function assertEnrichmentPolicy() {
+  const base = { id: "policy-check", name: "정책 확인", category: "food", addr: "서울특별시 중구", lat: 1, lng: 1, source: "kbizin", tel: "", hours: "", homepage: "" };
+  const filled = { ...base, enrichment: { indoorOutdoor: "실내·실외", sizeLimit: "소형견 10kg 이하", extraFee: "추가 요금 없음", checkedOn: "2026-10-18", checkedSource: "업체 공식 안내 페이지" } };
+  if (isThinPlace(filled)) throw new Error("보강이 채워진 장소가 noindex로 분류되었습니다.");
+  const indexed = makePlacePage(filled, "", "2026-10-18", false);
+  const hasAdUnit = (html) => /<ins\b[^>]*\bclass="adsbygoogle"/.test(html);
+  if (indexed.includes("noindex") || !hasAdUnit(indexed) || !indexed.includes("정보 정정 요청") || !indexed.includes("contact.html?place=policy-check") || !indexed.includes("실내/실외") || !indexed.includes("무게·크기 제한") || !indexed.includes("추가 요금") || !indexed.includes("확인 출처")) {
+    throw new Error("보강 장소 페이지 구성이 맞지 않습니다.");
+  }
+  const thinPage = makePlacePage(base, "", "2026-10-18", true);
+  if (!thinPage.includes('content="noindex, follow"') || hasAdUnit(thinPage) || !thinPage.includes('href="/contact.html?place=policy-check"')) {
+    throw new Error("얇은 장소 페이지에 광고 단위가 있거나 정정 링크가 없습니다.");
+  }
+  const partial = { ...base, enrichment: { indoorOutdoor: "실내", sizeLimit: "10kg 이하", extraFee: "없음", checkedOn: "2026-10-18" } };
+  if (!isThinPlace(partial)) throw new Error("출처가 없는 보강이 색인 대상이 되었습니다.");
+  const unknown = { ...base, enrichment: { indoorOutdoor: "미확인", sizeLimit: "소형견 10kg 이하", extraFee: "추가 요금 없음", checkedOn: "2026-10-18", checkedSource: "업체 공식 안내" } };
+  if (!isThinPlace(unknown)) throw new Error("미확인 보강이 색인 대상이 되었습니다.");
 }
 function makeMainMeta(html) {
   const titleMatch = html.match(/<title>([\s\S]*?)<\/title>/i);
@@ -437,18 +637,24 @@ async function build() {
       place.homepageFromTour = true;
     }
   }
+  const enrichmentMap = loadEnrichmentMap();
+  for (const place of valid) place.enrichment = normalizeEnrichment(enrichmentMap[place.id]);
+  assertEnrichmentPolicy();
   const tourStats = tourapi.summarize(valid);
+  const filledCount = valid.filter((place) => isFilledEnrichment(place)).length;
   log(`TourAPI contentid ${tour.contentIds}곳, 이번 빌드에서 받은 상세 ${tour.fetched}곳`);
-  log(`이미지 ${tourStats.images} · 개요 ${tourStats.overviews} · TourAPI로 새로 채운 홈페이지 ${tourStats.apiHomepages} · 기존 홈페이지 ${tourStats.existingHomepages} · 동반 조건 ${tourStats.petRules} · 색인 가능 ${tourStats.rich}`);
+  log(`이미지 ${tourStats.images} · 개요 ${tourStats.overviews} · TourAPI로 새로 채운 홈페이지 ${tourStats.apiHomepages} · 기존 홈페이지 ${tourStats.existingHomepages} · 동반 조건 ${tourStats.petRules} · TourAPI 상세 충족 ${tourStats.rich} · 보강 후 색인 ${filledCount}`);
   fs.rmSync(OUT, { recursive: true, force: true });
   copyAssets();
   let main = makeMainMeta(rawIndex).replace(/데이터 기준일: \d{4}-\d{2}-\d{2}/, "데이터 기준일: " + updatedAt);
+  main = injectCrawlCatalog(main, valid);
   if (USE_SRI) main = await withSri(main);
   fs.writeFileSync(path.join(OUT, "index.html"), main, "utf8");
   const publishedPlaces = valid.map((place) => {
     const copy = { ...place };
     if (!copy.tour) delete copy.tour;
     if (!copy.homepageFromTour) delete copy.homepageFromTour;
+    if (!copy.enrichment) delete copy.enrichment;
     return copy;
   });
   fs.writeFileSync(path.join(OUT, "places.json"), JSON.stringify({ updatedAt, places: publishedPlaces }), "utf8");
@@ -473,16 +679,28 @@ async function build() {
   const builtPages = valid.filter((p) => fs.existsSync(path.join(OUT, "place", p.id + ".html"))).length;
   log(`데이터 기준일: ${updatedAt}`);
   log(`장소 정적 페이지 생성: ${builtPages}/${valid.length}`);
-  log(`얇은 장소 noindex·사이트맵 제외: ${thinCount}곳, 색인을 유지하는 장소: ${indexablePlaces.length}곳`);
-  if (indexablePlaces.filter((place) => tourapi.isRich(place.tour)).length !== tourStats.rich) {
-    throw new Error("색인 장소 수가 TourAPI 상세(이미지·개요·동반 조건) 수와 다릅니다.");
+  log(`얇은 장소 noindex·사이트맵 제외: ${thinCount}곳, 보강이 채워져 색인하는 장소: ${indexablePlaces.length}곳`);
+  const sitemapXml = fs.readFileSync(path.join(OUT, "sitemap.xml"), "utf8");
+  for (const place of valid) {
+    const pagePath = path.join(OUT, "place", place.id + ".html");
+    const page = fs.readFileSync(pagePath, "utf8");
+    const filled = isFilledEnrichment(place);
+    const url = `${BASE_URL}/place/${encodeURIComponent(place.id)}.html`;
+    const inSitemap = sitemapXml.includes(`<loc>${url}</loc>`);
+    if (filled !== inSitemap) throw new Error("사이트맵과 보강 색인 기준이 다릅니다: " + place.id);
+    const hasAdUnit = /<ins\b[^>]*\bclass="adsbygoogle"/.test(page);
+    if (filled && (page.includes("noindex") || !hasAdUnit)) throw new Error("보강된 장소가 noindex이거나 광고 단위가 없습니다: " + place.id);
+    if (!filled && (!page.includes('content="noindex, follow"') || hasAdUnit)) throw new Error("보강되지 않은 장소가 색인되거나 광고 단위가 있습니다: " + place.id);
+    if (!page.includes(`href="/contact.html?place=${encodeURIComponent(place.id)}"`) || !page.includes("정보 정정 요청")) throw new Error("정정 요청 링크가 없습니다: " + place.id);
   }
+  assertNoindexWithoutAds([path.join(OUT, "index.html"), ...valid.map((place) => path.join(OUT, "place", place.id + ".html"))]);
   const sampleHtml = fs.readFileSync(path.join(OUT, "place", "kbizin-212.html"), "utf8");
   if (!sampleHtml.includes("카카오맵에서 보기") || !sampleHtml.includes("https://map.kakao.com/link/search/") || !sampleHtml.includes("네이버 지도에서 보기") || !sampleHtml.includes("https://map.naver.com/p/search/")) {
     throw new Error("장소 페이지에 카카오맵·네이버 지도 검색 링크가 없습니다.");
   }
   if (sampleHtml.includes("pd-overview") || sampleHtml.includes("pd-figure")) throw new Error("contentid가 없는 장소에 관광 개요나 사진을 넣었습니다.");
   if (!sampleHtml.includes('name="robots" content="noindex, follow"')) throw new Error("정보가 얇은 장소가 색인 대상이 되었습니다.");
+  if (/<ins\b[^>]*\bclass="adsbygoogle"/.test(sampleHtml)) throw new Error("noindex 샘플 장소에 광고 단위가 있습니다.");
   log(`전체 HTML: ${htmlCount}, OG PNG: 5, 장소 반영 전 sitemap URL: ${sitemapUrls.length}`);
   if (thinCount + indexablePlaces.length !== valid.length) throw new Error("얇은 장소 분류 수가 전체 장소 수와 다릅니다.");
   if (skipped.length) {

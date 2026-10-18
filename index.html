@@ -851,6 +851,70 @@ svg.leaflet-image-layer.leaflet-interactive path {
         color: var(--ink-3);
       }
       .ad-slot .adsbygoogle { display: block; width: 100%; min-height: 250px; }
+      .crawl-catalog {
+        padding: 8px 16px 12px;
+        background: var(--bg);
+        border-top: 1px solid var(--line);
+      }
+      .crawl-catalog.is-hidden { display: none; }
+      .crawl-catalog-inner { max-width: 980px; margin: 0 auto; }
+      .crawl-catalog h2 {
+        margin: 22px 0 10px;
+        font-size: 20px;
+        letter-spacing: -0.03em;
+      }
+      .crawl-note { margin: 0 0 10px; color: var(--ink-2); font-size: 14px; }
+      .region-counts, .rep-places, .guide-links {
+        display: grid;
+        gap: 8px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+      .region-counts { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); }
+      .rep-places { grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
+      .guide-links { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
+      .region-counts a, .rep-places li, .guide-links a {
+        display: flex;
+        justify-content: space-between;
+        gap: 8px;
+        align-items: baseline;
+        padding: 10px 12px;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        background: var(--surface);
+        color: var(--ink);
+        font-weight: 700;
+        text-decoration: none;
+      }
+      .rep-places li { display: block; }
+      .rep-places a { color: var(--ink); font-weight: 800; text-decoration: none; }
+      .region-counts span, .rep-places span { color: var(--ink-3); font-weight: 600; font-size: 13px; }
+      .pd-enrich .pd-row dt { width: 7.6em; }
+      .pd-ico { vertical-align: -2px; margin-right: 4px; color: var(--ink-2); }
+      .pd-checked { margin: 8px 0 0; }
+      .pd-badge {
+        display: inline-block;
+        padding: 4px 10px;
+        border-radius: 999px;
+        background: var(--accent-soft);
+        color: var(--brand-hover);
+        font-size: 13px;
+        font-weight: 800;
+      }
+      .pd-correct { margin: 16px 0; }
+      .pd-correct a {
+        display: inline-block;
+        font-weight: 800;
+        text-decoration: none;
+        color: var(--ink);
+        border: 1.5px solid var(--line-strong);
+        border-radius: 999px;
+        padding: 8px 14px;
+        background: var(--surface);
+      }
+      .pd-related { margin: 0 0 8px; padding-left: 18px; }
+      .pd-related a { font-weight: 700; color: var(--brand-text); text-decoration: none; }
       body.place-doc { height: auto; overflow: visible; }
       body.place-doc .page-detail { display: block; overflow: visible; flex: none; }
 
@@ -1616,9 +1680,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
     <main>
       <section class="map-wrap" aria-label="지도">
         <div id="map"></div>
-        <div class="map-fallback">
-          <p>지도를 불러올 수 없어요.<br />오른쪽(모바일은 아래) 목록에서 장소를 확인해 주세요.</p>
-        </div>
+        <div class="map-fallback" id="mapFallback"></div>
       </section>
 
       <aside aria-label="장소 목록">
@@ -1639,13 +1701,15 @@ svg.leaflet-image-layer.leaflet-interactive path {
         </div>
         <div class="list-head"><b>장소 목록</b><span id="resultCount"></span></div>
         <div class="list" id="list"></div>
-        <div class="empty" id="empty">
-          조건에 맞는 장소가 없어요.<br />지역, 유형, 검색어를 바꿔 보세요.
-        </div>
+        <div class="empty" id="empty"></div>
       </aside>
     </main>
 
     <section class="page-detail" id="pageDetail" aria-label="장소 상세"></section>
+
+    <section id="crawlCatalog" class="crawl-catalog" aria-label="수록 장소와 가이드">
+      <!--CRAWL_CATALOG-->
+    </section>
 
     <footer>
       <nav class="trust-nav" aria-label="안내">
@@ -2123,7 +2187,13 @@ svg.leaflet-image-layer.leaflet-interactive path {
           }
           if (totalPages > 1) frag.appendChild(buildPager(totalPages));
           listEl.appendChild(frag);
-          emptyEl.classList.toggle("show", dataReady && current.length === 0);
+          var noResults = dataReady && current.length === 0;
+          if (noResults) {
+            emptyEl.innerHTML = ("조건에 맞는 장소" + "가 없어요.") + "<br>지역, 유형, 검색어를 바꿔 보세요.";
+          } else {
+            emptyEl.innerHTML = "";
+          }
+          emptyEl.classList.toggle("show", noResults);
           countEl.textContent = dataReady ? resultPhrase() : "";
         }
 
@@ -2453,12 +2523,27 @@ svg.leaflet-image-layer.leaflet-interactive path {
           else markers.forEach(function (m) { m.addTo(markerLayer); });
         }
 
+        function showMapFailure() {
+          document.body.classList.add("no-map");
+          var box = document.getElementById("mapFallback");
+          if (box) {
+            box.innerHTML = "<p>" + ("지도를 불러" + "올 수 없어요.") + "<br>오른쪽(모바일은 아래) 목록과 아래 대표 장소에서 확인해 주세요.</p>";
+          }
+          syncCrawlCatalog();
+        }
+        function syncCrawlCatalog() {
+          var catalog = document.getElementById("crawlCatalog");
+          if (!catalog) return;
+          var mapOk = !document.body.classList.contains("no-map");
+          catalog.classList.toggle("is-hidden", dataReady && mapOk);
+        }
         function mountMap() {
           if (typeof L === "undefined") {
-            document.body.classList.add("no-map");
+            showMapFailure();
             return;
           }
           document.body.classList.remove("no-map");
+          try {
           if (!leafletMap) {
             var coarse = window.matchMedia && window.matchMedia("(pointer: coarse)").matches;
             leafletMap = L.map(mapEl, { dragging: !coarse }).setView([36.45, 127.95], 7);
@@ -2495,6 +2580,11 @@ svg.leaflet-image-layer.leaflet-interactive path {
           }
           renderMarkers();
           setTimeout(function () { if (leafletMap) leafletMap.invalidateSize(); }, 0);
+          } catch (mapError) {
+            showMapFailure();
+            return;
+          }
+          syncCrawlCatalog();
         }
 
         /* 상세페이지에서 홈으로 돌아오면 숨겨져 있던 지도의 크기를 다시 맞춘다 */
@@ -2533,6 +2623,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
           mountMap();
           if (opts.fitMap) fitFilteredMap();
           if (opts.url) commitUrl(opts.url);
+          syncCrawlCatalog();
         }
         window.addEventListener("popstate", function () {
           var next = readUrlState();
