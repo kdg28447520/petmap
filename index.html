@@ -440,54 +440,14 @@
         min-width: 0;
         background: var(--surface-2);
       }
-      #map { position: absolute; inset: 0; z-index: 1; max-width: 100%; }
-      .map-gate {
-        position: absolute;
-        inset: 0;
-        z-index: 2;
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-start;
-        align-items: flex-start;
-        gap: 8px;
-        max-width: 100%;
-        padding: 16px;
-        background: var(--surface-2);
-        cursor: pointer;
-      }
-      .map-gate h2 {
-        margin: 0;
-        max-width: 100%;
-        font-size: 22px;
-        line-height: 1.3;
-        letter-spacing: -0.02em;
-        overflow-wrap: anywhere;
-      }
-      .map-gate p {
-        margin: 0;
-        max-width: 36em;
-        font-size: 15px;
-        line-height: 1.5;
-        color: var(--ink-2);
-        overflow-wrap: anywhere;
-      }
-      .map-open-btn {
-        min-height: 44px;
-        max-width: 100%;
-        margin-top: 4px;
-        padding: 0 18px;
-        border: 0;
-        border-radius: 999px;
-        background: var(--brand-text);
-        color: #fff;
-        font: inherit;
-        font-size: 15px;
-        font-weight: 700;
-        cursor: pointer;
-      }
-      body.map-open .map-gate,
-      body.no-map .map-gate { display: none; }
+      #map { position: absolute; inset: 0; z-index: 1; max-width: 100%; background: var(--surface-2); }
       .leaflet-control-attribution { max-width: calc(100% - 10px); white-space: normal; }
+      .map-wrap .leaflet-control-zoom.leaflet-bar a {
+        width: 44px;
+        height: 44px;
+        line-height: 44px;
+        font-size: 22px;
+      }
       .map-fallback { display: none; }
       body.no-map #map { display: none; }
       body.no-map main { height: auto; align-items: flex-start; }
@@ -500,7 +460,7 @@
         text-align: left;
         color: var(--ink);
       }
-      .leaflet-container { font: inherit; background: transparent; }
+      .leaflet-container { font: inherit; background: var(--surface-2); }
       .leaflet-tile-pane { filter: saturate(0.55) brightness(1.02); }
       .mpin-icon { background: transparent; border: 0; }
       .mpin {
@@ -899,7 +859,7 @@
            지도 아래로 내리면 업체 목록이 그대로 이어진다 */
         body { height: auto; overflow: visible; }
         main { flex-direction: column; flex: none; height: auto; }
-        .map-wrap { flex: none; height: 62vh; height: 62dvh; }
+        .map-wrap { flex: none; height: 380px; min-height: 380px; }
         aside {
           width: auto;
           flex: none;
@@ -1265,11 +1225,6 @@
 
     <main>
       <section class="map-wrap" aria-label="지도">
-        <div class="map-gate" id="mapGate">
-          <h2>전국 지도</h2>
-          <p>반려동물 동반 장소를 지도에서 보려면 열어 주세요.</p>
-          <button type="button" class="map-open-btn" id="openMap">지도 열기</button>
-        </div>
         <div id="map"></div>
         <div class="map-fallback" id="mapFallback" aria-live="polite"></div>
       </section>
@@ -1939,9 +1894,34 @@
           if (kind === "nolibrary") return "이 브라우저에서 지도를 " + "열 수 없어요. 장소 목록은 그대로 볼 수 있어요.";
           return "지도 타일을 " + "받지 못했어요. 장소 목록은 그대로 볼 수 있어요.";
         }
+        function canvasTileLayer(url, options) {
+          if (!L.TileLayer.PetmapCanvas) {
+            L.TileLayer.PetmapCanvas = L.TileLayer.extend({
+              createTile: function (coords, done) {
+                var tile = document.createElement("canvas");
+                var size = this.getTileSize();
+                tile.width = size.x;
+                tile.height = size.y;
+                var img = new Image();
+                img.onload = function () {
+                  try {
+                    tile.getContext("2d").drawImage(img, 0, 0, size.x, size.y);
+                    done(null, tile);
+                  } catch (err) {
+                    done(err, tile);
+                  }
+                };
+                img.onerror = function () { done(new Error("tile"), tile); };
+                img.src = this.getTileUrl(coords);
+                return tile;
+              }
+            });
+          }
+          return new L.TileLayer.PetmapCanvas(url, options);
+        }
         function addBaseTiles(map, opts) {
           var watch = opts && opts.watch;
-          var primary = L.tileLayer(TILE_URL, { subdomains: "abc", maxZoom: 19, attribution: TILE_ATTR });
+          var primary = canvasTileLayer(TILE_URL, { subdomains: "abc", maxZoom: 19, attribution: TILE_ATTR });
           var usingFallback = false;
           function attach(layer) {
             if (!watch) return;
@@ -1956,7 +1936,7 @@
                 var host = layer._map;
                 if (!host) return;
                 host.removeLayer(layer);
-                var next = L.tileLayer(FALLBACK_TILE_URL, { maxZoom: 19, attribution: FALLBACK_TILE_ATTR });
+                var next = canvasTileLayer(FALLBACK_TILE_URL, { maxZoom: 19, attribution: FALLBACK_TILE_ATTR });
                 attach(next);
                 next.addTo(host);
                 return;
@@ -2015,12 +1995,9 @@
           }
           return leafletPromise;
         }
-        function openHomeMap() {
+        function startHomeMap() {
           if (mapArmed) return;
           mapArmed = true;
-          document.body.classList.add("map-open");
-          var gate = document.getElementById("mapGate");
-          if (gate) gate.hidden = true;
           Promise.all([ensureLeaflet(), ensureLeafletCss()]).then(function () {
             if (mapFailShown) return;
             mountMap();
@@ -2029,8 +2006,11 @@
             showMapFailure("nolibrary");
           });
         }
-        var mapGateEl = document.getElementById("mapGate");
-        if (mapGateEl) mapGateEl.addEventListener("click", openHomeMap);
+        function scheduleHomeMap() {
+          var run = function () { startHomeMap(); };
+          if (typeof window.requestIdleCallback === "function") window.requestIdleCallback(run, { timeout: 1500 });
+          else window.setTimeout(run, 50);
+        }
         function mountMiniMap(p) {
           var el = document.getElementById("miniMap");
           if (!el) return;
@@ -2314,6 +2294,21 @@
           if (!catalog) return;
           catalog.classList.toggle("is-hidden", dataReady);
         }
+        var homeTilesStarted = false;
+        var KOREA_BOUNDS = [[33.06, 125.02], [38.72, 129.6]];
+        function showKorea(map) {
+          map.invalidateSize();
+          map.fitBounds(KOREA_BOUNDS, { padding: [12, 12], animate: false, maxZoom: 8 });
+        }
+        function startHomeTiles() {
+          if (homeTilesStarted || !leafletMap || mapFailShown || !dataReady) return;
+          homeTilesStarted = true;
+          addBaseTiles(leafletMap, { watch: true });
+          clearMapFailTimer();
+          mapFailTimer = setTimeout(function () {
+            if (!mapTileLoaded) showMapFailure("timeout");
+          }, 8000);
+        }
         function mountMap() {
           if (mapFailShown) return;
           if (typeof L === "undefined") {
@@ -2324,23 +2319,28 @@
           try {
           if (!leafletMap) {
             var coarse = window.matchMedia && window.matchMedia("(pointer: coarse)").matches;
-            leafletMap = L.map(mapEl, { dragging: !coarse }).setView([36.45, 127.95], 7);
+            leafletMap = L.map(mapEl, { dragging: !coarse, zoomControl: true, maxZoom: 19 });
+            showKorea(leafletMap);
             mapTileLoaded = false;
             mapTileErrors = 0;
-            addBaseTiles(leafletMap, { watch: true });
-            clearMapFailTimer();
-            mapFailTimer = setTimeout(function () {
-              if (!mapTileLoaded) showMapFailure("timeout");
-            }, 8000);
+            homeTilesStarted = false;
 
             clusterAvailable = typeof L.markerClusterGroup === "function";
             if (clusterAvailable) {
               markerLayer = L.markerClusterGroup({
                 maxClusterRadius: 55,
                 showCoverageOnHover: false,
+                zoomToBoundsOnClick: true,
+                spiderfyOnMaxZoom: true,
                 chunkedLoading: true,
-                chunkInterval: 100,
-                chunkDelay: 30,
+                chunkInterval: 80,
+                chunkDelay: 16,
+                chunkProgress: function (processed, total) {
+                  if (!(dataReady && processed >= total)) return;
+                  requestAnimationFrame(function () {
+                    requestAnimationFrame(function () { startHomeTiles(); });
+                  });
+                },
                 iconCreateFunction: function (cluster) {
                   var n = cluster.getChildCount();
                   var size = n >= 100 ? "l" : n >= 25 ? "m" : "s";
@@ -2363,6 +2363,7 @@
             });
           }
           renderMarkers();
+          if (!clusterAvailable && dataReady) startHomeTiles();
           setTimeout(function () { if (leafletMap) leafletMap.invalidateSize(); }, 0);
           } catch (mapError) {
             showMapFailure("tile");
@@ -2379,7 +2380,7 @@
         function fitFilteredMap() {
           if (!leafletMap || typeof L === "undefined") return;
           if (!state.region && !state.locality && !state.type && !state.q) {
-            leafletMap.setView([36.45, 127.95], 7, { animate: false });
+            showKorea(leafletMap);
             return;
           }
           if (!current.length) return;
@@ -2432,6 +2433,7 @@
           historySilent = false;
         });
 
+        scheduleHomeMap();
         route();
       })();
     </script>
