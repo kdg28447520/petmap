@@ -115,9 +115,6 @@ function reportLink() {
   const subject = encodeURIComponent("댕냥이와 함께 장소 정보 수정 제안");
   return `<p class="pd-report"><a href="mailto:${escapeHtml(REPORT_EMAIL)}?subject=${subject}">정보가 다르면 알려주세요</a></p>`;
 }
-function correctionLink(place) {
-  return `<p class="pd-correct"><a href="/contact.html?place=${encodeURIComponent(place.id)}">정보 정정 요청</a></p>`;
-}
 const ENRICHMENT_FIELDS = [
   { id: "indoorOutdoor", keys: ["indoorOutdoor", "실내실외", "실내/실외"], label: "실내/실외" },
   { id: "sizeLimit", keys: ["sizeLimit", "weightLimit", "무게제한", "무게·크기 제한"], label: "무게·크기 제한" },
@@ -127,9 +124,8 @@ const ENRICHMENT_FIELDS = [
 ];
 const UNCONFIRMED = new Set(["미확인", "미확인.", "확인 불가", "알 수 없음"]);
 const INDEX_BODY_MIN = 24;
-const INDOOR_ICON = '<svg class="pd-ico" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M2 7.2 8 2.5l6 4.7V14H2V7.2Zm2 .6V12h8V7.8L8 4.7 4 7.8Z"/></svg>';
-const OUTDOOR_ICON = '<svg class="pd-ico" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 1.5 9.2 6H14l-3.8 2.8 1.5 4.7L8 10.7 4.3 13.5l1.5-4.7L2 6h4.8L8 1.5Z"/></svg>';
 const AD_UNIT = '<aside class="ad-slot" aria-label="광고"><p class="ad-slot-label">광고</p><ins class="adsbygoogle" style="display:block;width:100%;min-height:250px" data-ad-client="ca-pub-4533404826925371" data-ad-format="auto" data-full-width-responsive="true"></ins></aside>';
+let catalogPlaces = [];
 const REGION_ORDER = [
   "서울특별시", "경기도", "인천광역시", "강원특별자치도",
   "대전광역시", "세종특별자치시", "충청북도", "충청남도",
@@ -199,21 +195,254 @@ function isFilledEnrichment(place) {
   const body = (rows.map((row) => row.value).join("") + overview + pet).replace(/\s/g, "");
   return Array.from(body).length >= INDEX_BODY_MIN;
 }
-function enrichIcons(value) {
+const ICON = {
+  check: '<path d="M20 6 9 17l-5-5"/>',
+  bang: '<circle cx="12" cy="12" r="9"/><path d="M12 7.5v5.5M12 16.5v.01"/>',
+  cross: '<path d="M18 6 6 18M6 6l12 12"/>',
+  dog: '<path d="M7 9.5 4.5 5.5 4 11c0 4 3.5 8 8 8s8-4 8-8l-.5-5.5L17 9.5"/><path d="M7 9.5c1.4-1 3.1-1.5 5-1.5s3.6.5 5 1.5"/><circle cx="9.5" cy="12.5" r=".6" fill="currentColor"/><circle cx="14.5" cy="12.5" r=".6" fill="currentColor"/><path d="M11 15.5h2l-1 1z"/>',
+  indoor: '<path d="M3.5 10.5 12 4l8.5 6.5V20h-17z"/><path d="M9.5 20v-5.5h5V20"/>',
+  leash: '<circle cx="6.5" cy="6.5" r="3"/><path d="m8.6 8.6 9.4 9.4"/><path d="M15 21h5v-5"/>',
+  cat: '<path d="M5 19.5v-8.5L4 4l5 3.2h6L20 4l-1 7v8.5z"/><circle cx="9.5" cy="12.5" r=".6" fill="currentColor"/><circle cx="14.5" cy="12.5" r=".6" fill="currentColor"/><path d="M11 15.2h2l-1 1z"/>',
+  count: '<path d="M5 9h14M5 15h14M10 4 8 20M16 4l-2 16"/>',
+  fee: '<circle cx="12" cy="12" r="9"/><path d="M9 9.5c.5-1 1.6-1.5 3-1.5 1.7 0 3 .8 3 2s-1.3 1.7-3 2-3 .8-3 2 1.3 2 3 2c1.4 0 2.5-.5 3-1.5M12 6v2M12 16v2"/>',
+  cage: '<rect x="4" y="7" width="16" height="12" rx="1"/><path d="M4 12h16M9 7v12M15 7v12M8 7 12 3l4 4"/>',
+  menu: '<path d="M4 10h16v2a6 6 0 0 1-6 6h-4a6 6 0 0 1-6-6z"/><path d="M8 10V8a4 4 0 0 1 8 0v2"/>',
+  rule: '<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 8h.01"/>',
+  calendar: '<rect x="3.5" y="5" width="17" height="15" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/><path d="m9 15 2 2 4-4"/>',
+  pencil: '<path d="M4 20h4L19 9l-4-4L4 16v4z"/><path d="m13.5 6.5 4 4"/>',
+  pin: '<path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/>',
+  phone: '<path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/>',
+  external: '<path d="M14 4h6v6M20 4l-9 9"/><path d="M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/>',
+  chev: '<path d="m9 6 6 6-6 6"/>',
+};
+function strokeIcon(name, size) {
+  const px = size || 22;
+  return `<svg class="ic" width="${px}" height="${px}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${px <= 16 ? 2 : 1.5}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICON[name] || ""}</svg>`;
+}
+function confirmedText(value) {
+  const text = displayValue(value);
+  if (!text || UNCONFIRMED.has(text)) return "";
+  return text;
+}
+function monthIndex(iso) {
+  const match = /^(\d{4})-(\d{2})/.exec(String(iso || ""));
+  if (!match) return null;
+  return Number(match[1]) * 12 + Number(match[2]);
+}
+function isStaleCheck(iso) {
+  const then = monthIndex(iso);
+  const now = monthIndex(DEFAULT_DATE);
+  return then != null && now != null && now - then > 12;
+}
+function checkedBadgeText(iso) {
+  const match = /^(\d{4})-(\d{2})/.exec(String(iso || ""));
+  if (!match) return "";
+  const label = match[1] + "." + match[2] + " 확인";
+  return isStaleCheck(iso) ? label + " · 오래된 정보" : label;
+}
+function tidyTile(tile) {
+  if (tile.note && (tile.note === tile.status || tile.status.includes(tile.note))) tile.note = "";
+  return tile;
+}
+function pushTile(tiles, tile) {
+  const next = tidyTile(tile);
+  const key = next.label + "\n" + next.status;
+  if (tiles.some((item) => item.label + "\n" + item.status === key)) return;
+  tiles.push(next);
+}
+function indoorTile(value) {
   const indoor = /실내/.test(value);
-  const outdoor = /실외|야외/.test(value);
-  return (indoor ? INDOOR_ICON : "") + (outdoor ? OUTDOOR_ICON : "");
+  const outdoorOnly = /실외|야외/.test(value) && !indoor;
+  return { icon: "indoor", label: "실내 동반", tone: outdoorOnly ? "no" : "yes", status: value, note: "" };
+}
+function sizeTile(value) {
+  if (/소형견만|소형만|소형견\s*전용/.test(value)) return { icon: "dog", label: "소형견만", tone: "must", status: value, note: "" };
+  if (/대형견/.test(value) && /불가|금지|안\s*됨/.test(value) && !/가능/.test(value)) return { icon: "dog", label: "대형견 동반", tone: "no", status: "불가", note: value };
+  if (/대형견/.test(value) && /가능|허용|환영/.test(value) && !/불가|금지|이하|미만|까지/.test(value)) return { icon: "dog", label: "대형견 동반", tone: "yes", status: "가능", note: value };
+  const open = /제한\s*없음|제한없음|무게\s*제한\s*없음/.test(value);
+  return { icon: "dog", label: "무게·크기 제한", tone: open ? "yes" : "must", status: value, note: "" };
+}
+function feeTile(value) {
+  const none = /^(없음|없음\.|무료|0원)$/.test(value) || /추가\s*요금\s*없음|요금\s*없음|별도\s*요금\s*없음|무료/.test(value);
+  return { icon: "fee", label: "추가 요금", tone: none ? "yes" : "must", status: none ? "없음" : value, note: "" };
+}
+function tilesFromRules(rules, tiles) {
+  for (const rule of rules || []) {
+    const label = confirmedText(rule && rule.label);
+    const value = confirmedText(rule && rule.value);
+    if (!value) continue;
+    const text = (label + " " + value).replace(/\s+/g, " ");
+    if (/목줄/.test(text) && /필수|착용|해야|필요|지참/.test(text)) {
+      pushTile(tiles, { icon: "leash", label: "목줄 착용", tone: "must", status: "필수", note: value });
+      continue;
+    }
+    if (/고양이/.test(text) && /불가|안\s*됨|금지|제외|가능|허용|환영/.test(text)) {
+      const denied = /불가|안\s*됨|금지|제외/.test(text);
+      pushTile(tiles, { icon: "cat", label: "고양이 동반", tone: denied ? "no" : "yes", status: denied ? "불가" : "가능", note: value });
+      continue;
+    }
+    if (/\d+\s*마리|마리\s*까지|최대\s*\d+/.test(text)) {
+      pushTile(tiles, { icon: "count", label: "동반 마릿수", tone: /필수|제한|까지/.test(text) ? "must" : "yes", status: value, note: "" });
+      continue;
+    }
+    if (/케이지|이동장/.test(text) && /필수|필요|착용|지참|해야/.test(text)) {
+      pushTile(tiles, { icon: "cage", label: "케이지 필수", tone: "must", status: "필수", note: value });
+      continue;
+    }
+    if (/메뉴/.test(text) && /펫|반려|애견|동물/.test(text)) {
+      const missing = /없|불가|제공하지/.test(text);
+      pushTile(tiles, { icon: "menu", label: "펫 전용 메뉴", tone: missing ? "no" : "yes", status: missing ? "불가" : "가능", note: value });
+      continue;
+    }
+    if (/^(없음|해당\s*없음|해당없음|없음\.|-|–)$/.test(value)) continue;
+    pushTile(tiles, { icon: "rule", label: label || "동반 조건", tone: "must", status: value, note: "" });
+  }
+}
+function companionTiles(place) {
+  const tiles = [];
+  const record = place && place.enrichment;
+  const indoor = confirmedText(enrichmentValue(record, ["indoorOutdoor"]));
+  const size = confirmedText(enrichmentValue(record, ["sizeLimit"]));
+  const fee = confirmedText(enrichmentValue(record, ["extraFee"]));
+  if (indoor) pushTile(tiles, indoorTile(indoor));
+  if (size) pushTile(tiles, sizeTile(size));
+  if (fee) pushTile(tiles, feeTile(fee));
+  const rules = place && place.tour && Array.isArray(place.tour.petRules) ? place.tour.petRules : [];
+  tilesFromRules(rules, tiles);
+  return tiles;
+}
+function correctionButton(place) {
+  return `<a class="pd-fix" href="/contact.html?place=${encodeURIComponent(place.id)}" aria-label="정보 정정 요청">${strokeIcon("pencil", 18)}정정 요청</a>`;
 }
 function enrichmentHtml(place) {
-  const rows = enrichmentRows(place).filter((row) => row.value);
-  if (!rows.length) return "";
-  const items = rows.map((row) => {
-    const icons = row.id === "indoorOutdoor" ? enrichIcons(row.value) : "";
-    return `<div class="pd-row"><dt>${escapeHtml(row.label)}</dt><dd>${icons}${escapeHtml(row.value)}</dd></div>`;
+  const tiles = companionTiles(place);
+  if (!tiles.length) return "";
+  const checked = confirmedText(enrichmentValue(place.enrichment, ["checkedOn"]));
+  const source = confirmedText(enrichmentValue(place.enrichment, ["checkedSource"]));
+  const badgeText = checkedBadgeText(checked);
+  const badge = badgeText
+    ? `<span class="vbadge${isStaleCheck(checked) ? " is-stale" : ""}">${strokeIcon("calendar", 16)}${escapeHtml(badgeText)}</span>`
+    : "";
+  const items = tiles.map((tile) => {
+    const note = tile.note ? `<small>${escapeHtml(tile.note)}</small>` : "";
+    const statusIcon = tile.tone === "yes" ? "check" : tile.tone === "no" ? "cross" : "bang";
+    return `<li class="cond ${tile.tone}"><span class="ci">${strokeIcon(tile.icon, 22)}</span><span><b>${escapeHtml(tile.label)}</b><span class="st">${strokeIcon(statusIcon, 16)}${escapeHtml(tile.status)}</span>${note}</span></li>`;
   }).join("");
-  const checked = rows.find((row) => row.id === "checkedOn");
-  const badge = checked ? `<p class="pd-checked"><span class="pd-badge">확인일 ${escapeHtml(checked.value)}</span></p>` : "";
-  return `<h2 class="pd-sec-title">보강 정보</h2><div class="pd-card pd-enrich"><dl style="margin:0">${items}</dl></div>${badge}`;
+  const sub = source ? `<p class="enr-sub">${escapeHtml(source)}</p>` : "";
+  return `<section class="enr" aria-labelledby="enr-title"><div class="enr-h"><h2 id="enr-title">반려동물 동반 조건</h2>${badge}</div>${sub}<ul class="conds">${items}</ul><div class="enr-f"><p>방문 전 업체에 한 번 더 확인해 주세요. 바뀐 내용은 정정 요청으로 알려 주세요.</p>${correctionButton(place)}</div></section>`;
+}
+function localityOf(address) {
+  return String(address || "").trim().split(/\s+/)[1] || "";
+}
+function distKm(a, b) {
+  const rad = Math.PI / 180;
+  const dLat = (b.lat - a.lat) * rad;
+  const dLng = (b.lng - a.lng) * rad;
+  const lat1 = a.lat * rad;
+  const lat2 = b.lat * rad;
+  const h = Math.sin(dLat / 2) ** 2 + Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLng / 2) ** 2;
+  return 6371 * 2 * Math.asin(Math.min(1, Math.sqrt(h)));
+}
+function fmtKm(km) {
+  if (!Number.isFinite(km)) return "";
+  if (km < 1) return Math.max(1, Math.round(km * 1000)) + "m";
+  return km.toFixed(1).replace(/\.0$/, "") + "km";
+}
+function nearestCompanions(place) {
+  const region = regionOf(place.addr);
+  const locality = localityOf(place.addr);
+  const sameLocality = [];
+  const sameRegion = [];
+  const rest = [];
+  for (const other of catalogPlaces) {
+    if (!other || other.id === place.id) continue;
+    if (!Number.isFinite(other.lat) || !Number.isFinite(other.lng)) continue;
+    if (locality && localityOf(other.addr) === locality) sameLocality.push(other);
+    else if (regionOf(other.addr) === region) sameRegion.push(other);
+    else rest.push(other);
+  }
+  function take(list, count) {
+    return list
+      .map((other) => ({ place: other, km: distKm(place, other) }))
+      .sort((a, b) => a.km - b.km)
+      .slice(0, count);
+  }
+  let picked = take(sameLocality, 3);
+  if (picked.length < 3) picked = picked.concat(take(sameRegion, 3 - picked.length));
+  if (picked.length < 3) picked = picked.concat(take(rest, 3 - picked.length));
+  return picked;
+}
+function nearbyHtml(place) {
+  const picked = nearestCompanions(place);
+  if (!picked.length) return "";
+  const locality = localityOf(place.addr);
+  const region = regionOf(place.addr);
+  const allLocal = locality && picked.every((item) => localityOf(item.place.addr) === locality);
+  const allRegion = picked.every((item) => regionOf(item.place.addr) === region);
+  const title = allLocal ? locality + "의 다른 동반 장소" : (REGION_SHORT[region] || region) + "의 다른 동반 장소";
+  const sub = allLocal ? "같은 시·군·구에서 가까운 순" : allRegion ? "같은 시·도에서 가까운 순" : "가까운 순";
+  const items = picked.map((item) => {
+    const other = item.place;
+    const category = CATEGORIES[other.category];
+    const where = [localityOf(other.addr), regionOf(other.addr)].filter(Boolean);
+    const meta = [category ? category.label : "", where[0] || ""].filter(Boolean).join(" · ");
+    return `<li><a href="/place/${encodeURIComponent(other.id)}.html"><span class="dot dot--${escapeHtml(other.category)}"></span><span><b>${escapeHtml(other.name)}</b><span class="m">${escapeHtml(meta)}</span></span><span class="km">${escapeHtml(fmtKm(item.km))}</span></a></li>`;
+  }).join("");
+  return `<section class="pd-near"><h2>${escapeHtml(title)}</h2><p class="s">${escapeHtml(sub)}</p><ul class="near">${items}</ul></section>`;
+}
+function staticMapSvg(place) {
+  const lat = Number(place.lat);
+  const lng = Number(place.lng);
+  const x = Math.round(Math.max(36, Math.min(664, ((lng - 124) / 8) * 700)));
+  const y = Math.round(Math.max(36, Math.min(164, ((39 - lat) / 6) * 200)));
+  const label = escapeXml(place.name + " 위치, 위도 " + lat.toFixed(5) + ", 경도 " + lng.toFixed(5));
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="700" height="200" viewBox="0 0 700 200" role="img" aria-label="${label}">
+  <rect width="700" height="200" fill="#ECEEE6"/>
+  <path d="M0 140 C120 120 200 160 330 130 S560 90 700 110" stroke="#fff" stroke-width="14" fill="none"/>
+  <path d="M260 0 L300 200 M480 0 L440 200 M0 60 L700 40" stroke="#fff" stroke-width="7" fill="none"/>
+  <rect x="40" y="20" width="120" height="60" fill="#E1E6D8"/>
+  <rect x="520" y="130" width="140" height="50" fill="#E1E6D8"/>
+  <path d="M600 0 C580 60 640 90 700 80 V0 Z" fill="#D5E3E8"/>
+    <g transform="translate(${x} ${y})">
+    <path d="M0 0s15-13 15-25a15 15 0 0 0-30 0c0 12 15 25 15 25z" fill="#C2410C" stroke="#fff" stroke-width="2"/>
+    <circle cx="0" cy="-25" r="5.5" fill="#fff"/>
+  </g>
+</svg>`;
+}
+function staticMapHtml(place) {
+  const lat = Number(place.lat);
+  const lng = Number(place.lng);
+  const address = displayValue(place.addr);
+  const alt = place.name + " 위치. 위도 " + lat.toFixed(5) + ", 경도 " + lng.toFixed(5) + (address ? ". " + address : "");
+  const caption = address || ("위도 " + lat.toFixed(5) + ", 경도 " + lng.toFixed(5));
+  return `<figure class="pd-snap"><img src="/place/maps/${encodeURIComponent(place.id)}.svg" width="700" height="200" alt="${escapeHtml(alt)}" loading="lazy" decoding="async"><figcaption>${escapeHtml(caption)}</figcaption></figure>`;
+}
+function crumbHtml(place) {
+  const region = regionOf(place.addr);
+  const locality = localityOf(place.addr);
+  const short = REGION_SHORT[region] || region;
+  const category = CATEGORIES[place.category];
+  const chev = `<span class="sep" aria-hidden="true">${strokeIcon("chev", 14)}</span>`;
+  const parts = [`<a href="/">전국 지도</a>`];
+  if (region && region !== "전국") parts.push(`<a href="/?region=${encodeURIComponent(short)}">${escapeHtml(region)}</a>`);
+  if (locality) parts.push(`<a href="/?region=${encodeURIComponent(short)}&amp;locality=${encodeURIComponent(locality)}">${escapeHtml(locality)}</a>`);
+  parts.push(`<b>${escapeHtml(category.label)}</b>`);
+  return `<nav class="pd-crumb" aria-label="현재 위치">${parts.join(chev)}</nav>`;
+}
+function actionButtons(place, options) {
+  const tel = phoneHref(place.tel);
+  const phone = displayValue(place.tel);
+  const official = displayValue(place.homepage);
+  const mapUrl = `https://map.kakao.com/link/to/${encodeURIComponent(place.name)},${place.lat},${place.lng}`;
+  const buttons = [`<a class="pd-btn pri" href="${escapeHtml(mapUrl)}" target="_blank" rel="noopener">${strokeIcon("pin", 18)}길찾기</a>`];
+  if (official) buttons.push(`<a class="pd-btn" href="${escapeHtml(official)}" target="_blank" rel="noopener">${strokeIcon("external", 18)}공식 사이트</a>`);
+  if (tel && phone) buttons.push(`<a class="pd-btn" href="${escapeHtml(tel)}">${strokeIcon("phone", 18)}<span>전화</span></a>`);
+  if (options && options.stacked) {
+    const rest = buttons.slice(1);
+    return `<a class="pd-btn pri" href="${escapeHtml(mapUrl)}" target="_blank" rel="noopener">${strokeIcon("pin", 18)}길찾기</a>${rest.length ? `<div class="pd-btn-row">${rest.join("")}</div>` : ""}`;
+  }
+  return buttons.join("");
 }
 function homeGuideLinks() {
   const guides = JSON.parse(fs.readFileSync(path.join(ROOT, "content", "guides.json"), "utf8"));
@@ -309,47 +538,40 @@ function assertNoindexWithoutAds(htmlFiles) {
 function makePlacePage(place, css, updatedAt, thin) {
   const cat = CATEGORIES[place.category];
   const region = regionOf(place.addr);
+  const locality = localityOf(place.addr);
   const title = `${place.name} — ${region} 반려동물 동반 · 댕냥이와 함께`;
   const description = descriptionFor(place, cat);
   const url = `${BASE_URL}/place/${encodeURIComponent(place.id)}.html`;
   const image = `${BASE_URL}/og/${cat.image}`;
-  const tel = phoneHref(place.tel);
   const isHospital = place.category === "hospital";
-  const officialUrl = place.homepage || "";
-  const mapUrl = `https://map.kakao.com/link/to/${encodeURIComponent(place.name)},${place.lat},${place.lng}`;
   const search = tourapi.mapLinks(place);
   const detail = place.tour || null;
   const overview = detail ? displayValue(detail.overview) : "";
   const photo = detail && tourapi.isSizedImage(detail.image) ? detail.image : null;
-  const petRules = detail && Array.isArray(detail.petRules) ? detail.petRules.filter((rule) => displayValue(rule.value)) : [];
   const address = displayValue(place.addr);
-  const phone = displayValue(place.tel);
   const hours = displayValue(place.hours);
   const source = displayValue(sourceFor(place));
+  const checked = confirmedText(enrichmentValue(place.enrichment, ["checkedOn"]));
+  const checkedSource = confirmedText(enrichmentValue(place.enrichment, ["checkedSource"]));
+  const badgeText = checkedBadgeText(checked);
   const rows = [
     address ? `<div class="pd-row"><dt>주소</dt><dd>${escapeHtml(address)}</dd></div>` : "",
-    phone ? `<div class="pd-row"><dt>전화</dt><dd><a href="${escapeHtml(tel || ("tel:" + String(phone).replace(/[^\d+]/g, "")))}">${escapeHtml(phone)}</a></dd></div>` : "",
     hours ? `<div class="pd-row"><dt>${isHospital ? "진료시간" : "운영시간"}</dt><dd>${escapeHtml(hours)}</dd></div>` : "",
+    source ? `<div class="pd-row"><dt>출처</dt><dd>${escapeHtml(source)}</dd></div>` : "",
   ].filter(Boolean).join("\n");
-  const actions = [
-    tel ? `<a class="call-btn${isHospital ? " call-btn--emg" : ""}" href="${escapeHtml(tel)}">${isHospital ? "지금 전화하기" : "전화 걸기"}</a>` : "",
-    `<a class="site-btn" href="${escapeHtml(mapUrl)}" target="_blank" rel="noopener">길찾기</a>`,
-    officialUrl ? `<a class="site-btn" href="${escapeHtml(officialUrl)}" target="_blank" rel="noopener">${place.source === "gocamping" ? "고캠핑 상세 보기" : "공식 사이트"}</a>` : "",
-  ].filter(Boolean).join("\n");
-  const mapSearch = [
-    `<a class="site-btn" href="${escapeHtml(search.kakao)}" target="_blank" rel="noopener">카카오맵에서 보기</a>`,
-    `<a class="site-btn" href="${escapeHtml(search.naver)}" target="_blank" rel="noopener">네이버 지도에서 보기</a>`,
-  ].join("\n");
   const photoHtml = photo
     ? `<figure class="pd-figure"><img src="${escapeHtml(photo.url)}" width="${Math.round(Number(photo.width))}" height="${Math.round(Number(photo.height))}" alt="${escapeHtml(photo.alt || place.name)}" loading="lazy" decoding="async"><figcaption class="pd-caption">${escapeHtml(tourapi.imageCaption(photo))}</figcaption></figure>`
-    : `<div class="pd-photo" aria-hidden="true"><svg class="pd-photo-paw" width="84" height="84" viewBox="0 0 24 24"><path d="M12 13.2c2.9 0 5.6 2.3 5.6 4.7 0 1.5-1.1 2.5-2.7 2.5-1 0-1.8-.4-2.9-.4s-1.9.4-2.9.4c-1.6 0-2.7-1-2.7-2.5 0-2.4 2.7-4.7 5.6-4.7ZM6.2 8.1c1 .3 1.5 1.7 1.1 3-.4 1.4-1.5 2.2-2.5 1.9-1-.3-1.5-1.7-1.1-3 .4-1.3 1.5-2.2 2.5-1.9Zm11.6 0c1-.3 2.1.6 2.5 1.9.4 1.3-.1 2.7-1.1 3-1 .3-2.1-.5-2.5-1.9-.4-1.3.1-2.7 1.1-3ZM9.3 3.6c1.1.1 1.9 1.4 1.8 2.9-.1 1.4-1 2.6-2.1 2.5C7.9 8.9 7.1 7.6 7.2 6.2c.1-1.5 1-2.7 2.1-2.6Zm5.4 0c1.1-.1 2 1.1 2.1 2.6.1 1.4-.7 2.7-1.8 2.8-1.1.1-2-1.1-2.1-2.5-.1-1.5.7-2.8 1.8-2.9Z"/></svg><span class="pd-photo-cap">${escapeHtml(cat.label)}</span></div>`;
+    : staticMapHtml(place);
   const overviewHtml = overview ? `<p class="pd-overview">${escapeHtml(overview)}</p>` : "";
-  const petHtml = petRules.length
-    ? `<h2 class="pd-sec-title">반려동물 동반 조건</h2><div class="pd-card pd-pet"><dl style="margin:0">${petRules.map((rule) => `<div class="pd-row"><dt>${escapeHtml(rule.label)}</dt><dd>${escapeHtml(rule.value)}</dd></div>`).join("")}</dl></div><p class="pd-caption">동반 조건은 한국관광공사 TourAPI 반려동물 동반여행 정보(detailPetTour2)입니다. 방문 전 업체에 다시 확인하세요.</p>`
-    : "";
+  const enrich = enrichmentHtml(place);
+  const correction = enrich ? "" : `<p class="pd-correct">${correctionButton(place)}</p>`;
+  const where = [REGION_SHORT[region] || region, locality].filter((part) => part && part !== "전국").join(" ");
   const warning = isHospital
     ? `<p class="pd-warn"><strong>야간·응급 진료 가능 여부는 방문 전 전화로 확인하세요.</strong></p>`
     : `<p class="pd-warn">공공데이터에 등록된 정보 기준이라 실제 운영 현황과 다를 수 있어요. 방문 전 반려동물 동반 가능 여부를 해당 업체에 확인하세요.</p>`;
+  const checkedLine = badgeText
+    ? `<p><b>동반 조건 ${escapeHtml(badgeText)}</b>${checkedSource ? escapeHtml(checkedSource) : ""}</p>`
+    : "";
   return `<!doctype html>
 <html lang="ko">
 <head>
@@ -374,25 +596,42 @@ function makePlacePage(place, css, updatedAt, thin) {
       <a href="/about.html">소개</a>
     </nav>
   </header>
-  <main class="page-detail" style="display:block;overflow:visible">
-    <article class="pd-inner">
-      ${photoHtml}
-      <h1 class="pd-title">${escapeHtml(place.name)}</h1>
-      <span class="badge"><span class="dot dot--${place.category}"></span>${escapeHtml(cat.label)}</span>
-      ${overviewHtml}
-      <div class="pd-card"><dl style="margin:0">${rows}</dl></div>
-      ${petHtml}
-      ${enrichmentHtml(place)}
-      <!--RELATED_GUIDES-->
-      ${thin ? "" : AD_UNIT}
-      <div class="pd-actions">${actions}</div>
-      <div class="pd-maps">${mapSearch}</div>
-      ${warning}
-      ${correctionLink(place)}
-      ${reportLink()}
-      <p class="pd-source-date">데이터 기준일: ${escapeHtml(updatedAt)}</p>
-      ${source ? `<p class="pd-source-note">${escapeHtml(source)}</p>` : ""}
-      <p><a class="pd-back" href="/">← 목록으로 돌아가기</a></p>
+  <main class="page-detail">
+    <article class="pd-wrap">
+      ${crumbHtml(place)}
+      <div class="pd-grid">
+        <div class="pd-col">
+          <h1 class="pd-title">${escapeHtml(place.name)}</h1>
+          <p class="pd-cat"><span class="dot dot--${place.category}"></span>${escapeHtml(cat.label)}${where ? " · " + escapeHtml(where) : ""}</p>
+          ${photoHtml}
+          ${overviewHtml}
+          ${rows ? `<div class="pd-info"><dl>${rows}</dl></div>` : ""}
+          <div class="pd-mact">${actionButtons(place)}</div>
+          ${enrich}
+          ${correction}
+          ${thin ? "" : AD_UNIT}
+          <!--RELATED_GUIDES-->
+          ${nearbyHtml(place)}
+          ${warning}
+          ${reportLink()}
+          <p><a class="pd-back" href="/">← 목록으로 돌아가기</a></p>
+        </div>
+        <aside class="pd-side">
+          <div class="pd-card pd-actions-card">
+            <h2>바로 가기</h2>
+            ${actionButtons(place, { stacked: true })}
+            <div class="pd-maplinks">
+              <a href="${escapeHtml(search.kakao)}" target="_blank" rel="noopener">카카오맵에서 보기</a>
+              <a href="${escapeHtml(search.naver)}" target="_blank" rel="noopener">네이버 지도에서 보기</a>
+            </div>
+          </div>
+          <div class="pd-card pd-source-card">
+            <h2>정보 출처</h2>
+            <p><b>공공데이터 ${escapeHtml(updatedAt)}</b>${source ? escapeHtml(source) : ""}</p>
+            ${checkedLine}
+          </div>
+        </aside>
+      </div>
     </article>
   </main>
   <footer class="site-footer">
@@ -402,6 +641,7 @@ function makePlacePage(place, css, updatedAt, thin) {
       <a href="/contact.html">문의</a>
       <a href="/terms.html">이용안내</a>
     </nav>
+    <p>데이터 기준일: ${escapeHtml(updatedAt)}</p>
   </footer>
 </body>
 </html>`;
@@ -424,12 +664,21 @@ function assertEnrichmentPolicy() {
   if (isThinPlace(filled)) throw new Error("보강이 채워진 장소가 noindex로 분류되었습니다.");
   const indexed = makePlacePage(filled, "", "2026-10-18", false);
   const hasAdUnit = (html) => /<ins\b[^>]*\bclass="adsbygoogle"/.test(html);
-  if (indexed.includes("noindex") || !hasAdUnit(indexed) || !indexed.includes("정보 정정 요청") || !indexed.includes("contact.html?place=policy-check") || !indexed.includes("실내/실외") || !indexed.includes("무게·크기 제한") || !indexed.includes("추가 요금") || !indexed.includes("확인 출처")) {
+  const indexedOk = !indexed.includes("noindex") && hasAdUnit(indexed) && indexed.includes("정보 정정 요청") && indexed.includes("contact.html?place=policy-check") && indexed.includes('class="enr"') && indexed.includes("반려동물 동반 조건") && indexed.includes("실내 동반") && indexed.includes("실내·실외") && indexed.includes("무게·크기 제한") && indexed.includes("소형견 10kg 이하") && indexed.includes("추가 요금") && indexed.includes("업체 공식 안내 페이지") && indexed.includes("2026.10 확인") && indexed.includes('class="ad-slot"') && indexed.includes("min-height:250px");
+  if (!indexedOk || indexed.includes("예시") || indexed.includes("pd-photo-paw") || indexed.includes("대형견 동반")) {
     throw new Error("보강 장소 페이지 구성이 맞지 않습니다.");
   }
   const thinPage = makePlacePage(base, "", "2026-10-18", true);
-  if (!thinPage.includes('content="noindex, follow"') || hasAdUnit(thinPage) || !thinPage.includes('href="/contact.html?place=policy-check"')) {
+  if (!thinPage.includes('content="noindex, follow"') || hasAdUnit(thinPage) || !thinPage.includes('href="/contact.html?place=policy-check"') || thinPage.includes('class="enr"') || thinPage.includes("예시") || thinPage.includes("pd-photo-paw") || !thinPage.includes("/place/maps/policy-check.svg")) {
     throw new Error("얇은 장소 페이지에 광고 단위가 있거나 정정 링크가 없습니다.");
+  }
+  const withRule = { ...base, id: "policy-rule", tour: { petRules: [{ label: "동반 시 필요사항", value: "목줄 착용" }] } };
+  const rulePage = makePlacePage(withRule, "", "2026-10-18", true);
+  if (!rulePage.includes("목줄 착용") || !rulePage.includes("필수") || !rulePage.includes('class="enr"') || hasAdUnit(rulePage) || rulePage.includes("대형견") || rulePage.includes("고양이 동반")) {
+    throw new Error("확인된 동반 조건만 타일로 만들지 못했습니다.");
+  }
+  if (checkedBadgeText("2026-10-18") !== "2026.10 확인" || checkedBadgeText("2025-09-01") !== "2025.09 확인 · 오래된 정보") {
+    throw new Error("확인일 배지 형식이 맞지 않습니다.");
   }
   const partial = { ...base, enrichment: { indoorOutdoor: "실내", sizeLimit: "10kg 이하", extraFee: "없음", checkedOn: "2026-10-18" } };
   if (!isThinPlace(partial)) throw new Error("출처가 없는 보강이 색인 대상이 되었습니다.");
@@ -658,8 +907,9 @@ async function build() {
     return copy;
   });
   fs.writeFileSync(path.join(OUT, "places.json"), JSON.stringify({ updatedAt, places: publishedPlaces }), "utf8");
-  fs.mkdirSync(path.join(OUT, "place"), { recursive: true });
+  fs.mkdirSync(path.join(OUT, "place", "maps"), { recursive: true });
   fs.writeFileSync(path.join(OUT, "place", "place.css"), css, "utf8");
+  catalogPlaces = valid;
   const indexablePlaces = [];
   let thinCount = 0;
   for (const place of valid) {
@@ -667,7 +917,13 @@ async function build() {
     if (thin) thinCount += 1;
     else indexablePlaces.push(place);
     const filename = path.join(OUT, "place", place.id + ".html");
-    try { fs.writeFileSync(filename, makePlacePage(place, css, updatedAt, thin), "utf8"); }
+    try {
+      const pageHtml = makePlacePage(place, css, updatedAt, thin);
+      fs.writeFileSync(filename, pageHtml, "utf8");
+      const detail = place.tour || null;
+      const photo = detail && tourapi.isSizedImage(detail.image) ? detail.image : null;
+      if (!photo) fs.writeFileSync(path.join(OUT, "place", "maps", place.id + ".svg"), staticMapSvg(place), "utf8");
+    }
     catch (error) { skipped.push(`${place.id}: ${place.name} — 페이지 생성 실패 (${error.message})`); }
   }
   const pageUrls = indexablePlaces.map((p) => `${BASE_URL}/place/${encodeURIComponent(p.id)}.html`);
@@ -699,6 +955,9 @@ async function build() {
     throw new Error("장소 페이지에 카카오맵·네이버 지도 검색 링크가 없습니다.");
   }
   if (sampleHtml.includes("pd-overview") || sampleHtml.includes("pd-figure")) throw new Error("contentid가 없는 장소에 관광 개요나 사진을 넣었습니다.");
+  if (sampleHtml.includes("예시") || sampleHtml.includes("pd-photo-paw") || !sampleHtml.includes('class="pd-snap"') || !fs.existsSync(path.join(OUT, "place", "maps", "kbizin-212.svg"))) {
+    throw new Error("장소 페이지에 예시 값이나 발바닥 플레이스홀더가 있습니다.");
+  }
   if (!sampleHtml.includes('name="robots" content="noindex, follow"')) throw new Error("정보가 얇은 장소가 색인 대상이 되었습니다.");
   if (/<ins\b[^>]*\bclass="adsbygoogle"/.test(sampleHtml)) throw new Error("noindex 샘플 장소에 광고 단위가 있습니다.");
   log(`전체 HTML: ${htmlCount}, OG PNG: 5, 장소 반영 전 sitemap URL: ${sitemapUrls.length}`);
