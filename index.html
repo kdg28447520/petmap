@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" media="print" onload="this.media='all'" />
     <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" /></noscript>
     <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="/ad-slot.css" />
     <title>댕냥이와 함께 — 반려동물 동반 전국 지도</title>
     <meta name="description" content="서울부터 제주까지 전국의 애견 숙박, 동반 음식점·카페, 반려견 공원과 산책로, 24시간 동물병원 정보를 모은 지도예요. 방문 전 해당 업체에 확인하세요." />
     <link rel="canonical" href="https://www.petmap.kr/" />
@@ -157,27 +158,12 @@
         text-decoration: none;
       }
       .trust-nav a:hover { color: var(--brand-text); }
-      .ad-slot {
-        min-height: 250px;
-        margin: 32px 0;
-        contain: layout;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-        background: var(--surface-2);
-        border: 1px solid var(--line);
-        border-radius: var(--radius);
-        overflow: hidden;
-      }
-      .ad-slot-label {
-        font-size: 13px;
-        font-weight: 700;
-        letter-spacing: 0.06em;
-        color: var(--ink-3);
-      }
-      .ad-slot .adsbygoogle { display: block; width: 100%; min-height: 250px; }
+      .facts { margin-top: 20px; }
+      .facts h2 { margin: 0 0 8px; font-size: 18px; line-height: 26px; }
+      .facts dl { margin: 0; }
+      .facts div { display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 8px; padding: 8px 0; border-bottom: 1px solid var(--line); }
+      .facts dt { color: var(--ink-3); font-size: 14px; }
+      .facts dd { margin: 0; font-size: 15px; }
       .crawl-catalog {
         content-visibility: auto;
         contain-intrinsic-size: auto 800px;
@@ -1183,7 +1169,12 @@
       body.place-doc .near b { display: block; font-size: 16px; font-weight: 700; }
       body.place-doc .near .m { display: block; font-size: 13px; color: var(--ink-3); font-weight: 500; }
       body.place-doc .near .km { margin-left: auto; font-size: 13px; color: var(--ink-2); font-variant-numeric: tabular-nums; }
-      body.place-doc .ad-slot { min-height: 250px; margin: 32px 0; contain: layout; }
+      body.place-doc .facts { margin-top: 20px; }
+      body.place-doc .facts h2 { margin: 0 0 8px; font-size: 18px; line-height: 26px; }
+      body.place-doc .facts dl { margin: 0; }
+      body.place-doc .facts div { display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 8px; padding: 8px 0; border-bottom: 1px solid var(--line); }
+      body.place-doc .facts dt { color: var(--ink-3); font-size: 14px; }
+      body.place-doc .facts dd { margin: 0; font-size: 15px; }
       body.place-doc .pd-back { display: inline-flex; margin-top: 24px; text-decoration: none; }
       @media (max-width: 840px) {
         body.place-doc .pd-wrap { padding: 16px 16px 32px; }
@@ -1272,6 +1263,10 @@
     <section id="crawlCatalog" class="crawl-catalog" aria-label="수록 장소와 가이드">
       <!--CRAWL_CATALOG-->
     </section>
+    <aside class="ad-slot" id="homeAd" aria-label="광고">
+      <p class="ad-slot__label">광고</p>
+      <ins class="adsbygoogle" style="display:block;width:100%" data-ad-client="ca-pub-4533404826925371" data-ad-format="auto" data-full-width-responsive="true"></ins>
+    </aside>
 
     <footer>
       <nav class="trust-nav" aria-label="안내">
@@ -1712,7 +1707,28 @@
               (meta.length ? '<span class="row-meta"><span>' + meta.join("</span><span>") + "</span></span>" : "") +
             "</span>";
         }
+        function placeHomeAd(slot) {
+          if (!slot) slot = document.getElementById("homeAd");
+          if (!slot || !listEl) return;
+          var rows = listEl.querySelectorAll(".place-row");
+          if (!rows.length) {
+            listEl.insertAdjacentElement("afterend", slot);
+            return;
+          }
+          var index = Math.min(5, rows.length - 1);
+          function park(i) {
+            var row = rows[i];
+            if (row.nextSibling !== slot) row.parentNode.insertBefore(slot, row.nextSibling);
+          }
+          park(index);
+          while (index < rows.length - 1 && slot.getBoundingClientRect().top + window.scrollY < 900) {
+            index += 1;
+            park(index);
+          }
+        }
         function renderList() {
+          var parked = document.getElementById("homeAd");
+          if (parked && parked.parentNode) parked.parentNode.removeChild(parked);
           listEl.innerHTML = "";
           var frag = document.createDocumentFragment();
           var regionCounts = {};
@@ -1771,6 +1787,7 @@
           }
           emptyEl.classList.toggle("show", noResults);
           countEl.textContent = dataReady ? resultPhrase() : "";
+          placeHomeAd(parked);
         }
 
         /* ---------- 페이지 번호 UI ---------- */
@@ -2475,6 +2492,18 @@
 
         scheduleHomeMap();
         route();
+      })();
+    </script>
+    <script>
+      (function () {
+        function mark() {
+          document.querySelectorAll(".ad-slot").forEach(function (slot) {
+            var ins = slot.querySelector("ins.adsbygoogle");
+            slot.classList.toggle("is-filled", !!ins && ins.getAttribute("data-ad-status") === "filled");
+          });
+        }
+        new MutationObserver(mark).observe(document.body, { subtree: true, attributes: true, attributeFilter: ["data-ad-status"] });
+        mark();
       })();
     </script>
   </body>

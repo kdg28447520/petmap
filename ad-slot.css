@@ -1,0 +1,53 @@
+/* 애드센스 빈 광고 자리 접기
+   adsbygoogle 스크립트와 <ins> 태그는 지우지 않습니다.
+   광고가 채워지기 전에는 높이 0, 채워지면 자리 높이 308px입니다. */
+
+.ad-slot {
+  box-sizing: border-box;
+  display: block;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  overflow: hidden;
+}
+
+.ad-slot ins.adsbygoogle {
+  display: block;
+  width: 100%;
+  min-height: 0;
+}
+
+ins.adsbygoogle[data-ad-status="unfilled"] {
+  display: none !important;
+}
+
+.ad-slot__label {
+  display: none;
+  margin: 0 0 8px;
+  font-size: 12px;
+  line-height: 16px;
+  letter-spacing: 0.02em;
+  color: #4E5968;
+}
+
+.ad-slot:has(ins.adsbygoogle[data-ad-status="filled"]),
+.ad-slot.is-filled {
+  box-sizing: border-box;
+  margin: 32px 0;
+  padding: 16px 0;
+  border-top: 1px solid #E5E8EB;
+  border-bottom: 1px solid #E5E8EB;
+  overflow: visible;
+}
+
+.ad-slot:has(ins.adsbygoogle[data-ad-status="filled"]) .ad-slot__label,
+.ad-slot.is-filled .ad-slot__label {
+  display: block;
+}
+
+.ad-slot:has(ins.adsbygoogle[data-ad-status="filled"]) ins.adsbygoogle,
+.ad-slot.is-filled ins.adsbygoogle {
+  min-height: 250px;
+}

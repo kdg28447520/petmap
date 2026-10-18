@@ -22,6 +22,16 @@ const PET_FIELDS = [
   ["relaAcdntRiskMtr2", "주의사항"],
   ["relaAcdntRiskMtr3", "주의사항"],
 ];
+// detailPetTour2 fields shown as returned. Empty stays empty so the page can
+// print the visit-before-you-go line. Names are checked on the first live call.
+const VERBATIM_PET_FIELDS = [
+  ["acmpyTypeCd", "동반 구분"],
+  ["acmpyPsblCpam", "동반 가능 동물"],
+  ["acmpyNeedMtr", "동반 시 필요사항"],
+  ["etcAcmpyInfo", "기타 동반 정보"],
+];
+const PET_EMPTY = "정보 없음 — 방문 전 업체에 확인하세요";
+let petFieldNamesNoted = false;
 
 function contentIdOf(place) {
   if (!place || place.source !== "tourapi") return "";
@@ -129,6 +139,29 @@ function petRulesFromItem(item) {
   return rules;
 }
 
+function verbatimApiText(value) {
+  return plainText(value);
+}
+
+function petConditionsFromItem(item) {
+  return VERBATIM_PET_FIELDS.map(([key, label]) => ({
+    key,
+    label,
+    value: verbatimApiText(item && item[key]),
+  }));
+}
+
+function notePetFieldNames(item, log) {
+  if (petFieldNamesNoted || !item || typeof item !== "object") return;
+  petFieldNamesNoted = true;
+  const missing = VERBATIM_PET_FIELDS.map(([key]) => key).filter((key) => !Object.prototype.hasOwnProperty.call(item, key));
+  if (missing.length) {
+    log("detailPetTour2 응답에 없는 필드: " + missing.join(", ") + ". 응답 키: " + Object.keys(item).join(", "));
+    return;
+  }
+  log("detailPetTour2 필드 확인: " + VERBATIM_PET_FIELDS.map(([key]) => key).join(", "));
+}
+
 function isRich(detail) {
   if (!detail) return false;
   return Boolean(plainText(detail.overview) && isUsablePhoto(detail.image) && Array.isArray(detail.petRules) && detail.petRules.some((rule) => plainText(rule.value)));
@@ -220,6 +253,7 @@ function normalizeDetail(contentId, common, imageItem, petItem, size) {
     homepage: httpUrl(commonItem.homepage),
     image: image && isUsablePhoto(image) ? image : null,
     petRules: petRulesFromItem(petItem),
+    petConditions: petConditionsFromItem(petItem),
     fetchedAt: new Date().toISOString(),
     complete: true,
   };
@@ -287,6 +321,7 @@ async function fetchOne(contentId, key) {
   ]);
   const common = commonItems[0] || {};
   const imageItem = imageItems[0] || null;
+  if (petItems[0]) notePetFieldNames(petItems[0], (message) => console.log("[petmap] " + message));
   const picked = licensedImage(imageItem, common);
   let size = null;
   if (picked) {
@@ -377,6 +412,8 @@ function selfCheck() {
   if (homepage !== "https://www.gayoungdang.com/") throw new Error("홈페이지 추출");
   const rules = petRulesFromItem({ acmpyNeedMtr: "목줄 또는 이동장", acmpyTypeCd: "01", relaAcdntRiskMtr1: "없음" });
   if (rules.length !== 1 || rules[0].label !== "동반 시 필요사항") throw new Error("동반 조건 정리");
+  const conditions = petConditionsFromItem({ acmpyNeedMtr: "목줄 또는 이동장", acmpyTypeCd: "01", acmpyPsblCpam: "", etcAcmpyInfo: "없음" });
+  if (conditions.length !== 4 || conditions[0].value !== "01" || conditions[1].value !== "" || conditions[2].value !== "목줄 또는 이동장" || conditions[3].value !== "없음") throw new Error("동반 조건 원문");
   const rich = { overview: "펜션 소개", image: { url: "https://tong.visitkorea.or.kr/cms/resource/a.jpg", width: 640, height: 480, licenseCode: "Type1" }, petRules: rules };
   if (!isRich(rich)) throw new Error("풍부한 상세 판정");
   if (isRich({ ...rich, petRules: [] })) throw new Error("동반 조건 없는 페이지는 색인하지 않습니다");
@@ -409,6 +446,9 @@ module.exports = {
   isSizedImage,
   isUsablePhoto,
   isRich,
+  VERBATIM_PET_FIELDS,
+  PET_EMPTY,
+  petConditionsFromItem,
   mapLinks,
   imageSize,
   readCache,
