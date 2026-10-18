@@ -894,7 +894,7 @@ function generateOgImages() {
 }
 function copyAssets() {
   fs.mkdirSync(OUT, { recursive: true });
-  for (const file of ["index.html", "index-rule.js", "places_park.json"]) {
+  for (const file of ["index.html", "index-rule.js", "leaflet.css", "places_park.json"]) {
     if (fs.existsSync(path.join(ROOT, file))) fs.copyFileSync(path.join(ROOT, file), path.join(OUT, file));
   }
   const dataSrc = path.join(ROOT, "data");
