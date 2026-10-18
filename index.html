@@ -1288,7 +1288,6 @@
         <div class="sheet-sub" id="dirSheetSub"></div>
         <a class="sheet-btn" id="dirKakao" href="#" target="_blank" rel="noopener">카카오맵으로 길찾기</a>
         <a class="sheet-btn" id="dirNaver" href="#" target="_blank" rel="noopener">네이버지도로 길찾기</a>
-        <a class="sheet-btn" id="dirTmap" href="#">T맵으로 길찾기</a>
         <a class="sheet-btn" id="dirGoogle" href="#" target="_blank" rel="noopener">Google 지도로 길찾기 (웹)</a>
         <button class="sheet-cancel" id="dirCancel" type="button">취소</button>
       </div>
@@ -1883,8 +1882,6 @@
         }
         /* ---------- 길찾기 시트: 주소 문자열이 아닌 좌표(lat,lng) 기반으로 앱에 전달 ---------- */
         var dirSheetEl = document.getElementById("dirSheet");
-        var dirGoogleUrl = "";
-        var tmapFallbackTimer = null;
         function openDirSheet(p) {
           if (!dirSheetEl) return;
           document.getElementById("dirSheetSub").textContent = p.name + " · " + (p.address || "");
@@ -1892,10 +1889,8 @@
             "https://map.kakao.com/link/to/" + encodeURIComponent(p.name) + "," + p.lat + "," + p.lng;
           document.getElementById("dirNaver").href =
             "https://map.naver.com/p/directions/-/" + p.lng + "," + p.lat + "," + encodeURIComponent(p.name) + "/car";
-          document.getElementById("dirTmap").href =
-            "tmap://route/car?goalx=" + p.lng + "&goaly=" + p.lat + "&goalname=" + encodeURIComponent(p.name);
-          dirGoogleUrl = "https://www.google.com/maps/dir/?api=1&destination=" + p.lat + "," + p.lng;
-          document.getElementById("dirGoogle").href = dirGoogleUrl;
+          document.getElementById("dirGoogle").href =
+            "https://www.google.com/maps/dir/?api=1&destination=" + p.lat + "," + p.lng;
           dirSheetEl.classList.add("open");
         }
         function closeDirSheet() { if (dirSheetEl) dirSheetEl.classList.remove("open"); }
@@ -1904,14 +1899,6 @@
           document.getElementById("dirCancel").addEventListener("click", closeDirSheet);
           ["dirKakao", "dirNaver", "dirGoogle"].forEach(function (id) {
             document.getElementById(id).addEventListener("click", closeDirSheet);
-          });
-          /* T맵 앱이 없으면 웹(Google 지도)으로 폴백 */
-          document.getElementById("dirTmap").addEventListener("click", function () {
-            if (tmapFallbackTimer) clearTimeout(tmapFallbackTimer);
-            tmapFallbackTimer = setTimeout(function () {
-              if (!document.hidden && dirGoogleUrl) window.open(dirGoogleUrl, "_blank", "noopener");
-            }, 1500);
-            closeDirSheet();
           });
         }
 

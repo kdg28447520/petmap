@@ -175,7 +175,7 @@ function build(){
  for(let i=0;i<data.length;i++)write("guides/"+data[i].id+".html",makeGuide(data[i],i));
  for(const g of longGuides)write("guides/"+g.id+".html",makeLongGuide(g));
  legal("댕냥이와 함께 소개","/about.html","반려동물 동반 전국 지도 서비스의 데이터 출처, 운영 원칙과 정보 이용 방법 안내.",'<p>댕냥이와 함께(petmap.kr)는 반려동물 보호자가 전국의 동반 숙박·카페·음식점·산책 공간과 야간 동물병원을 탐색하도록 돕는 정보 지도입니다. 편집 목적은 장소를 쉽게 비교하고 방문 전에 확인할 사항을 분명하게 알려드리는 것입니다.</p><h2>데이터는 어떻게 마련하나요?</h2><p>장소 정보는 한국관광공사 TourAPI, 공공 관광·문화 데이터, 고캠핑 및 외부 병원 안내 목록을 바탕으로 정리합니다. 데이터 수록과 실제 동반 허용·예약 가능·24시간 응급진료 가능 여부는 동일하지 않습니다. 운영시간, 추가요금, 병원 당직 여부 등은 업체에 직접 확인해 주세요.</p><h2>편집 원칙</h2><p>광고·제휴 여부와 관계없이 실제 여행 준비에 도움이 되는 정보를 우선합니다. 확인되지 않은 가격이나 체중 제한을 사실처럼 표기하지 않고, 오류를 발견한 이용자의 정정 제안을 받습니다. 본 사이트는 수의학적 진단, 예약 대행 또는 현장 이용 허가를 제공하지 않습니다.</p><h2>자료·정정 요청</h2><p>오류·폐업·동반 조건 변경 등이 있다면 <a href="/contact.html">문의·정정 안내</a>를 이용해 주세요. 여행 참고 자료는 <a href="/guides/">여행 가이드</a>에서 확인할 수 있습니다.</p><h2>운영자</h2><p>댕냥이와 함께는 김동곤이 운영합니다. 문의는 <a href="mailto:kdg2844@gmail.com">kdg2844@gmail.com</a>으로 보내 주세요.</p>');
- legal("개인정보처리방침","/privacy.html","petmap.kr의 위치정보·쿠키·Google AdSense 및 개인정보 취급 안내.",fs.readFileSync(path.join(ROOT,"content/legal/privacy.html"),"utf8"),"2026-10-18");
+ legal("개인정보처리방침","/privacy.html","petmap.kr의 쿠키·Google AdSense 및 개인정보 취급 안내.",fs.readFileSync(path.join(ROOT,"content/legal/privacy.html"),"utf8"),"2026-10-18");
  legal("문의·장소 정보 정정","/contact.html","petmap.kr 동반 시설 정보 오류, 운영시간 변경 및 개인정보 관련 문의 접수 안내.",'<p>반려동물 동반 규정·영업 여부·병원 진료시간 변경을 발견했다면 근거와 함께 알려 주세요. 정확한 정보를 제공하기 위해 업소 공식 공지 또는 전화 확인 등 검증 가능한 자료가 있으면 도움이 됩니다.</p><p id="placeCorrectionNote">장소 상세의 정보 정정 요청으로 오면 주소에 place 값이 붙습니다. 그 값이 정정하려는 장소입니다.</p><script>(function(){var id=new URLSearchParams(location.search).get("place");var note=document.getElementById("placeCorrectionNote");if(!id||!note)return;note.textContent="정정 요청 장소 ID: "+id+". 아래 제안에 이 값과 상세 페이지 주소를 함께 적어 주세요.";})();</script><h2>정보 정정 제안</h2><p>현재 확인 가능한 공개 정정 창구는 프로젝트 GitHub 이슈입니다. GitHub 로그인이 필요할 수 있으며 문의가 공개될 수 있으므로 전화번호·주소 등 개인정보나 민감한 정보를 기재하지 마세요.</p><p><a href="https://github.com/kdg28447520/petmap/issues/new" target="_blank" rel="noopener">→ GitHub에서 장소 정보 정정 제안하기</a></p><h2>제안 시 유용한 정보</h2><ul><li>장소명과 지도 상세 페이지 URL</li><li>바뀐 항목(운영시간·동반 허용·폐업 등)</li><li>근거 자료의 공개 URL 또는 확인 일자</li></ul><h2>운영자</h2><p>운영자는 김동곤입니다. 장소 정보 정정과 개인정보 관련 문의는 <a href="mailto:kdg2844@gmail.com">kdg2844@gmail.com</a>으로 보내 주세요.</p><h2>개인정보 관련 요청</h2><p>본 사이트는 별도 회원가입 화면을 제공하지 않습니다. 개인정보 요청은 위 이메일로 보내 주세요. GitHub 공개 이슈에는 개인 정보를 올리지 마세요.</p>');
  legal("댕냥이와 함께 이용약관","/terms.html","댕냥이와 함께 이용 조건, 자료 출처, 광고와 책임의 한계.",fs.readFileSync(path.join(ROOT,"content/legal/terms.html"),"utf8"),"2026-10-18");
  patchMap();
@@ -315,9 +315,10 @@ function assertPublished(){
  if(!privacy.includes("Google을 포함한 제3자 업체")||!privacy.includes("다른 웹사이트를 이전에 방문한 기록")||!privacy.includes("https://policies.google.com/technologies/ads")||!privacy.includes("https://www.aboutads.info/choices/"))problems.push("개인정보처리방침에 제3자 업체 쿠키 고지가 없습니다.");
  if(privacy.includes("송출이 확인된 상태는 아닙니다"))problems.push("개인정보처리방침이 아직 광고 미사용으로 적혀 있습니다.");
  if(privacy.includes("코드 기반의 안내"))problems.push("개인정보처리방침에 임시 안내 문장이 남아 있습니다.");
- for(const phrase of ["처리하는 개인정보","제3자에게 제공하지 않습니다","국외 이전","Vercel Inc.","파기 절차","열람","처리정지","개인정보 보호책임자","1833-6972","privacy.kisa.or.kr","만 14세","youronlinechoices.eu","2026년 10월 17일","이용자 기기 안에서만","[상호]"]){
+ for(const phrase of ["처리하는 개인정보","제3자에게 제공하지 않습니다","국외 이전","Vercel Inc.","파기 절차","열람","처리정지","개인정보 보호책임자","1833-6972","privacy.kisa.or.kr","만 14세","youronlinechoices.eu","2026년 10월 17일","현재 위치 정보를 사용하지 않습니다.","GitHub, Inc.","OpenStreetMap France","OpenStreetMap Foundation","[상호]"]){
   if(!privacy.includes(phrase))problems.push("개인정보처리방침 항목 누락: "+phrase);
  }
+ if(privacy.includes("T맵")||privacy.includes("이용자 기기 안에서만"))problems.push("쓰지 않는 T맵 또는 위치 기능 안내가 남아 있습니다.");
  const ads=fs.readFileSync(path.join(OUT,"ads.txt"),"utf8");
  if(ads!=="google.com, pub-4533404826925371, DIRECT, f08c47fec0942fa0\n")problems.push("ads.txt 내용이 게시자 ID와 다릅니다.");
  const samplePlace=fs.readFileSync(path.join(OUT,"place","tour-2707444.html"),"utf8");
