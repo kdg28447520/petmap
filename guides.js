@@ -24,19 +24,33 @@ const chrome='<header class="site-bar"><a class="brand" href="/"><span class="pa
 const trustFooter='<footer class="site-footer"><nav class="trust-nav" aria-label="안내"><a href="/about.html">소개</a><a href="/privacy.html">개인정보처리방침</a><a href="/contact.html">문의</a><a href="/terms.html">이용안내</a></nav><p class="data-credit">장소·반려동물 동반 정보 출처: <a href="https://api.visitkorea.or.kr" target="_blank" rel="noopener">한국관광공사 TourAPI</a> 「반려동물 동반여행 서비스」(<a href="https://www.data.go.kr/data/15135102/openapi.do" target="_blank" rel="noopener">공공데이터포털</a>). 사진은 공공누리 제1유형(출처표시)·제3유형(출처표시+변경금지) 조건에 따라 한국관광공사의 공공저작물을 이용했습니다 (<a href="https://contest.visitkorea.or.kr/kor/helpDesk/copyrightGuide.kto" target="_blank" rel="noopener">한국관광공사 저작권정책</a>). 댕냥이와 함께는 한국관광공사와 제휴하거나 후원받는 사이트가 아닙니다.</p><p>© 2026 댕냥이와 함께 · 운영 김동곤 · <a href="mailto:kdg2844@gmail.com">kdg2844@gmail.com</a> · 공공데이터 기반 안내 · 방문 전 해당 업체에 직접 확인해 주세요.</p></footer>';
 const adSlot='<aside class="ad-slot" aria-label="광고"><p class="ad-slot__label">광고</p><ins class="adsbygoogle" style="display:block;width:100%" data-ad-client="ca-pub-4533404826925371" data-ad-format="auto" data-full-width-responsive="true"></ins></aside>';
 const adWatch='<script>(function(){function mark(){document.querySelectorAll(".ad-slot").forEach(function(s){var i=s.querySelector("ins.adsbygoogle");s.classList.toggle("is-filled",!!i&&i.getAttribute("data-ad-status")==="filled");});}function topOf(slot){return slot.getBoundingClientRect().top+window.scrollY;}function sink(slot){if(!slot||slot.id==="homeAd")return;slot.style.marginTop="";var steps=0;while(steps<40&&topOf(slot)<window.innerHeight){steps+=1;var next=slot.nextElementSibling;if(next){next.after(slot);continue;}var parent=slot.parentElement;if(parent&&parent!==document.body&&parent.parentElement&&parent.nextElementSibling){parent.after(slot);continue;}break;}var top=topOf(slot);if(top<window.innerHeight)slot.style.marginTop=Math.ceil(window.innerHeight-top)+"px";}function place(){document.querySelectorAll(".ad-slot").forEach(sink);}if(!document.body)return;new MutationObserver(mark).observe(document.body,{subtree:true,attributes:true,attributeFilter:["data-ad-status"]});mark();place();var timer=null;window.addEventListener("resize",function(){if(timer)clearTimeout(timer);timer=setTimeout(place,150);});})();</script>';
-const css=':root{color-scheme:light}*{box-sizing:border-box}body{margin:0;background:#faf9f6;color:#262522;font-family:Pretendard,"Noto Sans KR",system-ui,sans-serif;font-size:16px;line-height:1.75;overflow-wrap:break-word}a{color:#1765ac}a:hover{text-decoration:underline}.shell{max-width:920px;margin:auto;padding:0 22px 60px}.site-bar{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:12px;height:56px;padding:0 16px;background:#faf9f6;border-bottom:1px solid #e7e3da}.brand{display:flex;align-items:center;gap:8px;color:#1a1a1a;font-size:17px;font-weight:800;text-decoration:none}.brand .paw{display:grid;place-items:center;width:23px;height:23px}.site-nav{display:flex;gap:2px;margin-left:auto;min-width:0;overflow-x:auto;scrollbar-width:none}.site-nav a{font-size:15px;font-weight:700;color:#1a1a1a;text-decoration:none;padding:8px 10px;border-radius:999px;white-space:nowrap;background:transparent}.site-nav a:hover{background:#f3f1ec}.site-footer{padding:22px 16px 32px;text-align:center;color:#6B675F;font-size:14px}.trust-nav{display:flex;flex-wrap:wrap;justify-content:center;gap:8px 14px;margin:0 0 8px}.trust-nav a{color:#55524C;font-size:15px;font-weight:700;text-decoration:none}.course{margin:0;padding-left:20px}.course>li{margin:0 0 18px}.fact-dl{margin:6px 0 0}.fact-dl div{display:grid;grid-template-columns:88px minmax(0,1fr);gap:6px;padding:4px 0;border-bottom:1px solid #f0eeea}.fact-dl dt{color:#6B675F;font-size:14px}.fact-dl dd{margin:0}h1{font-size:clamp(26px,4vw,36px);letter-spacing:-.8px;line-height:1.38;margin:16px 0}h2{font-size:23px;line-height:1.5;margin:36px 0 12px}h3{font-size:18px;margin:20px 0 9px}.lede{font-size:17px;color:#3d4546}.meta{font-size:14px;color:#6B675F}.article{background:white;border-radius:17px;padding:28px 35px;border:1px solid #eceae7}.section{margin-top:27px}.section p{margin:10px 0 16px}.table-scroll{max-width:100%;overflow-x:auto;border-radius:12px;border:1px solid #e8e8e5}table{border-collapse:collapse;width:100%;min-width:580px;font-size:16px}th,td{text-align:left;padding:11px 13px;border-bottom:1px solid #eee}th{background:#f2f5f4}td a{font-weight:700}.figure{margin:23px 0;overflow:hidden;border:1px solid #eee;border-radius:12px;background:#f8f7f2}.figure img{display:block;max-width:100%;width:100%;max-height:300px;object-fit:cover}.figure figcaption{font-size:14px;padding:8px 13px;color:#6B675F}.bullets{padding-left:21px}.bullets li{margin-bottom:12px}.checklist{list-style:none;padding:0}.checklist li{padding:7px 0;border-bottom:1px solid #f3f3f0}.checklist li{position:relative;padding-left:26px}.checklist li:before{content:"";position:absolute;left:0;top:12px;width:16px;height:16px;background:url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2716%27 height=%2716%27 viewBox=%270 0 16 16%27%3E%3Crect x=%271%27 y=%271%27 width=%2714%27 height=%2714%27 rx=%273%27 fill=%27none%27 stroke=%27%235F7161%27 stroke-width=%271.5%27/%3E%3Cpath d=%27M4 8.2 6.6 11 12 5%27 fill=%27none%27 stroke=%27%235F7161%27 stroke-width=%271.6%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27/%3E%3C/svg%3E") center/16px 16px no-repeat}.subtle{color:#6B675F;font-size:14px}.note{padding:15px 17px;background:#f5f7f5;border-radius:12px;border-left:4px solid #467e70}.summary{margin-top:30px;padding:20px;background:#f6f6f3;border-radius:12px}.refs{padding:14px;background:#faf9f7;border-radius:12px;font-size:15px}.guide-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.guide-card{padding:18px;border:1px solid #ddd;border-radius:12px;background:#fff;text-decoration:none;color:#282722}.guide-card b{display:block;line-height:1.5}.guide-card small{color:#6B675F;font-size:15px}.footer{font-size:14px;color:#6B675F;margin-top:26px}.crumb{font-size:14px;color:#6B675F;margin-top:15px}dl dt{font-weight:700;margin-top:17px}dl dd{margin:4px 0 16px}@media(max-width:680px){.shell{padding:0 14px 45px}.article{padding:18px 17px;border-radius:12px}h2{font-size:20px}.guide-cards{grid-template-columns:1fr}.site-nav{gap:2px}.site-nav a{font-size:15px;padding:8px 10px}}';
+const css=':root{color-scheme:light}*{box-sizing:border-box}body{margin:0;background:#faf9f6;color:#262522;font-family:Pretendard,"Noto Sans KR",system-ui,sans-serif;font-size:16px;line-height:1.75;overflow-wrap:break-word}a{color:#1765ac}a:hover{text-decoration:underline}.shell{max-width:920px;margin:auto;padding:0 22px 60px}.site-bar{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:12px;height:56px;padding:0 16px;background:#faf9f6;border-bottom:1px solid #e7e3da}.brand{display:flex;align-items:center;gap:8px;color:#1a1a1a;font-size:17px;font-weight:800;text-decoration:none}.brand .paw{display:grid;place-items:center;width:23px;height:23px}.site-nav{display:flex;gap:2px;margin-left:auto;min-width:0;overflow-x:auto;scrollbar-width:none}.site-nav a{font-size:15px;font-weight:700;color:#1a1a1a;text-decoration:none;padding:8px 10px;border-radius:999px;white-space:nowrap;background:transparent}.site-nav a:hover{background:#f3f1ec}.site-footer{padding:22px 16px 32px;text-align:center;color:#6B675F;font-size:14px}.trust-nav{display:flex;flex-wrap:wrap;justify-content:center;gap:8px 14px;margin:0 0 8px}.trust-nav a{color:#55524C;font-size:15px;font-weight:700;text-decoration:none}.course{margin:0;padding-left:20px}.course>li{margin:0 0 18px}.fact-dl{margin:6px 0 0}.fact-dl div{display:grid;grid-template-columns:88px minmax(0,1fr);gap:6px;padding:4px 0;border-bottom:1px solid #f0eeea}.fact-dl dt{color:#6B675F;font-size:14px}.fact-dl dd{margin:0}h1{font-size:clamp(26px,4vw,36px);letter-spacing:-.8px;line-height:1.38;margin:16px 0}h2{font-size:23px;line-height:1.5;margin:36px 0 12px}h3{font-size:18px;margin:20px 0 9px}.lede{font-size:17px;color:#3d4546}.meta{font-size:14px;color:#6B675F}.article{background:white;border-radius:17px;padding:28px 35px;border:1px solid #eceae7}.section{margin-top:27px}.section p{margin:10px 0 16px}.table-scroll{max-width:100%;overflow-x:auto;border-radius:12px;border:1px solid #e8e8e5}table{border-collapse:collapse;width:100%;min-width:580px;font-size:16px}th,td{text-align:left;padding:11px 13px;border-bottom:1px solid #eee}th{background:#f2f5f4}td a{font-weight:700}.figure{margin:23px 0;overflow:hidden;border:1px solid #eee;border-radius:12px;background:#f8f7f2}.figure img{display:block;max-width:100%;width:100%;max-height:300px;object-fit:cover}.figure figcaption{font-size:14px;padding:8px 13px;color:#6B675F}.bullets{padding-left:21px}.bullets li{margin-bottom:12px}.checklist{list-style:none;padding:0}.checklist li{padding:7px 0;border-bottom:1px solid #f3f3f0}.checklist li{position:relative;padding-left:26px}.checklist li:before{content:"";position:absolute;left:0;top:12px;width:16px;height:16px;background:url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2716%27 height=%2716%27 viewBox=%270 0 16 16%27%3E%3Crect x=%271%27 y=%271%27 width=%2714%27 height=%2714%27 rx=%273%27 fill=%27none%27 stroke=%27%235F7161%27 stroke-width=%271.5%27/%3E%3Cpath d=%27M4 8.2 6.6 11 12 5%27 fill=%27none%27 stroke=%27%235F7161%27 stroke-width=%271.6%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27/%3E%3C/svg%3E") center/16px 16px no-repeat}.subtle{color:#6B675F;font-size:14px}.note{padding:15px 17px;background:#f5f7f5;border-radius:12px;border-left:4px solid #467e70}.summary{margin-top:30px;padding:20px;background:#f6f6f3;border-radius:12px}.refs{padding:14px;background:#faf9f7;border-radius:12px;font-size:15px}.article ul,.article ol{padding-left:21px}.article li{margin:6px 0}.article blockquote{margin:16px 0;padding:12px 16px;background:#f5f7f5;border-left:4px solid #467e70}.article code{font-size:.92em}.guide-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.guide-card{padding:18px;border:1px solid #ddd;border-radius:12px;background:#fff;text-decoration:none;color:#282722}.guide-card b{display:block;line-height:1.5}.guide-card small{color:#6B675F;font-size:15px}.footer{font-size:14px;color:#6B675F;margin-top:26px}.crumb{font-size:14px;color:#6B675F;margin-top:15px}dl dt{font-weight:700;margin-top:17px}dl dd{margin:4px 0 16px}@media(max-width:680px){.shell{padding:0 14px 45px}.article{padding:18px 17px;border-radius:12px}h2{font-size:20px}.guide-cards{grid-template-columns:1fr}.site-nav{gap:2px}.site-nav a{font-size:15px;padding:8px 10px}}';
 function layout(title,desc,url,html,structured){
  const absolute=BASE+url;
  const meta='<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>'+esc(title)+' | 댕냥이와 함께</title><meta name="description" content="'+esc(desc)+'"><link rel="canonical" href="'+absolute+'"><meta property="og:type" content="article"><meta property="og:title" content="'+esc(title)+'"><meta property="og:description" content="'+esc(desc)+'"><meta property="og:url" content="'+absolute+'"><meta property="og:image" content="'+BASE+'/og/default.png"><meta property="og:site_name" content="댕냥이와 함께"><meta name="twitter:card" content="summary_large_image">';
  return '<!doctype html><html lang="ko"><head>'+meta+'<link rel="stylesheet" href="/ad-slot.css"><style>'+css+'</style>'+(structured?'<script type="application/ld+json">'+JSON.stringify(structured).replace(/</g,"\\u003c")+'</script>':'')+'</head><body>'+chrome+'<div class="shell">'+html+'</div>'+trustFooter+adWatch+'</body></html>';
 }
 function write(name,html){const p=path.join(OUT,name);fs.mkdirSync(path.dirname(p),{recursive:true});fs.writeFileSync(p,html,"utf8");}
+const PET_EMPTY="정보 없음 — 방문 전 업체에 확인하세요";
+const NOT_PET_ALLOWED=new Set(["tour-2528107","tour-3101971","tour-1990092"]);
+function isCampsite(place){
+ return place.source==="gocamping"&&/캠핑|글램핑|야영|카라반|캠프/.test(place.name||"");
+}
 function getPlaces(g){
  const terms=g.regionKeys||[];
- return all.filter(p=>indexRule.includeInPetLists(p)&&(!g.categories||g.categories.includes(p.category))&&(!terms.length||terms.some(s=>(p.addr||"").includes(s)))).slice(0,8);
+ let list=all.filter(p=>{
+  if(!indexRule.includeInPetLists(p))return false;
+  if(NOT_PET_ALLOWED.has(p.id)||/국립공원/.test(p.name||""))return false;
+  if(g.categories&&g.categories.length&&!g.categories.includes(p.category))return false;
+  if(terms.length&&!terms.some(s=>(p.addr||"").includes(s)))return false;
+  if(g.id==="pet-camping-glamping-korea"&&!isCampsite(p))return false;
+  return true;
+ });
+ if(!terms.length)list=list.slice().sort((a,b)=>String(a.name||"").localeCompare(String(b.name||""),"ko"));
+ return list.slice(0,8);
 }
 function itemTable(places){
- const rows=places.map(p=>'<tr><td><a href="/place/'+encodeURIComponent(p.id)+'.html">'+esc(p.name)+'</a></td><td>'+esc(p.addr||"주소 재확인")+'</td><td>'+esc(({stay:"숙박",food:"음식점·카페",park:"산책·놀이터",hospital:"동물병원"})[p.category]||"장소")+'</td><td>업체 확인</td></tr>').join("");
+ const rows=places.map(p=>'<tr><td><a href="/place/'+encodeURIComponent(p.id)+'.html">'+esc(p.name)+'</a></td><td>'+esc(p.addr||"주소 재확인")+'</td><td>'+esc(({stay:"숙박",food:"음식점·카페",park:"산책·놀이터",hospital:"동물병원"})[p.category]||"장소")+'</td><td>'+esc(PET_EMPTY)+'</td></tr>').join("");
  return '<div class="table-scroll"><table><thead><tr><th>장소명</th><th>주소</th><th>유형</th><th>동반 조건·요금</th></tr></thead><tbody>'+rows+'</tbody></table></div><p class="subtle">표의 장소는 사이트 수록 데이터에서 지역·카테고리 기준으로 추린 목록이며, 추천 순위나 최신 운영 보증이 아닙니다. 국립공원은 출입 제한, 도립공원·군립공원·자연휴양림은 출입 미확인이라 이 표에 넣지 않습니다. 자세한 사항은 각 시설에 확인하세요.</p>';
 }
 function compareTable(g){
@@ -121,23 +135,107 @@ function makeRegionGuide(g){
  const structured={"@context":"https://schema.org","@type":"Article",headline:g.title,dateModified:updated,inLanguage:"ko-KR",author:{"@type":"Organization",name:"댕냥이와 함께"},mainEntityOfPage:BASE+url};
  return layout(g.title,label+" 수록 장소의 주소·유형·동반 조건 칸",url,html,structured);
 }
-function makeGuide(g,idx){
- if(g.group==="지역별")return makeRegionGuide(g);
- const url="/guides/"+g.id+".html", places=getPlaces(g), intro=esc(g.lead), details=g.route||[];
+function inlineMd(raw){
+ const re=/(\*\*([^*]+)\*\*|`([^`]+)`|\[([^\]]+)\]\(([^)\s]+)\))/g;
+ let out="", last=0, match;
+ const text=String(raw);
+ while((match=re.exec(text))){
+  out+=esc(text.slice(last,match.index));
+  if(match[2])out+="<strong>"+esc(match[2])+"</strong>";
+  else if(match[3])out+="<code>"+esc(match[3])+"</code>";
+  else{
+   let href=match[5].replace(/^https:\/\/www\.petmap\.kr(?=\/)/,"");
+   const external=/^https?:/i.test(href);
+   out+='<a href="'+esc(href)+'"'+(external?' target="_blank" rel="noopener"':'')+'>'+esc(match[4])+"</a>";
+  }
+  last=match.index+match[0].length;
+ }
+ return out+esc(text.slice(last));
+}
+function guideBodyPath(g){return path.join(ROOT,"content","guide-bodies",g.id+".md");}
+function guideSource(g){
+ const md=fs.readFileSync(guideBodyPath(g),"utf8").replace(/\r\n/g,"\n");
+ const title=(md.match(/^#\s+(.+)$/m)||[null,g.title])[1].trim();
+ return {md,title};
+}
+function firstParagraph(md){
+ const buf=[];
+ for(const line of md.split("\n")){
+  if(/^#\s/.test(line))continue;
+  if(!line.trim()){if(buf.length)break;continue;}
+  if(/^[#|>-]/.test(line)||line.startsWith("|")||line.startsWith("<!--"))break;
+  buf.push(line.trim());
+ }
+ return buf.join(" ");
+}
+function renderMarkdown(md){
+ const lines=md.replace(/\r\n/g,"\n").split("\n");
+ const out=[];
+ let i=0;
+ while(i<lines.length){
+  const line=lines[i];
+  if(!line.trim()){i++;continue;}
+  if(line.startsWith("<!--")&&line.includes("-->")){out.push(line);i++;continue;}
+  const heading=line.match(/^(#{1,3})\s+(.+)$/);
+  if(heading){
+   if(heading[1].length>1)out.push("<h"+heading[1].length+">"+inlineMd(heading[2])+"</h"+heading[1].length+">");
+   i++;continue;
+  }
+  if(line.startsWith("> ")){
+   const quote=[];
+   while(i<lines.length&&lines[i].startsWith("> ")){quote.push(lines[i].slice(2));i++;}
+   out.push("<blockquote><p>"+inlineMd(quote.join(" "))+"</p></blockquote>");
+   continue;
+  }
+  if(line.startsWith("|")){
+   const rows=[];
+   while(i<lines.length&&lines[i].startsWith("|")){rows.push(lines[i]);i++;}
+   const parsed=rows.filter(row=>!/^\|[\s|:-]+\|$/.test(row));
+   const cells=row=>row.split("|").slice(1,-1).map(cell=>cell.trim());
+   const head=cells(parsed[0]||"");
+   const body=parsed.slice(1);
+   out.push('<div class="table-scroll"><table><thead><tr>'+head.map(cell=>"<th>"+inlineMd(cell)+"</th>").join("")+"</tr></thead><tbody>"+body.map(row=>"<tr>"+cells(row).map(cell=>"<td>"+inlineMd(cell)+"</td>").join("")+"</tr>").join("")+"</tbody></table></div>");
+   continue;
+  }
+  if(/^[-*]\s/.test(line)){
+   const items=[];
+   while(i<lines.length&&/^[-*]\s/.test(lines[i])){items.push(lines[i].replace(/^[-*]\s+/,""));i++;}
+   out.push("<ul>"+items.map(item=>"<li>"+inlineMd(item)+"</li>").join("")+"</ul>");
+   continue;
+  }
+  const para=[];
+  while(i<lines.length&&lines[i].trim()&&!/^#{1,3}\s/.test(lines[i])&&!lines[i].startsWith("|")&&!lines[i].startsWith("> ")&&!/^[-*]\s/.test(lines[i])&&!lines[i].startsWith("<!--")){
+   para.push(lines[i].trim());
+   i++;
+  }
+  if(para.length)out.push("<p>"+inlineMd(para.join(" "))+"</p>");
+ }
+ return out.join("");
+}
+function campTable(places){
+ const kind={stay:"숙박",food:"음식점·카페",park:"산책·공원",hospital:"동물병원"};
+ const rows=places.map(place=>"<tr><td><a href=\"/place/"+encodeURIComponent(place.id)+".html\">"+esc(place.name)+"</a></td><td>"+esc(place.addr||"")+"</td><td>"+esc(kind[place.category]||"장소")+"</td><td>"+esc(PET_EMPTY)+"</td></tr>").join("");
+ return '<div class="table-scroll"><table><thead><tr><th>장소</th><th>주소</th><th>유형</th><th>동반 조건 (TourAPI)</th></tr></thead><tbody>'+rows+"</tbody></table></div>";
+}
+function makeGuide(g){
+ const url="/guides/"+g.id+".html";
+ const src=guideSource(g);
+ let body=renderMarkdown(src.md);
+ if(g.id==="pet-camping-glamping-korea"){
+  if(!body.includes("<!--CAMP_TABLE-->"))throw new Error("캠핑 가이드 표 위치가 없습니다.");
+  const camps=getPlaces(g);
+  if(camps.length<8||camps.some(place=>place.source!=="gocamping"))throw new Error("캠핑 가이드가 캠핑장을 고르지 못했습니다.");
+  body=body.replace("<!--CAMP_TABLE-->",campTable(camps));
+ }
  const imgcat=(g.categories||[]).includes("stay")?"stay":(g.categories||[]).includes("hospital")?"hospital":(g.categories||[]).includes("park")?"park":"food";
- const image='<figure class="figure"><img src="/og/'+imgcat+'.png" width="1200" height="630" alt="'+esc(g.title)+' 관련 반려동물 지도 일러스트"><figcaption>반려동물 동반 정보는 현장 운영 조건에 따라 달라집니다.</figcaption></figure>';
- const first=sec("어떤 순서로 준비하면 좋을까요?",para(g.context)+para(g.detail)+para("먼저 이동 수단과 체류 시간을 정하고, 산책·식사·휴식 시간을 분리해 보세요. 사람에게는 짧은 이동이어도 반려동물에게는 냄새와 소음이 낯선 긴 외출일 수 있습니다. 예약 가능한 장소만 연결하고, 당일 취소나 우천 시 대안도 하나씩 마련하는 편이 좋습니다."));
- const second=sec(g.routeTitle||"추천 일정과 동선",'<ol class="bullets">'+details.map(x=>'<li>'+esc(x)+'</li>').join("")+'</ol>'+para(g.routeAfter)+image);
- const third=sec("지도에 수록된 실제 장소 확인하기",para("다음은 댕냥이와 함께 장소 데이터에서 이 글과 관련된 장소를 골라 보여주는 표입니다. 주소·유형을 우선 확인하고, 영업시간과 동반 가능 범위가 중요한 경우 반드시 출발 전에 문의하세요.")+(places.length?itemTable(places):para("현재 지도 데이터에서 이 주제와 일치하는 장소를 충분히 찾지 못했습니다. 전국 지도에서 지역명을 입력하고 다른 카테고리도 함께 살펴보세요."))+para(g.placesTip||"검색 결과는 시점에 따라 달라질 수 있습니다. 직접 확인한 조건이 기존 정보와 다르면 문의·정정 경로를 통해 알려주세요."));
- const fourth=sec("예약·이용 전에 비교할 조건",para(g.priceGuide)+compareTable(g)+para("요금은 평일·주말, 시즌, 반려견 크기, 객실 형태에 따라 달라집니다. 이 문서에는 검증하지 못한 금액을 임의로 넣지 않았습니다. 가격이나 주차 가능 여부를 표시하지 않은 곳은 공식 예약화면 또는 업체 전화가 가장 정확합니다."));
- const fifth=sec(g.cautionTitle||"현장에서 꼭 챙길 안전·펫티켓",para(g.safety)+'<ul class="checklist">'+g.checks.map(x=>'<li>'+esc(x)+'</li>').join("")+'</ul>'+para("비상용 물과 배변봉투는 이동 거리와 관계없이 챙기는 편이 안전합니다. 더위·추위·습도 때문에 걷기 힘들어한다면 동선을 바로 줄이세요. 강아지가 낯선 곳을 힘들어하는 경우 사진이나 방문 개수보다 안정된 휴식이 우선입니다."));
- const sixth=sec("자주 묻는 질문",'<dl>'+faqPairs(g).map(pair=>'<dt>'+esc(pair[0])+'</dt><dd>'+esc(pair[1])+'</dd>').join("")+'</dl>');
- const links=data.filter(x=>x.id!==g.id&&(x.group===g.group||x.categories&&g.categories&&x.categories.some(c=>g.categories.includes(c)))).slice(0,3).map(x=>'<li><a href="/guides/'+x.id+'.html">'+esc(x.title)+'</a></li>').join("");
- const notes='<div class="summary"><strong>핵심 정리</strong><p>'+esc(g.summary)+'</p><ul><li>동반 허용 범위·운영시간은 방문 전 재확인</li><li>무게·마릿수 제한과 추가요금은 별도 확인</li><li>일정을 줄여 반려동물 휴식 시간 확보</li></ul></div>';
- const refs='<div class="refs"><strong>정보 확인 경로</strong><ul><li><a href="https://korean.visitkorea.or.kr/" target="_blank" rel="noopener">한국관광공사 대한민국 구석구석</a></li><li><a href="https://www.gocamping.or.kr/" target="_blank" rel="noopener">고캠핑(캠핑장 현황)</a></li><li><a href="https://www.foodsafetykorea.go.kr/portal/petKorea.do" target="_blank" rel="noopener">식품안전나라(동반 가능 음식점 현황)</a></li></ul><p>정보 검토일: '+updated+' · 장소별 조건은 업체 공식 안내 우선</p></div>';
- let html='<div class="crumb"><a href="/guides/">여행 가이드</a> / '+esc(g.group)+'</div><article class="article"><h1>'+esc(g.title)+'</h1><div class="meta">댕냥이와 함께 편집팀 · '+updated+' 검토 · 읽는 시간 약 6~8분</div><p class="lede">'+intro+'</p><p class="note"><strong>10초 요약:</strong> '+esc(g.summary)+'</p><nav aria-label="이 글의 목차"><strong>목차</strong><ol><li>준비 순서</li><li>추천 동선</li><li>실제 장소 보기</li><li>예약 조건 비교</li><li>안전·펫티켓</li><li>FAQ</li></ol></nav>'+first+second+third+adSlot+fourth+fifth+sixth+notes+refs+'<h2>함께 읽으면 좋은 글</h2><ul>'+links+'</ul><p><a href="/">→ petmap.kr 전국 지도에서 해당 장소 찾아보기</a></p></article>';
- const structured={"@context":"https://schema.org","@type":"Article",headline:g.title,description:g.summary,datePublished:updated,dateModified:updated,inLanguage:"ko-KR",author:{"@type":"Organization",name:"댕냥이와 함께"},publisher:{"@type":"Organization",name:"댕냥이와 함께"},mainEntityOfPage:BASE+url};
- return layout(g.title,g.description||g.summary,url,html,structured);
+ const image='<figure class="figure"><img src="/og/'+imgcat+'.png" width="1200" height="630" alt="'+esc(src.title)+'"></figure>';
+ const secondHeading=body.indexOf("<h2>",body.indexOf("<h2>")+4);
+ if(secondHeading>0)body=body.slice(0,secondHeading)+adSlot+body.slice(secondHeading);
+ else body+=adSlot;
+ const desc=firstParagraph(src.md)||g.description||src.title;
+ const html='<div class="crumb"><a href="/guides/">여행 가이드</a> / '+esc(g.group)+'</div><article class="article"><h1>'+esc(src.title)+'</h1><p class="meta">작성 2026-10-18 · 갱신 2026-10-18</p>'+image+body+'<p><a href="/">전국 지도</a></p></article>';
+ const structured={"@context":"https://schema.org","@type":"Article",headline:src.title,description:desc,datePublished:LONG_DATE,dateModified:LONG_DATE,inLanguage:"ko-KR",author:{"@type":"Organization",name:"댕냥이와 함께"},publisher:{"@type":"Organization",name:"댕냥이와 함께"},mainEntityOfPage:BASE+url};
+ return layout(src.title,desc,url,html,structured);
 }
 function makeLongGuide(g){
  const url="/guides/"+g.id+".html";
@@ -169,7 +267,7 @@ function build(){
  if(!Array.isArray(longGuides)||longGuides.length!==12)throw Error("새 가이드 항목 수가 12개가 아닙니다.");
  const total=data.length+longGuides.length;
  const longCards=longGuides.map((g,i)=>guideCard(g,i,longGuides.length,g.description)).join("");
- const cardList=data.map((g,i)=>guideCard(g,i,data.length,g.group==="지역별"?"수록 장소의 주소·유형·조건 칸으로 이은 코스":g.summary)).join("");
+ const cardList=data.map((g,i)=>{const src=guideSource(g);const excerpt=firstParagraph(src.md);return guideCard(Object.assign({},g,{title:src.title}),i,data.length,excerpt.length>90?excerpt.slice(0,90)+"…":excerpt);}).join("");
  const cover='<article class="article"><h1>반려동물 동반 여행 가이드 '+total+'편</h1><p class="lede">장소 파일에서 센 지역 분포, 열차·버스·항공·자가용의 공식 규정, 그리고 기존의 지역·테마 글을 한 목록에 모았습니다. 규정 숫자는 출처 페이지에 있는 것만 적습니다.</p><h2>데이터와 규정 '+longGuides.length+'편</h2><div class="guide-cards">'+longCards+'</div><h2>지역·테마·실용 '+data.length+'편</h2><div class="guide-cards">'+cardList+'</div></article>';
  write("guides/index.html",layout("반려동물 동반 여행 가이드 "+total+"편","반려동물 동반 여행의 지역 분포, 교통 규정, 지역별·테마별 가이드 "+total+"편.","/guides/",cover));
  for(let i=0;i<data.length;i++)write("guides/"+data[i].id+".html",makeGuide(data[i],i));
@@ -180,7 +278,7 @@ function build(){
  legal("댕냥이와 함께 이용약관","/terms.html","댕냥이와 함께 이용 조건, 자료 출처, 광고와 책임의 한계.",fs.readFileSync(path.join(ROOT,"content/legal/terms.html"),"utf8"),"2026-10-18");
  patchMap();
  write404();
- const urls=[["/guides/",LONG_DATE],["/about.html",updated],["/privacy.html","2026-10-18"],["/contact.html",updated],["/terms.html","2026-10-18"],...data.map(g=>["/guides/"+g.id+".html",updated]),...longGuides.map(g=>["/guides/"+g.id+".html",LONG_DATE])];
+ const urls=[["/guides/",LONG_DATE],["/about.html",updated],["/privacy.html","2026-10-18"],["/contact.html",updated],["/terms.html","2026-10-18"],...data.map(g=>["/guides/"+g.id+".html",LONG_DATE]),...longGuides.map(g=>["/guides/"+g.id+".html",LONG_DATE])];
  const site=path.join(OUT,"sitemap.xml");let xml=fs.readFileSync(site,"utf8");
  const fresh=urls.filter(([p])=>!xml.includes("<loc>"+BASE+p+"</loc>"));
  xml=xml.replace("</urlset>",fresh.map(([p,when])=>'<url><loc>'+BASE+p+'</loc><lastmod>'+when+'</lastmod></url>').join("\n")+(fresh.length?"\n":"")+"</urlset>");
@@ -460,17 +558,30 @@ function assertPublished(){
  }
  const slotCss=fs.readFileSync(path.join(OUT,"ad-slot.css"),"utf8");
  if(!slotCss.includes("min-height: 0")||!slotCss.includes('data-ad-status="filled"')||!slotCss.includes("min-height: 250px"))problems.push("광고 자리 CSS가 비어 있을 때 높이를 접지 않습니다.");
- for(const g of data.filter(item=>item.group==="지역별")){
-  const regionHtml=fs.readFileSync(path.join(OUT,"guides",g.id+".html"),"utf8");
-  if(regionHtml.includes("실내에서도 반려견과 함께 있을 수 있나요?")||regionHtml.includes("먼저 이동 수단과 체류 시간을 정하고"))problems.push(g.id+" 에 반복 문단이 있습니다.");
-  if(!regionHtml.includes('class="course"')||!regionHtml.includes('class="fact-dl"'))problems.push(g.id+" 코스 구조가 없습니다.");
-  const regionPlaceLinks=(regionHtml.match(/href="\/place\/[^"]+\.html"/g)||[]).length;
-  if(regionPlaceLinks<2)problems.push(g.id+" 장소 링크 "+regionPlaceLinks);
+ for(const g of data){
+  const page=fs.readFileSync(path.join(OUT,"guides",g.id+".html"),"utf8");
+  if(page.includes("실내에서도 반려견과 함께 있을 수 있나요?")||page.includes("먼저 이동 수단과 체류 시간을 정하고")||page.includes("검증하지 못한 금액")||page.includes("<td>업체 확인</td>"))problems.push(g.id+" 에 공통 템플릿 문장이 있습니다.");
+  if(!page.includes("정보 없음 — 방문 전 업체에 확인하세요")&&g.id!=="pet-travel-emergency-vet"){
+   const condCells=[...page.matchAll(/<td>([^<]*)<\/td>\s*<\/tr>/g)].map(match=>match[1]);
+   if(!condCells.length)problems.push(g.id+" 동반 조건 칸이 없습니다.");
+  }
+  const placeLinks=(page.match(/href="\/place\/[^"]+\.html"/g)||[]).length;
+  if(g.id!=="pet-travel-emergency-vet"&&placeLinks<2)problems.push(g.id+" 장소 링크 "+placeLinks);
+  for(const id of NOT_PET_ALLOWED){
+   if(page.includes("/place/"+id+".html"))problems.push(g.id+" 가 동반 불가로 등록된 장소를 링크합니다: "+id);
+  }
+  if(page.includes("/place/tour-127220.html"))problems.push(g.id+" 가 북한산국립공원을 링크합니다.");
  }
+ const seoul=fs.readFileSync(path.join(OUT,"guides","seoul-pet-cafes-walks.html"),"utf8");
+ if(seoul.includes("이전 판에는")||!seoul.includes("국립공원은 「자연공원법」에 따라 원칙적으로 반려동물 출입이 금지돼 있고")||!seoul.includes("https://reservation.knps.or.kr/contents/withPet.do"))problems.push("서울 가이드 국립공원 안내 문장이 다릅니다.");
+ const camping=fs.readFileSync(path.join(OUT,"guides","pet-camping-glamping-korea.html"),"utf8");
+ const campIds=[...camping.matchAll(/href="\/place\/([^"]+)\.html"/g)].map(match=>match[1]);
+ if(campIds.length<8||campIds.some(id=>!id.startsWith("gocamp-")))problems.push("캠핑 가이드 장소가 캠핑장이 아닙니다: "+campIds.join(","));
  const guideDir=path.join(OUT,"guides");
  for(const name of fs.readdirSync(guideDir).filter(item=>item.endsWith(".html"))){
   const html=fs.readFileSync(path.join(guideDir,name),"utf8");
   for(const place of flagged){
+   if(indexRule.petAccessStatus(place)!=="restricted")continue;
    if(html.includes("/place/"+encodeURIComponent(place.id)+".html"))problems.push("가이드가 제한 장소를 동반 목록에 링크 "+name+" "+place.id);
   }
  }
