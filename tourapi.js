@@ -1,13 +1,19 @@
 "use strict";
 
-// Build-time client for 한국관광공사 TourAPI 4 (KorService2).
+// Build-time client for 한국관광공사 TourAPI.
+// 사진·개요·홈페이지는 국문 관광정보 KorService2(data.go.kr 15101578)의
+// detailCommon2·detailImage2를 쓴다. 반려동물 동반 조건은 2026-02-26 수정본인
+// 반려동물 동반여행 서비스 KorPetTourService2(data.go.kr 15135102)의
+// detailPetTour2를 쓴다. 구 경로 KorPetTourService(끝의 2 없음)는 호출하지 않는다.
 // The browser never calls this API. Results are cached in data/tourapi-cache.json
 // and copied into the static place pages.
 const fs = require("node:fs");
 const path = require("node:path");
 
 const TOUR_BASE = "https://apis.data.go.kr/B551011/KorService2";
-const CACHE_VERSION = 1;
+const PET_BASE = "https://apis.data.go.kr/B551011/KorPetTourService2";
+const CACHE_VERSION = 2;
+const CACHE_SERVICE = "KorService2+KorPetTourService2";
 const PET_FIELDS = [
   ["acmpyPsblCpam", "동반 가능 동물"],
   ["etcAcmpyPsblCpam", "기타 동반 동물"],
@@ -179,12 +185,13 @@ function readCache(cachePath) {
   if (!fs.existsSync(cachePath)) return {};
   const parsed = JSON.parse(fs.readFileSync(cachePath, "utf8"));
   if (JSON.stringify(parsed).includes("serviceKey")) throw new Error("TourAPI 캐시에 인증키가 들어 있습니다.");
+  if (parsed.version !== CACHE_VERSION || parsed.service !== CACHE_SERVICE) return {};
   const places = parsed && parsed.places;
   return places && typeof places === "object" ? places : {};
 }
 
 function writeCache(cachePath, places) {
-  const body = JSON.stringify({ version: CACHE_VERSION, service: "KorService2", places }, null, 2) + "\n";
+  const body = JSON.stringify({ version: CACHE_VERSION, service: CACHE_SERVICE, places }, null, 2) + "\n";
   if (body.includes("serviceKey")) throw new Error("TourAPI 캐시에 인증키를 쓰지 않습니다.");
   fs.mkdirSync(path.dirname(cachePath), { recursive: true });
   const temp = cachePath + ".tmp";
@@ -199,8 +206,13 @@ function serviceKeyQuery(key) {
   return "serviceKey=" + encoded;
 }
 
+function endpointFor(operation) {
+  if (operation === "detailPetTour2") return PET_BASE + "/" + operation;
+  return TOUR_BASE + "/" + operation;
+}
+
 async function tourGet(operation, key, params) {
-  const url = new URL(TOUR_BASE + "/" + operation);
+  const url = new URL(endpointFor(operation));
   for (const [name, value] of Object.entries({ MobileOS: "ETC", MobileApp: "petmap", _type: "json", numOfRows: "10", pageNo: "1", ...params })) {
     url.searchParams.set(name, value);
   }
@@ -275,7 +287,7 @@ async function loadOrFetch({ places, cachePath, serviceKey, refresh, log }) {
     return { byContentId: cached, contentIds: ids.length, fetched: 0 };
   }
   const pending = ids.filter((id) => refresh || !cached[id] || cached[id].complete !== true);
-  log("TourAPI contentid " + ids.length + "곳 중 " + pending.length + "곳을 detailCommon2·detailImage2·detailPetTour2로 받습니다.");
+  log("TourAPI contentid " + ids.length + "곳 중 " + pending.length + "곳을 KorService2 detailCommon2·detailImage2와 KorPetTourService2 detailPetTour2로 받습니다.");
   let fetched = 0;
   let failed = 0;
   await mapPool(pending, 3, async (contentId) => {
@@ -322,6 +334,10 @@ function selfCheck() {
   if (!decodeURIComponent(links.kakao.split("/search/")[1]).includes("100코달리 와인바")) throw new Error("검색어");
   if (contentIdOf({ source: "kbizin", id: "kbizin-212" })) throw new Error("kbizin은 contentid가 아닙니다");
   if (contentIdOf({ source: "tourapi", id: "tour-2707444" }) !== "2707444") throw new Error("contentid");
+  const petUrl = endpointFor("detailPetTour2");
+  if (!petUrl.startsWith("https://apis.data.go.kr/B551011/KorPetTourService2/detailPetTour2")) throw new Error("반려동물 동반여행 주소");
+  if (petUrl.includes("KorPetTourService/")) throw new Error("구 반려동물 동반여행 주소");
+  if (!endpointFor("detailCommon2").includes("/KorService2/detailCommon2")) throw new Error("국문 관광정보 주소");
   const homepage = httpUrl('<a href="https://www.gayoungdang.com/" target="_blank">홈페이지</a>');
   if (homepage !== "https://www.gayoungdang.com/") throw new Error("홈페이지 추출");
   const rules = petRulesFromItem({ acmpyNeedMtr: "목줄 또는 이동장", acmpyTypeCd: "01", relaAcdntRiskMtr1: "없음" });
