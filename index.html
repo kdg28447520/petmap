@@ -156,16 +156,18 @@
         overflow-x: auto;
         scrollbar-width: none;
       }
-      .site-bar .brand { font-family: "DoHyeon", sans-serif; font-size: 22px; font-weight: 400; min-height: 44px; }
+      .site-bar .brand { font-family: "DoHyeon", sans-serif; font-size: 22px; font-weight: 400; display: flex; align-items: center; box-sizing: border-box; height: 44px; min-height: 44px; }
       .site-nav a {
         font-size: 14px;
         font-weight: 700;
         color: var(--ink);
         text-decoration: none;
+        box-sizing: border-box;
+        height: 44px;
         min-height: 44px;
         min-width: 44px;
-        padding: 0 10px;
-        display: flex;
+        padding: 0 12px;
+        display: inline-flex;
         align-items: center;
         border-radius: 999px;
         white-space: nowrap;
@@ -188,7 +190,11 @@
         text-decoration: none;
         display: inline-flex;
         align-items: center;
+        justify-content: center;
+        box-sizing: border-box;
+        min-width: 44px;
         min-height: 44px;
+        padding: 0 8px;
       }
       .trust-nav a:hover { color: var(--brand-text); }
       .facts { margin-top: 20px; }
@@ -226,7 +232,9 @@
         display: flex;
         justify-content: space-between;
         gap: 8px;
-        align-items: baseline;
+        align-items: center;
+        box-sizing: border-box;
+        min-height: 44px;
         padding: 10px 12px;
         border: 1px solid var(--line);
         border-radius: 12px;
@@ -235,8 +243,8 @@
         font-weight: 700;
         text-decoration: none;
       }
-      .rep-places li { display: block; }
-      .rep-places a { color: var(--ink); font-weight: 800; text-decoration: none; }
+      .rep-places li { display: flex; align-items: center; }
+      .rep-places a { color: var(--ink); font-weight: 800; text-decoration: none; display: inline-flex; align-items: center; box-sizing: border-box; flex: 1 1 auto; min-width: 44px; min-height: 44px; }
       .region-counts span, .rep-places span { color: var(--ink-3); font-weight: 600; font-size: 13px; }
       .pd-enrich .pd-row dt { width: 7.6em; }
       .pd-ico { vertical-align: -2px; margin-right: 4px; color: var(--ink-2); }
@@ -421,7 +429,10 @@
         font-size: 15px;
         font-weight: 700;
         border-radius: 999px;
+        box-sizing: border-box;
+        height: 44px;
         min-height: 44px;
+        min-width: 44px;
         padding: 0 14px;
         cursor: pointer;
         border: 1px solid var(--line-strong);
@@ -465,6 +476,26 @@
         overflow: hidden;
       }
       #map { position: absolute; inset: 0; z-index: 1; max-width: 100%; background: var(--surface-2); }
+      .map-placeholder {
+        position: absolute;
+        inset: 0;
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0;
+        padding: 16px;
+        background: var(--surface-2);
+        color: var(--ink-2);
+        font-family: "Gothic A1", sans-serif;
+        font-size: 15px;
+        font-weight: 400;
+        line-height: 22px;
+        text-align: center;
+        pointer-events: none;
+      }
+      .map-wrap.is-live .map-placeholder,
+      body.no-map .map-placeholder { visibility: hidden; }
       .leaflet-control-attribution { max-width: calc(100% - 10px); white-space: normal; }
       .map-wrap .leaflet-container,
       .map-wrap .leaflet-bar a,
@@ -911,7 +942,7 @@
         line-height: 1.5;
         overflow-wrap: anywhere;
       }
-      footer a { color: inherit; }
+      footer a { color: inherit; display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; min-width: 44px; min-height: 44px; padding: 0 4px; }
 
       .pm-hero { display: flex; align-items: flex-end; gap: 12px; padding: 12px 16px 4px; max-width: 100%; }
       .pm-hero .big { font-family: "DoHyeon", sans-serif; font-size: clamp(3.5rem, 17vw, 4.5rem); line-height: 0.95; letter-spacing: -0.02em; color: var(--ink); font-weight: 400; }
@@ -960,7 +991,7 @@
         .site-bar { gap: 8px; padding: 0 12px; }
         .site-bar .brand { font-size: 20px; min-width: 0; }
         .site-nav { flex: none; }
-        .site-nav a { padding: 0 8px; }
+        .site-nav a { height: 44px; min-height: 44px; padding: 0 12px; }
         .map-wrap .leaflet-container,
         .map-wrap .leaflet-container.leaflet-touch-drag,
         .map-wrap .leaflet-container.leaflet-touch-drag.leaflet-touch-zoom {
@@ -1350,6 +1381,7 @@
     <main>
       <section class="map-wrap" aria-label="전국 지도, 숫자는 장소 수">
         <div id="map"></div>
+        <p class="map-placeholder" id="mapPlaceholder">지도 타일은 화면을 움직이면 불러옵니다.</p>
         <div class="map-fallback" id="mapFallback" aria-live="polite"></div>
       </section>
 
@@ -2172,6 +2204,22 @@
           if (typeof window.requestIdleCallback === "function") window.requestIdleCallback(run, { timeout: 1500 });
           else window.setTimeout(run, 50);
         }
+        function armHomeMap() {
+          var started = false;
+          function go(event) {
+            if (started) return;
+            if (!event || event.isTrusted === false) return;
+            if (event.type === "scroll" && (window.scrollY || document.documentElement.scrollTop || 0) < 24) return;
+            started = true;
+            window.removeEventListener("pointerdown", go, true);
+            window.removeEventListener("keydown", go, true);
+            window.removeEventListener("scroll", go, true);
+            scheduleHomeMap();
+          }
+          window.addEventListener("pointerdown", go, { capture: true, passive: true });
+          window.addEventListener("keydown", go, { capture: true });
+          window.addEventListener("scroll", go, { capture: true, passive: true });
+        }
         function mountMiniMap(p) {
           var el = document.getElementById("miniMap");
           if (!el) return;
@@ -2464,6 +2512,8 @@
         function startHomeTiles() {
           if (homeTilesStarted || !leafletMap || mapFailShown || !dataReady) return;
           homeTilesStarted = true;
+          var wrap = mapEl && mapEl.parentElement;
+          if (wrap) wrap.classList.add("is-live");
           addBaseTiles(leafletMap, { watch: true });
           clearMapFailTimer();
           mapFailTimer = setTimeout(function () {
@@ -2623,7 +2673,7 @@
           historySilent = false;
         });
 
-        scheduleHomeMap();
+        armHomeMap();
         route();
       })();
     </script>
