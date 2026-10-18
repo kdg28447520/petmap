@@ -53,6 +53,34 @@
       "largeDog": "대형견 구역이 소중형견과 나뉘어 있습니다. 실내 놀이터는 체고 40cm 미만.",
       "checkedOn": "2026-10-18",
       "checkedSource": "https://korean.visitkorea.or.kr/detail/rem_detail.do?cotid=33483c28-e4cd-427e-bf82-f31dcd96b97d"
+    },
+    "tour-127487": {
+      "petAccess": "allowed",
+      "indoorOutdoor": "공원 내 실내 시설 및 야간 입장 불가. 본문에는 전망대가 있는 경주 타워 등 실내는 대부분 반려동물 출입이 불가능하지만, 야외에도 즐길 거리가 충분하다고 적혀 있습니다. 기사는 2025년 1월에 작성되었고 이후 바뀔 수 있다고 적혀 있습니다.",
+      "sizeLimit": "맹견 입장 불가. 강아지와 고양이 동반이 가능하다고 본문에 적혀 있습니다.",
+      "extraFee": "입장료는 1인 12,000원에 반려동물 요금은 따로 없어요. 사실표의 공원 이용권은 대인 보통권 12,000원, 소인 보통권 10,000원으로 사람 요금입니다.",
+      "leash": "목줄 및 인식표 필수. 배설물 수거 필수.",
+      "cat": "강아지와 고양이 동반 가능.",
+      "checkedOn": "2026-10-18",
+      "checkedSource": "https://korean.visitkorea.or.kr/detail/rem_detail.do?cotid=dc36ca8b-a6df-49d0-a15b-73a8fd242774"
+    },
+    "tour-2767888": {
+      "petAccess": "allowed",
+      "indoorOutdoor": "인천 연수구 송도동 달빛축제공원 안에 있는 송도 도그파크는 5,500㎡ 규모의 야외 반려견 놀이터입니다.",
+      "sizeLimit": "전염병, 유기방지 동물 등록을 한 후 입장 절차를 거친 반려견만 들어갈 수 있습니다. 인식 칩 또는 인식표가 없으면 보호자가 동물등록증을 소지해야 입장이 가능합니다. 도그파크는 대형견, 중소형견, 혼합형인 3개의 공간으로 구성되어 있습니다.",
+      "extraFee": "입장료가 무료",
+      "checkedOn": "2026-10-18",
+      "checkedSource": "https://itour.incheon.go.kr/ssst/ssst/detail.do?cotId=APD21112710001541157"
+    },
+    "tour-2757631": {
+      "petAccess": "allowed",
+      "indoorOutdoor": "견주와 반려견이 함께 뛰노는 야외 펫 파크입니다. 운영 시간은 08:00~20:00입니다. 이 문장은 객실이 아니라 야외 펫 놀이터에 대한 안내입니다.",
+      "sizeLimit": "소형견부터 대형견까지 함께 이용하는 공용 공간입니다. 맹견의 출입은 금지입니다. 전염병이나 질병이 있는 견, 발정이 있는 견, 동물 등록이 되지 않은 변려견(페이지 표기)은 입장할 수 없습니다.",
+      "extraFee": "이용요금 무료. 라마다 평창 호텔 투숙객과 방문 고객에게 무료로 개방된 공간이라고 적혀 있습니다.",
+      "leash": "공격 성향이 있는 반려견은 입마개를 착용. 배변 봉투를 지참하고 배변은 직접 수거. 입구와 출구에서 출입문 고리를 겁니다.",
+      "largeDog": "소형견부터 대형견까지 한 공간에서 이용하며 맹견은 출입 금지입니다.",
+      "checkedOn": "2026-10-18",
+      "checkedSource": "http://www.pyeongchangramadahotel.com/view/viewLink.do?page=homepage/KOR/facilities/petpool"
     }
   }
 }
