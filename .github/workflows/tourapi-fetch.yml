@@ -1,23 +1,30 @@
 name: TourAPI raw fetch
 
-# This workflow must not run on push. A push trigger would spend the
-# data.go.kr dev-account quota (about 1,000 detail calls/day) on every update.
+# Push runs only when .github/tourapi-trigger.txt changes on tourapi-fetch.
+# Ordinary pushes do not match that path, so they do not spend the
+# data.go.kr dev-account quota (about 1,000 detail calls/day). The raw-data
+# commit below pushes data/tourapi-raw/ with GITHUB_TOKEN, which does not
+# retrigger workflows, and it does not touch the trigger file.
 #
 # GitHub Actions runs scheduled workflows only from the default branch.
 # This file lives on tourapi-fetch and is not on main, so the cron below
-# does not fire and does not call TourAPI. It starts only if this workflow
-# file is on the repository default branch. Do not merge this branch into
-# main to start the schedule.
+# does not fire. workflow_dispatch is listed only when the workflow file
+# is on the default branch. The path-filtered push is what starts a run
+# from this branch. Do not merge this branch into main to start the schedule.
 #
 # cron '10 15 * * *' is 15:10 UTC, which is 00:10 Asia/Seoul (KST).
-# One-shot-safe: there is no push trigger, so the raw-data commit cannot
-# start another run; concurrency does not overlap runs; each run stops at
-# 950 calls and skips detail files already saved under data/tourapi-raw/.
+# Each run stops at 950 calls and skips detail files already saved under
+# data/tourapi-raw/.
 
 on:
   workflow_dispatch:
   schedule:
     - cron: "10 15 * * *"
+  push:
+    branches:
+      - tourapi-fetch
+    paths:
+      - .github/tourapi-trigger.txt
 
 permissions:
   contents: write
