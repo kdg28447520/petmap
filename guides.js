@@ -369,6 +369,27 @@ function connectAdsense(){
 }
 connectAdsense();
 
+function injectAnalytics(){
+ const id="G-18XXSL2NNJ";
+ const snippet='<!-- Google tag (gtag.js) --><script async src="https://www.googletagmanager.com/gtag/js?id='+id+'"></script><script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag(\'js\',new Date());gtag(\'config\',\''+id+'\');</script>';
+ const present=/googletagmanager\.com\/gtag\/js|google-analytics\.com\/(?:analytics|ga)\.js|googletagmanager\.com\/gtm\.js|\bgtag\s*\(/;
+ function walk(dir){
+  for(const ent of fs.readdirSync(dir,{withFileTypes:true})){
+   const filename=path.join(dir,ent.name);
+   if(ent.isDirectory())walk(filename);
+   else if(ent.name.endsWith(".html")){
+    const html=fs.readFileSync(filename,"utf8");
+    if(present.test(html))continue;
+    if(!/<head\b/i.test(html))throw new Error("GA를 넣을 head가 없습니다: "+filename);
+    fs.writeFileSync(filename,html.replace(/<head\b[^>]*>/i,function(open){return open+snippet;}),"utf8");
+   }
+  }
+ }
+ walk(OUT);
+ console.log("[petmap analytics] gtag.js "+id);
+}
+injectAnalytics();
+
 function assertPublished(){
  const xml=fs.readFileSync(path.join(OUT,"sitemap.xml"),"utf8");
  const locs=new Set([...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map(m=>m[1]));
@@ -391,6 +412,12 @@ function assertPublished(){
     const url=pageUrl(filename);
     const rel="/"+path.relative(OUT,filename).split(path.sep).join("/");
     if(rel!=="/404.html"&&(!html.includes(scriptSrc)||!html.includes('crossorigin="anonymous"')||!html.includes('name="google-adsense-account"')))missingScript++;
+    const headEnd=html.search(/<\/head>/i);
+    const head=headEnd>=0?html.slice(0,headEnd):"";
+    const gaSrc=(head.match(/https:\/\/www\.googletagmanager\.com\/gtag\/js\?id=G-18XXSL2NNJ/g)||[]).length;
+    const gaCfg=(head.match(/gtag\('config','G-18XXSL2NNJ'\)/g)||[]).length;
+    const gaAll=(html.match(/G-18XXSL2NNJ/g)||[]).length;
+    if(gaSrc!==1||gaCfg!==1||gaAll!==2)problems.push("GA4 gtag이 head에 한 번이 아님: "+rel);
     const blocked=html.includes('name="robots" content="noindex, follow"');
     const adUnit=/<ins\b[^>]*\bclass="adsbygoogle"/.test(html);
     const barePage=rel==="/404.html"||rel.includes("/admin")||rel==="/about.html"||rel==="/privacy.html"||rel==="/contact.html"||rel==="/terms.html";
