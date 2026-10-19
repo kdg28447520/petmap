@@ -403,13 +403,17 @@ function correctionButton(place) {
   return `<a class="pd-fix" href="/contact.html?place=${encodeURIComponent(place.id)}" aria-label="정보 정정 요청">${strokeIcon("pencil", 18)}정정 요청</a>`;
 }
 function factSectionHtml(place) {
-  const items = placeFacts.rows(place).map((row) => {
-    const body = row.href
+  const items = placeFacts.rows(place);
+  if (!items.length) {
+    return `<section class="facts" aria-label="동반 조건"><h2>동반 조건</h2><p class="facts-empty">${escapeHtml(placeFacts.EMPTY_LINE)}</p></section>`;
+  }
+  const body = items.map((row) => {
+    const value = row.href
       ? `<a href="${escapeHtml(row.href)}" target="_blank" rel="noopener">${escapeHtml(row.value)}</a>`
       : escapeHtml(row.value);
-    return `<div><dt>${escapeHtml(row.label)}</dt><dd>${body}</dd></div>`;
+    return `<div><dt>${escapeHtml(row.label)}</dt><dd>${value}</dd></div>`;
   }).join("");
-  return `<section class="facts" aria-label="동반 조건"><h2>동반 조건</h2><dl>${items}</dl></section>`;
+  return `<section class="facts" aria-label="동반 조건"><h2>동반 조건</h2><dl>${body}</dl></section>`;
 }
 function enrichmentHtml(place) {
   const tiles = companionTiles(place);
@@ -491,25 +495,125 @@ function nearbyHtml(place) {
   }).join("");
   return `<section class="pd-near"><h2>${escapeHtml(title)}</h2><p class="s">${escapeHtml(sub)}</p><ul class="near">${items}</ul></section>`;
 }
-function staticMapSvg(place) {
-  const lat = Number(place.lat);
-  const lng = Number(place.lng);
-  const x = Math.round(Math.max(36, Math.min(664, ((lng - 124) / 8) * 700)));
-  const y = Math.round(Math.max(36, Math.min(164, ((39 - lat) / 6) * 200)));
-  const label = escapeXml(place.name + " 위치, 위도 " + lat.toFixed(5) + ", 경도 " + lng.toFixed(5));
-  return `<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="700" height="200" viewBox="0 0 700 200" role="img" aria-label="${label}">
-  <rect width="700" height="200" fill="#ECEEE6"/>
-  <path d="M0 140 C120 120 200 160 330 130 S560 90 700 110" stroke="#fff" stroke-width="14" fill="none"/>
-  <path d="M260 0 L300 200 M480 0 L440 200 M0 60 L700 40" stroke="#fff" stroke-width="7" fill="none"/>
-  <rect x="40" y="20" width="120" height="60" fill="#E1E6D8"/>
-  <rect x="520" y="130" width="140" height="50" fill="#E1E6D8"/>
-  <path d="M600 0 C580 60 640 90 700 80 V0 Z" fill="#D5E3E8"/>
-    <g transform="translate(${x} ${y})">
-    <path d="M0 0s15-13 15-25a15 15 0 0 0-30 0c0 12 15 25 15 25z" fill="#C2410C" stroke="#fff" stroke-width="2"/>
-    <circle cx="0" cy="-25" r="5.5" fill="#fff"/>
-  </g>
-</svg>`;
+function hasCoords(place) {
+  const lat = Number(place && place.lat);
+  const lng = Number(place && place.lng);
+  return Number.isFinite(lat) && Number.isFinite(lng) ? { lat, lng } : null;
+}
+function directionLinks(place) {
+  const search = tourapi.mapLinks(place);
+  const coords = hasCoords(place);
+  const kakao = coords
+    ? "https://map.kakao.com/link/to/" + encodeURIComponent(place.name) + "," + coords.lat + "," + coords.lng
+    : search.kakao;
+  return { kakao, naver: search.naver };
+}
+function directionHtml(place) {
+  const links = directionLinks(place);
+  return `<p class="pd-dirs"><a class="pd-dir" href="${escapeHtml(links.kakao)}" target="_blank" rel="noopener">카카오맵 길찾기</a><a class="pd-dir" href="${escapeHtml(links.naver)}" target="_blank" rel="noopener">네이버 지도 길찾기</a></p>`;
+}
+function placeMapScript() {
+  return `<script>
+(function () {
+  var el = document.getElementById("placeMap");
+  if (!el) return;
+  var lat = Number(el.getAttribute("data-lat"));
+  var lng = Number(el.getAttribute("data-lng"));
+  var name = el.getAttribute("data-name") || "";
+  if (!isFinite(lat) || !isFinite(lng)) return;
+  var started = false;
+  function loadCss(href) {
+    return new Promise(function (resolve) {
+      var link = document.createElement("link");
+      link.rel = "stylesheet";
+      link.href = href;
+      link.onload = function () { resolve(); };
+      link.onerror = function () { resolve(); };
+      document.head.appendChild(link);
+    });
+  }
+  function loadScript(src) {
+    return new Promise(function (resolve, reject) {
+      var script = document.createElement("script");
+      script.src = src;
+      script.async = true;
+      script.onload = function () { resolve(); };
+      script.onerror = function () { reject(new Error("script")); };
+      document.body.appendChild(script);
+    });
+  }
+  function fail() {
+    if (el.querySelector(".pd-map-fail")) return;
+    var note = document.createElement("p");
+    note.className = "pd-map-fail";
+    note.textContent = "지도를 불러오지 " + "못했어요. 아래 길찾기 링크로 지도 앱에서 볼 수 있어요.";
+    el.appendChild(note);
+  }
+  function mount() {
+    if (started) return;
+    started = true;
+    Promise.all([
+      loadCss("/leaflet.css"),
+      loadScript("https://unpkg.com/leaflet@1.9.4/dist/leaflet.js")
+    ]).then(function () {
+      if (!window.L || typeof L.map !== "function") { fail(); return; }
+      var map = L.map(el, {
+        dragging: true,
+        touchZoom: true,
+        scrollWheelZoom: true,
+        zoomControl: false,
+        maxZoom: 19,
+        tap: true
+      }).setView([lat, lng], 16);
+      L.control.zoom({ position: "topright" }).addTo(map);
+      var hot = "https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png";
+      var osm = "https://tile.openstreetmap.org/{z}/{x}/{y}.png";
+      var layer = L.tileLayer(hot, {
+        subdomains: "abc",
+        maxZoom: 19,
+        attribution: "&copy; OpenStreetMap contributors, Tiles style by Humanitarian OpenStreetMap Team hosted by OpenStreetMap France"
+      });
+      var swapped = false;
+      layer.on("tileerror", function () {
+        if (swapped) return;
+        swapped = true;
+        map.removeLayer(layer);
+        L.tileLayer(osm, { maxZoom: 19, attribution: "&copy; OpenStreetMap contributors" }).addTo(map);
+      });
+      layer.addTo(map);
+      var icon = L.divIcon({
+        className: "pd-pin",
+        html: "<span class=\\"pd-pin-body\\"></span>",
+        iconSize: [28, 36],
+        iconAnchor: [14, 34]
+      });
+      L.marker([lat, lng], { icon: icon, title: name, alt: name }).addTo(map);
+      function fit() { map.invalidateSize(); }
+      setTimeout(fit, 0);
+      window.addEventListener("resize", fit);
+    }).catch(fail);
+  }
+  if (!("IntersectionObserver" in window)) { mount(); return; }
+  var watcher = new IntersectionObserver(function (entries) {
+    if (!entries.some(function (entry) { return entry.isIntersecting; })) return;
+    watcher.disconnect();
+    if (window.requestIdleCallback) window.requestIdleCallback(mount, { timeout: 1200 });
+    else setTimeout(mount, 0);
+  }, { rootMargin: "240px" });
+  watcher.observe(el);
+})();
+</script>`;
+}
+function liveMapHtml(place) {
+  const coords = hasCoords(place);
+  const address = displayValue(place.addr);
+  const caption = address || (coords ? "위도 " + coords.lat.toFixed(5) + ", 경도 " + coords.lng.toFixed(5) : "");
+  const chip = caption ? `<p class="pd-map-addr">${escapeHtml(caption)}</p>` : "";
+  if (!coords) {
+    const fallback = caption || "좌표가 없어 이 장소의 지도를 열 수 없어요.";
+    return `<div class="pd-live pd-live--fallback"><p class="pd-map-fallback">${escapeHtml(fallback)}</p></div>${directionHtml(place)}`;
+  }
+  return `<div class="pd-live"><div class="pd-map" id="placeMap" data-lat="${coords.lat}" data-lng="${coords.lng}" data-name="${escapeHtml(place.name)}" role="region" aria-label="${escapeHtml(place.name + " 지도")}"></div>${chip}</div>${directionHtml(place)}${placeMapScript()}`;
 }
 function photoFigureHtml(photo, placeName) {
   const kind = tourapi.licenseKind(photo && photo.licenseCode);
@@ -524,14 +628,6 @@ function placeCreditHtml(place, updatedAt) {
   const fromTour = place && (place.source === "tourapi" || tourapi.contentIdOf(place) || (place.tour && tourapi.isUsablePhoto(place.tour.image)));
   if (!fromTour) return "";
   return `<p class="place-credit">정보 출처: <a href="https://api.visitkorea.or.kr" target="_blank" rel="noopener">한국관광공사 TourAPI</a> 「반려동물 동반여행 서비스」 · 데이터 기준일 ${escapeHtml(updatedAt)} · 반려동물 동반 조건은 바뀔 수 있으니 방문 전 업체에 확인해 주세요.</p>`;
-}
-function staticMapHtml(place) {
-  const lat = Number(place.lat);
-  const lng = Number(place.lng);
-  const address = displayValue(place.addr);
-  const alt = place.name + " 위치. 위도 " + lat.toFixed(5) + ", 경도 " + lng.toFixed(5) + (address ? ". " + address : "");
-  const caption = address || ("위도 " + lat.toFixed(5) + ", 경도 " + lng.toFixed(5));
-  return `<figure class="pd-snap"><img src="/place/maps/${encodeURIComponent(place.id)}.svg" width="700" height="200" alt="${escapeHtml(alt)}" loading="eager" fetchpriority="high" decoding="async"><figcaption>${escapeHtml(caption)}</figcaption></figure>`;
 }
 function crumbHtml(place) {
   const region = regionOf(place.addr);
@@ -731,7 +827,8 @@ function makePlacePage(place, css, updatedAt) {
   const officialPhoto = official && official.poster
     ? `<figure class="pd-official"><img src="/posters/places/${encodeURIComponent(place.id)}.webp" width="480" height="270" alt="${escapeHtml(place.name)}" loading="lazy" decoding="async"><figcaption class="pd-photo-credit">이미지 출처: ${escapeHtml(official.site || "")}</figcaption></figure>`
     : "";
-  const photoHtml = officialPhoto || (photo ? photoFigureHtml(photo, place.name) : staticMapHtml(place));
+  const photoHtml = officialPhoto || (photo ? photoFigureHtml(photo, place.name) : "");
+  const mapHtml = liveMapHtml(place);
   const overviewHtml = notice ? "" : (overview ? `<p class="pd-overview">${escapeHtml(overview)}</p>` : "");
   const enrich = notice ? "" : enrichmentHtml(place);
   const correction = enrich ? "" : `<p class="pd-correct">${correctionButton(place)}</p>`;
@@ -780,6 +877,7 @@ function makePlacePage(place, css, updatedAt) {
           ${indexRule.noticeHtml(place)}
           ${catLine}
           ${photoHtml}
+          ${mapHtml}
           ${overviewHtml}
           ${rows ? `<div class="pd-info"><dl>${rows}</dl></div>` : ""}
           ${factSectionHtml(place)}
@@ -853,18 +951,19 @@ function assertEnrichmentPolicy() {
   }
   const indexed = makePlacePage(filled, "", "2026-10-18", false);
   const hasAdUnit = (html) => /<ins\b[^>]*\bclass="adsbygoogle"/.test(html);
-  const indexedOk = !indexed.includes("noindex") && hasAdUnit(indexed) && indexed.includes("정보 정정 요청") && indexed.includes("contact.html?place=policy-check") && indexed.includes('class="enr"') && indexed.includes("반려동물 동반 조건") && indexed.includes("실내 동반") && indexed.includes("실내·실외") && indexed.includes("무게 제한") && indexed.includes("소형견 10kg 이하") && indexed.includes("추가 요금") && indexed.includes("마릿수") && indexed.includes("공식 출처") && indexed.includes("확인일") && indexed.includes("업체 공식 안내 페이지") && indexed.includes("2026-10-18") && indexed.includes("2026.10 확인") && indexed.includes('class="ad-slot"') && indexed.includes('href="/ad-slot.css"') && !indexed.includes("min-height:250px");
+  const indexedOk = !indexed.includes("noindex") && hasAdUnit(indexed) && indexed.includes("정보 정정 요청") && indexed.includes("contact.html?place=policy-check") && indexed.includes('class="enr"') && indexed.includes("반려동물 동반 조건") && indexed.includes("실내 동반") && indexed.includes("실내·실외") && indexed.includes("무게 제한") && indexed.includes("소형견 10kg 이하") && indexed.includes("추가 요금") && indexed.includes("공식 출처") && indexed.includes("확인일") && indexed.includes("업체 공식 안내 페이지") && indexed.includes("2026-10-18") && indexed.includes("2026.10 확인") && indexed.includes('class="ad-slot"') && indexed.includes('href="/ad-slot.css"') && !indexed.includes("min-height:250px") && !indexed.includes(placeFacts.PET_EMPTY) && !indexed.includes("<dd>확인 필요</dd>");
   if (!indexedOk || indexed.includes("예시") || indexed.includes("pd-photo-paw") || indexed.includes("대형견 동반")) {
     throw new Error("보강 장소 페이지 구성이 맞지 않습니다.");
   }
   const thinPage = makePlacePage(base, "", "2026-10-18", true);
-  const thinFacts = ["실내·실외", "무게 제한", "마릿수", "추가 요금", "공식 출처", "확인일"].every((label) => thinPage.includes(label)) && (thinPage.match(/확인 필요/g) || []).length >= 6;
-  if (!thinPage.includes('content="noindex, follow"') || hasAdUnit(thinPage) || !thinPage.includes('href="/contact.html?place=policy-check"') || thinPage.includes('class="enr"') || thinPage.includes("예시") || thinPage.includes("pd-photo-paw") || !thinPage.includes("/place/maps/policy-check.svg") || !thinFacts) {
+  const thinFactsBlock = (thinPage.match(/<section class="facts"[\s\S]*?<\/section>/) || [""])[0];
+  const thinFacts = thinFactsBlock.includes(placeFacts.EMPTY_LINE) && !thinFactsBlock.includes("<dt>") && !thinFactsBlock.includes(placeFacts.PET_EMPTY) && !thinFactsBlock.includes("<dd>확인 필요</dd>");
+  if (!thinPage.includes('content="noindex, follow"') || hasAdUnit(thinPage) || !thinPage.includes('href="/contact.html?place=policy-check"') || thinPage.includes('class="enr"') || thinPage.includes("예시") || thinPage.includes("pd-photo-paw") || thinPage.includes("/place/maps/policy-check.svg") || thinPage.includes('class="pd-snap"') || !thinPage.includes('id="placeMap"') || !thinPage.includes("카카오맵 길찾기") || !thinPage.includes("네이버 지도 길찾기") || !thinFacts) {
     throw new Error("얇은 장소 페이지에 광고 단위가 있거나 정정 링크가 없습니다.");
   }
   const unlicensed = { ...base, id: "policy-nophoto", source: "tourapi", tour: { overview: "개요 문장입니다. 반려동물과 함께 머물 수 있습니다.", image: { url: "https://tong.visitkorea.or.kr/cms/resource/a.jpg", width: 640, height: 480, licenseCode: "" } } };
   const unlicensedPage = makePlacePage(unlicensed, "", "2026-10-18", true);
-  if (unlicensedPage.includes("pd-figure") || unlicensedPage.includes("tong.visitkorea") || !unlicensedPage.includes('class="pd-snap"') || !unlicensedPage.includes("api.visitkorea.or.kr") || !unlicensedPage.includes("반려동물 동반여행 서비스")) {
+  if (unlicensedPage.includes("pd-figure") || unlicensedPage.includes("tong.visitkorea") || unlicensedPage.includes('class="pd-snap"') || !unlicensedPage.includes('id="placeMap"') || !unlicensedPage.includes("api.visitkorea.or.kr") || !unlicensedPage.includes("반려동물 동반여행 서비스")) {
     throw new Error("cpyrhtDivCd가 없는 사진을 넣었거나 TourAPI 출처가 빠졌습니다.");
   }
   const type3Place = { ...base, id: "policy-type3", source: "tourapi", tour: { image: { url: "https://tong.visitkorea.or.kr/cms/resource/b.jpg", width: 900, height: 300, licenseCode: "Type3", imgname: "해변 산책", alt: "해변 산책" } } };
@@ -1146,7 +1245,7 @@ async function build() {
     return copy;
   });
   fs.writeFileSync(path.join(OUT, "places.json"), JSON.stringify({ updatedAt, places: publishedPlaces }), "utf8");
-  fs.mkdirSync(path.join(OUT, "place", "maps"), { recursive: true });
+  fs.mkdirSync(path.join(OUT, "place"), { recursive: true });
   fs.writeFileSync(path.join(OUT, "place", "place.css"), css, "utf8");
   catalogPlaces = valid;
   const officialMap = loadOfficialMap();
@@ -1161,9 +1260,6 @@ async function build() {
     try {
       const pageHtml = makePlacePage(place, css, updatedAt, thin);
       fs.writeFileSync(filename, pageHtml, "utf8");
-      const detail = place.tour || null;
-      const photo = detail && tourapi.isUsablePhoto(detail.image) ? detail.image : null;
-      if (!photo) fs.writeFileSync(path.join(OUT, "place", "maps", place.id + ".svg"), staticMapSvg(place), "utf8");
     }
     catch (error) { skipped.push(`${place.id}: ${place.name} — 페이지 생성 실패 (${error.message})`); }
   }
@@ -1181,6 +1277,8 @@ async function build() {
   const noindexReasons = {};
   const adReasons = {};
   let diverged = 0;
+  let filledFacts = 0;
+  let emptyFacts = 0;
   for (const place of valid) {
     const pagePath = path.join(OUT, "place", place.id + ".html");
     const page = fs.readFileSync(pagePath, "utf8");
@@ -1202,10 +1300,28 @@ async function build() {
     if (pageNoindex !== !indexable) throw new Error("noindex 표시가 색인 규칙과 다릅니다: " + place.id);
     if (hasAdUnit !== allowAds) throw new Error("광고 단위가 광고 제외 규칙과 다릅니다: " + place.id);
     if (!page.includes(`href="/contact.html?place=${encodeURIComponent(place.id)}"`) || !page.includes("정보 정정 요청")) throw new Error("정정 요청 링크가 없습니다: " + place.id);
-    for (const label of ["실내·실외", "무게 제한", "마릿수", "추가 요금", "공식 출처", "확인일"]) {
-      if (!page.includes(label)) throw new Error("동반 조건 칸이 없습니다: " + place.id + " " + label);
+    const facts = (page.match(/<section class="facts"[\s\S]*?<\/section>/) || [""])[0];
+    if (!facts) throw new Error("동반 조건 칸이 없습니다: " + place.id);
+    if (facts.includes(placeFacts.PET_EMPTY) || facts.includes("<dd>확인 필요</dd>") || facts.includes("확인 중")) throw new Error("동반 조건에 빈 안내 문장이 있습니다: " + place.id);
+    const hasFactRow = facts.includes("<dt>");
+    const hasEmptyLine = facts.includes(placeFacts.EMPTY_LINE);
+    if (hasFactRow === hasEmptyLine) throw new Error("동반 조건이 비었거나 안내 문장이 겹칩니다: " + place.id);
+    if (hasFactRow) filledFacts += 1;
+    else emptyFacts += 1;
+    if (!page.includes('href="/place/place.css"')) throw new Error("공통 스타일 없음: " + place.id);
+    if (!page.includes('class="pd-live')) throw new Error("지도 영역이 없습니다: " + place.id);
+    if (page.includes('class="pd-snap"') || page.includes("/place/maps/")) throw new Error("정적 지도 그림이 남아 있습니다: " + place.id);
+    if (Number.isFinite(place.lat) && Number.isFinite(place.lng)) {
+      if (!page.includes('id="placeMap"') || !page.includes(`data-lat="${place.lat}"`) || !page.includes(`data-lng="${place.lng}"`)) throw new Error("지도 좌표가 장소와 다릅니다: " + place.id);
+      if (!page.includes("카카오맵 길찾기") || !page.includes("네이버 지도 길찾기")) throw new Error("길찾기 링크가 없습니다: " + place.id);
+      if (!page.includes('class="pd-row"')) throw new Error("정보 표 행이 없습니다: " + place.id);
     }
   }
+  const placeCss = fs.readFileSync(path.join(OUT, "place", "place.css"), "utf8");
+  if (!placeCss.includes("grid-template-columns: 88px minmax(0, 1fr)") || !placeCss.includes("word-break: keep-all") || !placeCss.includes("overflow-wrap: anywhere") || /pd-info dl \{ display: grid/.test(placeCss)) {
+    throw new Error("장소 정보 표 스타일이 행 레이아웃이 아닙니다.");
+  }
+  log(`동반 조건이 있는 장소 ${filledFacts}곳, 안내 한 줄만 있는 장소 ${emptyFacts}곳`);
   log("noindex 사유 " + JSON.stringify(noindexReasons));
   log("광고 제외 사유 " + JSON.stringify(adReasons));
   if (diverged) log("색인과 광고 허용이 어긋난 장소 " + diverged + "곳");
@@ -1215,7 +1331,7 @@ async function build() {
     throw new Error("장소 페이지에 카카오맵·네이버 지도 검색 링크가 없습니다.");
   }
   if (sampleHtml.includes("pd-overview") || sampleHtml.includes("pd-figure")) throw new Error("contentid가 없는 장소에 관광 개요나 사진을 넣었습니다.");
-  if (sampleHtml.includes("예시") || sampleHtml.includes("pd-photo-paw") || !sampleHtml.includes('class="pd-snap"') || !fs.existsSync(path.join(OUT, "place", "maps", "kbizin-212.svg"))) {
+  if (sampleHtml.includes("예시") || sampleHtml.includes("pd-photo-paw") || sampleHtml.includes('class="pd-snap"') || fs.existsSync(path.join(OUT, "place", "maps", "kbizin-212.svg")) || !sampleHtml.includes('id="placeMap"') || !sampleHtml.includes("카카오맵 길찾기") || !sampleHtml.includes("네이버 지도 길찾기")) {
     throw new Error("장소 페이지에 예시 값이나 발바닥 플레이스홀더가 있습니다.");
   }
   let officialPages = 0;
@@ -1270,11 +1386,15 @@ async function build() {
       throw new Error("월악산 야영장이 시범 구간으로 안내됩니다: " + id);
     }
   }
-  const petLabels = ["동반 구분", "동반 가능 동물", "동반 시 필요사항", "기타 동반 정보"];
   const samplePet = fs.readFileSync(path.join(OUT, "place", "kbizin-212.html"), "utf8");
-  if (!petLabels.every((label) => samplePet.includes(label)) || !samplePet.includes(placeFacts.PET_EMPTY)) {
+  const samplePetFacts = (samplePet.match(/<section class="facts"[\s\S]*?<\/section>/) || [""])[0];
+  if (samplePetFacts.includes(placeFacts.PET_EMPTY) || samplePetFacts.includes("<dd>확인 필요</dd>") || (!samplePetFacts.includes("<dt>") && !samplePetFacts.includes(placeFacts.EMPTY_LINE))) {
     throw new Error("TourAPI 동반 조건이 비어 있을 때 안내 문장이 없습니다.");
   }
+  const factStats = placeFacts.fieldReport(valid);
+  log("동반 조건 표시 " + JSON.stringify(factStats.shown));
+  log("동반 조건 새로 채운 칸 " + JSON.stringify(factStats.gained));
+  log("가이드 표에서 가져온 장소 " + factStats.guidePlaces + "곳, 값이 갈린 칸 " + factStats.conflicts.length + (factStats.conflicts.length ? " (" + factStats.conflicts.join(", ") + ")" : ""));
   if (skipped.length) {
     console.warn(`[petmap] 건너뛴 장소 ${skipped.length}건:`);
     skipped.forEach((line) => console.warn("  - " + line));

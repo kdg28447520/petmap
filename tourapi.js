@@ -144,7 +144,7 @@ function verbatimApiText(value) {
 }
 
 function petConditionsFromItem(item) {
-  return VERBATIM_PET_FIELDS.map(([key, label]) => ({
+  return PET_FIELDS.map(([key, label]) => ({
     key,
     label,
     value: verbatimApiText(item && item[key]),
@@ -154,7 +154,7 @@ function petConditionsFromItem(item) {
 function notePetFieldNames(item, log) {
   if (petFieldNamesNoted || !item || typeof item !== "object") return;
   petFieldNamesNoted = true;
-  const missing = VERBATIM_PET_FIELDS.map(([key]) => key).filter((key) => !Object.prototype.hasOwnProperty.call(item, key));
+  const missing = PET_FIELDS.map(([key]) => key).filter((key) => !Object.prototype.hasOwnProperty.call(item, key));
   if (missing.length) {
     log("detailPetTour2 응답에 없는 필드: " + missing.join(", ") + ". 응답 키: " + Object.keys(item).join(", "));
     return;
@@ -412,8 +412,9 @@ function selfCheck() {
   if (homepage !== "https://www.gayoungdang.com/") throw new Error("홈페이지 추출");
   const rules = petRulesFromItem({ acmpyNeedMtr: "목줄 또는 이동장", acmpyTypeCd: "01", relaAcdntRiskMtr1: "없음" });
   if (rules.length !== 1 || rules[0].label !== "동반 시 필요사항") throw new Error("동반 조건 정리");
-  const conditions = petConditionsFromItem({ acmpyNeedMtr: "목줄 또는 이동장", acmpyTypeCd: "01", acmpyPsblCpam: "", etcAcmpyInfo: "없음" });
-  if (conditions.length !== 4 || conditions[0].value !== "01" || conditions[1].value !== "" || conditions[2].value !== "목줄 또는 이동장" || conditions[3].value !== "없음") throw new Error("동반 조건 원문");
+  const conditions = petConditionsFromItem({ acmpyNeedMtr: "목줄 또는 이동장", acmpyTypeCd: "01", acmpyPsblCpam: "", etcAcmpyInfo: "없음", relaPosesFclty: "정원" });
+  const byKey = new Map(conditions.map((row) => [row.key, row.value]));
+  if (conditions.length !== PET_FIELDS.length || byKey.get("acmpyTypeCd") !== "01" || byKey.get("acmpyPsblCpam") !== "" || byKey.get("acmpyNeedMtr") !== "목줄 또는 이동장" || byKey.get("etcAcmpyInfo") !== "없음" || byKey.get("relaPosesFclty") !== "정원") throw new Error("동반 조건 원문");
   const rich = { overview: "펜션 소개", image: { url: "https://tong.visitkorea.or.kr/cms/resource/a.jpg", width: 640, height: 480, licenseCode: "Type1" }, petRules: rules };
   if (!isRich(rich)) throw new Error("풍부한 상세 판정");
   if (isRich({ ...rich, petRules: [] })) throw new Error("동반 조건 없는 페이지는 색인하지 않습니다");
@@ -446,6 +447,7 @@ module.exports = {
   isSizedImage,
   isUsablePhoto,
   isRich,
+  PET_FIELDS,
   VERBATIM_PET_FIELDS,
   PET_EMPTY,
   petConditionsFromItem,

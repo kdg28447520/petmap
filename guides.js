@@ -449,7 +449,8 @@ function assertPublished(){
  if(ads!=="google.com, pub-4533404826925371, DIRECT, f08c47fec0942fa0\n")problems.push("ads.txt 내용이 게시자 ID와 다릅니다.");
  const samplePlace=fs.readFileSync(path.join(OUT,"place","tour-2707444.html"),"utf8");
  if(!samplePlace.includes('class="site-bar"')||!samplePlace.includes('href="/privacy.html"')||!samplePlace.includes("이용안내"))problems.push("장소 페이지에 공통 헤더·푸터가 없습니다.");
- if(samplePlace.includes("확인 중")||!samplePlace.includes("정보 없음 — 방문 전 업체에 확인하세요"))problems.push("빈 정보 행이 장소 페이지에 남아 있습니다.");
+ const sampleFacts=(samplePlace.match(/<section class="facts"[\s\S]*?<\/section>/)||[""])[0];
+ if(samplePlace.includes("확인 중")||sampleFacts.includes("정보 없음 — 방문 전 업체에 확인하세요")||sampleFacts.includes("<dd>확인 필요</dd>")||(!sampleFacts.includes("<dt>")&&!sampleFacts.includes("동반 조건은 방문 전 업체에 확인해 주세요.")))problems.push("빈 정보 행이 장소 페이지에 남아 있습니다.");
  const sampleGuide=fs.readFileSync(path.join(OUT,"guides","jeju-pet-flight-guide.html"),"utf8");
  if(/🐾|📌|☑/.test(sampleGuide))problems.push("가이드에 이모지 아이콘이 남아 있습니다.");
  if(!sampleGuide.includes('class="ad-slot"')||!sampleGuide.includes('href="/ad-slot.css"')||sampleGuide.includes("min-height:250px"))problems.push("접히는 광고 슬롯이 없습니다.");
