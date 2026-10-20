@@ -247,9 +247,14 @@ function normalizeDetail(contentId, common, imageItem, petItem, size) {
     alt: picked.alt,
     imgname: picked.imgname,
   } : null;
+  const tel = plainText(commonItem.tel).replace(/^TEL\\s*[:：]?\\s*/i, "");
+  const address = [plainText(commonItem.addr1), plainText(commonItem.addr2)].filter(Boolean).join(" ").trim();
   return {
     contentId: String(contentId),
     overview: plainText(commonItem.overview),
+    tel,
+    address,
+    zipcode: plainText(commonItem.zipcode),
     homepage: httpUrl(commonItem.homepage),
     image: image && isUsablePhoto(image) ? image : null,
     petRules: petRulesFromItem(petItem),
