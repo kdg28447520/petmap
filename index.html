@@ -225,7 +225,15 @@
         padding: 0;
         list-style: none;
       }
-      .region-counts { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); }
+      .region-counts { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+      .browse-type-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 10px; }
+      .browse-type-card { display: flex; min-height: 88px; flex-direction: column; justify-content: center; gap: 6px; padding: 14px 16px; border: 1px solid var(--line); border-radius: 18px; background: var(--surface); color: var(--ink); text-decoration: none; box-shadow: 0 6px 20px rgba(32, 29, 24, .05); }
+      .browse-type-card b { font-size: 17px; }
+      .browse-type-card span { color: var(--ink-2); font-weight: 650; }
+      .browse-type-card--stay { border-top: 4px solid var(--stay); }
+      .browse-type-card--food { border-top: 4px solid var(--food); }
+      .browse-type-card--park { border-top: 4px solid var(--park); }
+      .browse-type-card--hospital { border-top: 4px solid var(--hospital); }
       .rep-places { grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
       .guide-links { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
       .region-counts a, .rep-places li, .guide-links a {
@@ -243,6 +251,10 @@
         font-weight: 700;
         text-decoration: none;
       }
+      .region-counts a { min-height: 116px; align-items: flex-start; justify-content: center; flex-direction: column; gap: 4px; padding: 14px 16px; border-radius: 18px; box-shadow: 0 6px 20px rgba(32,29,24,.05); }
+      .region-counts a b { font-size: 19px; }
+      .region-counts a .region-full { color: var(--ink-2); font-size: 14px; font-weight: 500; }
+      .region-counts a strong { margin-top: 2px; color: var(--ink-2); font-size: 14px; }
       .rep-places li { display: flex; align-items: center; }
       .rep-places a { color: var(--ink); font-weight: 800; text-decoration: none; display: inline-flex; align-items: center; box-sizing: border-box; flex: 1 1 auto; min-width: 44px; min-height: 44px; }
       .region-counts span, .rep-places span { color: var(--ink-3); font-weight: 600; font-size: 13px; }
@@ -1001,6 +1013,12 @@
 
       /* ---------- mobile ---------- */
       @media (max-width: 840px) {
+        .region-counts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .browse-type-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .browse-type-card { min-height: 76px; padding: 12px; border-radius: 16px; }
+        .browse-type-card b { font-size: 15px; }
+        .region-counts a { min-height: 108px; padding: 12px; border-radius: 16px; }
+        .region-counts a b { font-size: 17px; }
         /* 모바일은 페이지 전체가 스크롤된다.
            지도 높이는 뷰포트의 40%이고, 한 손가락 세로 스와이프는 페이지를 스크롤한다. */
         html, body { height: auto; overflow: visible; }
