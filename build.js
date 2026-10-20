@@ -717,13 +717,6 @@ function crawlCatalogHtml(places) {
     const region = regionOf(place.addr);
     counts.set(region, (counts.get(region) || 0) + 1);
   }
-  const categoryCounts = new Map();
-  for (const place of places) {
-    const region = regionOf(place.addr);
-    if (!categoryCounts.has(region)) categoryCounts.set(region, new Map());
-    const byCategory = categoryCounts.get(region);
-    byCategory.set(place.category, (byCategory.get(place.category) || 0) + 1);
-  }
   const regions = REGION_ORDER.filter((region) => counts.has(region));
   for (const region of counts.keys()) if (!regions.includes(region)) regions.push(region);
   const regionItems = regions.map((region) => {
