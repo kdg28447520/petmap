@@ -717,11 +717,23 @@ function crawlCatalogHtml(places) {
     const region = regionOf(place.addr);
     counts.set(region, (counts.get(region) || 0) + 1);
   }
+  const categoryCounts = new Map();
+  for (const place of places) {
+    const region = regionOf(place.addr);
+    if (!categoryCounts.has(region)) categoryCounts.set(region, new Map());
+    const byCategory = categoryCounts.get(region);
+    byCategory.set(place.category, (byCategory.get(place.category) || 0) + 1);
+  }
   const regions = REGION_ORDER.filter((region) => counts.has(region));
   for (const region of counts.keys()) if (!regions.includes(region)) regions.push(region);
   const regionItems = regions.map((region) => {
     const href = "/?region=" + encodeURIComponent(REGION_SHORT[region] || region);
-    return `<li><a href="${href}">${escapeHtml(region)} <span>${counts.get(region)}곳</span></a></li>`;
+    return `<li><a href="${href}"><b>${escapeHtml(REGION_SHORT[region] || region)}</b><span class="region-full">${escapeHtml(region)}</span><strong>${counts.get(region).toLocaleString("ko-KR")}곳</strong></a></li>`;
+  }).join("");
+  const typeSlugs = { stay: "stay", food: "food", park: "park", hospital: "vet" };
+  const categoryItems = Object.entries(CATEGORIES).map(([key, category]) => {
+    const count = places.filter((place) => place.category === key).length;
+    return `<a class="browse-type-card browse-type-card--${escapeHtml(key)}" href="/?type=${typeSlugs[key]}"><b>${escapeHtml(category.label)}</b><span>${count.toLocaleString("ko-KR")}곳</span></a>`;
   }).join("");
   const reps = pickRepresentatives(places);
   const repsByRegion = new Map();
@@ -740,7 +752,7 @@ function crawlCatalogHtml(places) {
     return `<section><h3>${escapeHtml(region)}</h3><ul class="rep-places">${items}</ul></section>`;
   }).join("");
   const guideItems = homeGuideLinks().map((guide) => `<li><a href="/guides/${encodeURIComponent(guide.id)}.html">${escapeHtml(guide.title)}</a></li>`).join("");
-  return `<div class="crawl-catalog-inner"><h2>시·도별 장소 수</h2><ul class="region-counts">${regionItems}</ul><h2>시·도별 대표 장소</h2><p class="crawl-note">지도가 열리지 않아도 상세 페이지로 이동할 수 있어요. 수록 ${places.length.toLocaleString("ko-KR")}곳 가운데 시·도마다 고른 ${reps.length}곳입니다.</p>${placeItems}<h2>여행 가이드</h2><ul class="guide-links">${guideItems}</ul></div>`;
+  return `<div class="crawl-catalog-inner"><h2>업종별로 찾기</h2><div class="browse-type-grid">${categoryItems}</div><h2>지역별로 찾기</h2><ul class="region-counts">${regionItems}</ul><h2>시·도별 대표 장소</h2><p class="crawl-note">지도가 열리지 않아도 상세 페이지로 이동할 수 있어요. 수록 ${places.length.toLocaleString("ko-KR")}곳 가운데 시·도마다 고른 ${reps.length}곳입니다.</p>${placeItems}<h2>여행 가이드</h2><ul class="guide-links">${guideItems}</ul></div>`;
 }
 const STORY_IDS = ["tour-2706354", "tour-3540230", "tour-3536570", "tour-2807380", "tour-2615225"];
 const STORY_KIND = { stay: "숙박", food: "음식점·카페", park: "산책·놀이터", hospital: "24시 병원" };
