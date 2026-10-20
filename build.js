@@ -1342,7 +1342,7 @@ async function build() {
   if (diverged) log("색인과 광고 허용이 어긋난 장소 " + diverged + "곳");
   assertNoindexWithoutAds([path.join(OUT, "index.html"), ...valid.map((place) => path.join(OUT, "place", place.id + ".html"))]);
   const sampleHtml = fs.readFileSync(path.join(OUT, "place", "kbizin-212.html"), "utf8");
-  if (!sampleHtml.includes("카카오맵에서 보기") || !sampleHtml.includes("https://map.kakao.com/link/search/") || !sampleHtml.includes("네이버 지도에서 보기") || !sampleHtml.includes("https://map.naver.com/p/search/")) {
+  if (!sampleHtml.includes("카카오맵 업체 정보") || !sampleHtml.includes("https://map.kakao.com/link/search/") || !sampleHtml.includes("네이버 지도 업체 정보") || !sampleHtml.includes("https://map.naver.com/p/search/")) {
     throw new Error("장소 페이지에 카카오맵·네이버 지도 검색 링크가 없습니다.");
   }
   if (sampleHtml.includes("pd-overview") || sampleHtml.includes("pd-figure")) throw new Error("contentid가 없는 장소에 관광 개요나 사진을 넣었습니다.");
