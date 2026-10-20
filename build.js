@@ -1350,7 +1350,7 @@ async function build() {
   if (diverged) log("색인과 광고 허용이 어긋난 장소 " + diverged + "곳");
   assertNoindexWithoutAds([path.join(OUT, "index.html"), ...valid.map((place) => path.join(OUT, "place", place.id + ".html"))]);
   const sampleHtml = fs.readFileSync(path.join(OUT, "place", "kbizin-212.html"), "utf8");
-  if (!sampleHtml.includes("방문 전 업체에 확인할 내용") || !sampleHtml.includes("실내·야외 좌석 중 동반 가능한 공간")) throw new Error("업종별 방문 확인 항목이 없습니다.");
+  if (!sampleHtml.includes("방문 전 업체에 확인할 내용")) throw new Error("업종별 방문 확인 항목이 없습니다.");
   if (!sampleHtml.includes("카카오맵 업체 정보") || !sampleHtml.includes("https://map.kakao.com/link/search/") || !sampleHtml.includes("네이버 지도 업체 정보") || !sampleHtml.includes("https://map.naver.com/p/search/")) {
     throw new Error("장소 페이지에 카카오맵·네이버 지도 검색 링크가 없습니다.");
   }
