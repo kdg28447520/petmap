@@ -1302,7 +1302,13 @@
       body.place-doc .pd-live .leaflet-control-zoom a { width: 44px; height: 44px; line-height: 44px; font-size: 22px; }
       body.place-doc .pd-live .leaflet-control-attribution { max-width: calc(100% - 12px); font-size: 10px; line-height: 14px; white-space: normal; }
       body.place-doc .pd-info { margin-top: 20px; border-top: 1px solid var(--ink); }
+      body.place-doc .pd-info h2 { margin: 0; padding: 12px 0 4px; font-size: 19px; line-height: 28px; font-weight: 800; }
       body.place-doc .pd-info dl { display: block; margin: 0; }
+      body.place-doc .pd-more-info { margin-top: 20px; padding: 18px; border: 1px solid var(--line); border-radius: 16px; background: var(--surface); }
+      body.place-doc .pd-more-info h2 { margin: 0; font-size: 18px; line-height: 26px; font-weight: 800; }
+      body.place-doc .pd-more-info p { margin: 6px 0 0; color: var(--ink-2); font-size: 14px; line-height: 22px; }
+      body.place-doc .pd-more-info .pd-maplinks { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: 12px; gap: 8px; }
+      body.place-doc .pd-more-info .pd-maplinks a { display: flex; align-items: center; justify-content: center; min-height: 44px; padding: 8px; border: 1px solid var(--line); border-radius: 10px; background: var(--bg); color: var(--brand-text); text-align: center; font-size: 14px; font-weight: 750; text-decoration: none; }
       body.place-doc .pd-info .pd-row { display: grid; grid-template-columns: 88px minmax(0, 1fr); column-gap: 12px; align-items: start; border-top: 0; border-bottom: 1px solid var(--line); }
       body.place-doc .pd-info .pd-row + .pd-row { border-top: 0; }
       body.place-doc .pd-info dt, body.place-doc .pd-info dd { margin: 0; padding: 12px 0; border-bottom: 0; min-width: 0; font-size: 15px; line-height: 24px; }
@@ -1370,6 +1376,8 @@
         body.place-doc .pd-grid { grid-template-columns: minmax(0, 1fr); gap: 0; }
         body.place-doc .pd-title { font-size: 26px; line-height: 34px; }
         body.place-doc .pd-live .pd-map { height: 220px; }
+        body.place-doc .pd-more-info { padding: 16px 12px; }
+        body.place-doc .pd-more-info .pd-maplinks a { font-size: 13px; }
         body.place-doc .pd-mact { display: flex; gap: 8px; margin-top: 16px; min-width: 0; max-width: 100%; }
         body.place-doc .pd-mact .pd-btn { flex: 1; min-width: 0; padding: 0 6px; font-size: 14px; }
         body.place-doc .pd-actions-card { display: none; }
