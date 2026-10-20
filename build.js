@@ -820,14 +820,19 @@ function makePlacePage(place, css, updatedAt) {
   const photo = detail && tourapi.isUsablePhoto(detail.image) ? detail.image : null;
   const address = displayValue(place.addr);
   const hours = displayValue(place.hours);
+  const phone = displayValue(place.tel);
+  const phoneLink = phoneHref(phone);
+  const homepage = displayValue(place.homepage);
   const source = displayValue(sourceFor(place));
   const checked = confirmedText(enrichmentValue(place.enrichment, ["checkedOn"]));
   const checkedSource = confirmedText(enrichmentValue(place.enrichment, ["checkedSource"]));
   const badgeText = checkedBadgeText(checked);
   const rows = [
     address ? `<div class="pd-row"><dt>주소</dt><dd>${escapeHtml(address)}</dd></div>` : "",
+    phone ? `<div class="pd-row"><dt>전화</dt><dd>${phoneLink ? `<a href="${escapeHtml(phoneLink)}">${escapeHtml(phone)}</a>` : escapeHtml(phone)}</dd></div>` : "",
     hours ? `<div class="pd-row"><dt>${isHospital ? "진료시간" : "운영시간"}</dt><dd>${escapeHtml(hours)}</dd></div>` : "",
-    source ? `<div class="pd-row"><dt>출처</dt><dd>${escapeHtml(source)}</dd></div>` : "",
+    homepage ? `<div class="pd-row"><dt>홈페이지</dt><dd><a href="${escapeHtml(homepage)}" target="_blank" rel="noopener noreferrer">업체 사이트 열기</a></dd></div>` : "",
+    source ? `<div class="pd-row"><dt>정보 출처</dt><dd>${escapeHtml(source)}</dd></div>` : "",
   ].filter(Boolean).join("\n");
   const officialPhoto = official && official.poster
     ? `<figure class="pd-official"><img src="/posters/places/${encodeURIComponent(place.id)}.webp" width="480" height="270" alt="${escapeHtml(place.name)}" loading="lazy" decoding="async"><figcaption class="pd-photo-credit">이미지 출처: ${escapeHtml(official.site || "")}</figcaption></figure>`
@@ -835,6 +840,7 @@ function makePlacePage(place, css, updatedAt) {
   const photoHtml = officialPhoto || (photo ? photoFigureHtml(photo, place.name) : "");
   const mapHtml = liveMapHtml(place);
   const overviewHtml = notice ? "" : (overview ? `<p class="pd-overview">${escapeHtml(overview)}</p>` : "");
+  const moreInfoHtml = notice ? "" : `<section class="pd-more-info" aria-labelledby="pd-more-title"><h2 id="pd-more-title">업체 정보 더 보기</h2><p>운영시간·메뉴·휴무일은 달라질 수 있어요. 지도 앱의 업체 정보를 확인하거나 방문 전에 전화해 주세요.</p><div class="pd-maplinks"><a href="${escapeHtml(search.kakao)}" target="_blank" rel="noopener noreferrer">카카오맵 업체 정보</a><a href="${escapeHtml(search.naver)}" target="_blank" rel="noopener noreferrer">네이버 지도 업체 정보</a></div></section>`;
   const enrich = notice ? "" : enrichmentHtml(place);
   const correction = enrich ? "" : `<p class="pd-correct">${correctionButton(place)}</p>`;
   const where = [REGION_SHORT[region] || region, locality].filter((part) => part && part !== "전국").join(" ");
@@ -882,11 +888,12 @@ function makePlacePage(place, css, updatedAt) {
           ${indexRule.noticeHtml(place)}
           ${catLine}
           ${photoHtml}
-          ${mapHtml}
           ${overviewHtml}
-          ${rows ? `<div class="pd-info"><dl>${rows}</dl></div>` : ""}
+          ${rows ? `<section class="pd-info" aria-labelledby="pd-info-title"><h2 id="pd-info-title">업체 기본 정보</h2><dl>${rows}</dl></section>` : ""}
           ${factSectionHtml(place)}
           <div class="pd-mact">${actionButtons(place)}</div>
+          ${moreInfoHtml}
+          ${mapHtml}
           ${enrich}
           ${correction}
           <!--RELATED_GUIDES-->
@@ -901,10 +908,7 @@ function makePlacePage(place, css, updatedAt) {
           <div class="pd-card pd-actions-card">
             <h2>바로 가기</h2>
             ${actionButtons(place, { stacked: true })}
-            <div class="pd-maplinks">
-              <a href="${escapeHtml(search.kakao)}" target="_blank" rel="noopener">카카오맵에서 보기</a>
-              <a href="${escapeHtml(search.naver)}" target="_blank" rel="noopener">네이버 지도에서 보기</a>
-            </div>
+
           </div>
           <div class="pd-card pd-source-card">
             <h2>정보 출처</h2>
@@ -1222,6 +1226,14 @@ async function build() {
     const contentId = tourapi.contentIdOf(place);
     const detail = contentId ? tour.byContentId[contentId] : null;
     place.tour = detail && detail.complete ? detail : null;
+    if (place.tour && place.tour.tel && !displayValue(place.tel)) {
+      place.tel = place.tour.tel;
+      place.telFromTour = true;
+    }
+    if (place.tour && place.tour.address && !displayValue(place.addr)) {
+      place.addr = place.tour.address;
+      place.addrFromTour = true;
+    }
     if (place.tour && place.tour.homepage && !displayValue(place.homepage)) {
       place.homepage = place.tour.homepage;
       place.homepageFromTour = true;
