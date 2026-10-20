@@ -1228,11 +1228,9 @@ async function build() {
     place.tour = detail && detail.complete ? detail : null;
     if (place.tour && place.tour.tel && !displayValue(place.tel)) {
       place.tel = place.tour.tel;
-      place.telFromTour = true;
     }
     if (place.tour && place.tour.address && !displayValue(place.addr)) {
       place.addr = place.tour.address;
-      place.addrFromTour = true;
     }
     if (place.tour && place.tour.homepage && !displayValue(place.homepage)) {
       place.homepage = place.tour.homepage;
