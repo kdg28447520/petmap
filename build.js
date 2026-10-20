@@ -841,6 +841,13 @@ function makePlacePage(place, css, updatedAt) {
   const mapHtml = liveMapHtml(place);
   const overviewHtml = notice ? "" : (overview ? `<p class="pd-overview">${escapeHtml(overview)}</p>` : "");
   const moreInfoHtml = notice ? "" : `<section class="pd-more-info" aria-labelledby="pd-more-title"><h2 id="pd-more-title">업체 정보 더 보기</h2><p>운영시간·메뉴·휴무일은 달라질 수 있어요. 지도 앱의 업체 정보를 확인하거나 방문 전에 전화해 주세요.</p><div class="pd-maplinks"><a href="${escapeHtml(search.kakao)}" target="_blank" rel="noopener noreferrer">카카오맵 업체 정보</a><a href="${escapeHtml(search.naver)}" target="_blank" rel="noopener noreferrer">네이버 지도 업체 정보</a></div></section>`;
+  const visitChecks = {
+    stay: ["반려동물 동반 가능 객실과 체중·마릿수 제한", "추가 요금과 준비물", "객실 내 동반 가능 범위"],
+    food: ["실내·야외 좌석 중 동반 가능한 공간", "목줄·이동장 등 이용 조건", "반려동물 메뉴와 매장 이용 시간"],
+    park: ["입장료·휴장일과 운영 시간", "목줄·배변 등 이용 수칙", "주차장과 출입구 위치"],
+    hospital: ["현재 진료 여부와 야간 응급 접수", "진료 가능한 동물·진료 과목", "예약·대기 및 응급 비용 안내"],
+  }[place.category] || [];
+  const visitCheckHtml = notice || !visitChecks.length ? "" : `<section class="pd-visit-check" aria-labelledby="pd-visit-title"><h2 id="pd-visit-title">방문 전 업체에 확인할 내용</h2><p>업체별로 달라질 수 있어요. 전화나 지도 앱에서 확인해 주세요.</p><ul>${visitChecks.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul></section>`;
   const enrich = notice ? "" : enrichmentHtml(place);
   const correction = enrich ? "" : `<p class="pd-correct">${correctionButton(place)}</p>`;
   const where = [REGION_SHORT[region] || region, locality].filter((part) => part && part !== "전국").join(" ");
@@ -892,6 +899,7 @@ function makePlacePage(place, css, updatedAt) {
           ${rows ? `<section class="pd-info" aria-labelledby="pd-info-title"><h2 id="pd-info-title">업체 기본 정보</h2><dl>${rows}</dl></section>` : ""}
           ${factSectionHtml(place)}
           <div class="pd-mact">${actionButtons(place)}</div>
+          ${visitCheckHtml}
           ${moreInfoHtml}
           ${mapHtml}
           ${enrich}
