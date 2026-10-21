@@ -1270,6 +1270,18 @@ async function build() {
   generateOgImages();
   // 미리 만든 OG 이미지가 저장소 og/ 폴더에 있으면 자동 생성본 대신 사용 (자동 생성 시 한글이 깨지는 문제 방지)
   if (fs.existsSync(path.join(ROOT, "og"))) fs.cpSync(path.join(ROOT, "og"), path.join(OUT, "og"), { recursive: true });
+  // og-assets.js(base64 내장 카테고리 이미지)를 빌드 결과에 적용
+  try {
+    const assets = require("./og-assets.js");
+    fs.mkdirSync(path.join(OUT, "og"), { recursive: true });
+    for (const [name, data] of Object.entries(assets)) fs.writeFileSync(path.join(OUT, "og", name), Buffer.from(data, "base64"));
+  } catch (error) { /* 내장 자산이 없으면 건너뜀 */ }
+  // 기본 OG 이미지(default.png)는 base64 조각 3개를 합쳐서 적용
+  try {
+    const joined = ["./og-default-b64-1.js", "./og-default-b64-2.js", "./og-default-b64-3.js"].map((m) => require(m)).join("");
+    fs.mkdirSync(path.join(OUT, "og"), { recursive: true });
+    fs.writeFileSync(path.join(OUT, "og", "default.png"), Buffer.from(joined, "base64"));
+  } catch (error) { /* 조각 파일이 없으면 건너뜀 */ }
   const htmlCount = verifyOgFiles();
   const builtPages = valid.filter((p) => fs.existsSync(path.join(OUT, "place", p.id + ".html"))).length;
   log(`데이터 기준일: ${updatedAt}`);
