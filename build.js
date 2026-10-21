@@ -1274,7 +1274,7 @@ async function build() {
   try {
     const assets = require("./og-assets.js");
     fs.mkdirSync(path.join(OUT, "og"), { recursive: true });
-    for (const [name, data] of Object.entries(assets)) fs.writeFileSync(path.join(OUT, "og", name), Buffer.from(data, "base64"));
+    for (const [name, data] of Object.entries(assets)) fs.writeFileSync(path.join(OUT, "og", name.endsWith(".png") ? name : name + ".png"), Buffer.from(data, "base64"));
   } catch (error) { /* 내장 자산이 없으면 건너뜀 */ }
   // 기본 OG 이미지(default.png)는 base64 조각 3개를 합쳐서 적용
   try {
