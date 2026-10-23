@@ -721,7 +721,12 @@ function crawlCatalogHtml(places) {
   for (const region of counts.keys()) if (!regions.includes(region)) regions.push(region);
   const regionItems = regions.map((region) => {
     const href = "/?region=" + encodeURIComponent(REGION_SHORT[region] || region);
-    return `<li><a href="${href}">${escapeHtml(region)} <span>${counts.get(region)}곳</span></a></li>`;
+    return `<li><a href="${href}"><b>${escapeHtml(REGION_SHORT[region] || region)}</b><span class="region-full">${escapeHtml(region)}</span><strong>${counts.get(region).toLocaleString("ko-KR")}곳</strong></a></li>`;
+  }).join("");
+  const typeSlugs = { stay: "stay", food: "food", park: "park", hospital: "vet" };
+  const categoryItems = Object.entries(CATEGORIES).map(([key, category]) => {
+    const count = places.filter((place) => place.category === key).length;
+    return `<a class="browse-type-card browse-type-card--${escapeHtml(key)}" href="/?type=${typeSlugs[key]}"><b>${escapeHtml(category.label)}</b><span>${count.toLocaleString("ko-KR")}곳</span></a>`;
   }).join("");
   const reps = pickRepresentatives(places);
   const repsByRegion = new Map();
@@ -740,7 +745,7 @@ function crawlCatalogHtml(places) {
     return `<section><h3>${escapeHtml(region)}</h3><ul class="rep-places">${items}</ul></section>`;
   }).join("");
   const guideItems = homeGuideLinks().map((guide) => `<li><a href="/guides/${encodeURIComponent(guide.id)}.html">${escapeHtml(guide.title)}</a></li>`).join("");
-  return `<div class="crawl-catalog-inner"><h2>시·도별 장소 수</h2><ul class="region-counts">${regionItems}</ul><h2>시·도별 대표 장소</h2><p class="crawl-note">지도가 열리지 않아도 상세 페이지로 이동할 수 있어요. 수록 ${places.length.toLocaleString("ko-KR")}곳 가운데 시·도마다 고른 ${reps.length}곳입니다.</p>${placeItems}<h2>여행 가이드</h2><ul class="guide-links">${guideItems}</ul></div>`;
+  return `<div class="crawl-catalog-inner"><h2>업종별로 찾기</h2><div class="browse-type-grid">${categoryItems}</div><h2>지역별로 찾기</h2><ul class="region-counts">${regionItems}</ul><h2>시·도별 대표 장소</h2><p class="crawl-note">지도가 열리지 않아도 상세 페이지로 이동할 수 있어요. 수록 ${places.length.toLocaleString("ko-KR")}곳 가운데 시·도마다 고른 ${reps.length}곳입니다.</p>${placeItems}<h2>여행 가이드</h2><ul class="guide-links">${guideItems}</ul></div>`;
 }
 const STORY_IDS = ["tour-2706354", "tour-3540230", "tour-3536570", "tour-2807380", "tour-2615225"];
 const STORY_KIND = { stay: "숙박", food: "음식점·카페", park: "산책·놀이터", hospital: "24시 병원" };
@@ -815,14 +820,19 @@ function makePlacePage(place, css, updatedAt) {
   const photo = detail && tourapi.isUsablePhoto(detail.image) ? detail.image : null;
   const address = displayValue(place.addr);
   const hours = displayValue(place.hours);
+  const phone = displayValue(place.tel);
+  const phoneLink = phoneHref(phone);
+  const homepage = displayValue(place.homepage);
   const source = displayValue(sourceFor(place));
   const checked = confirmedText(enrichmentValue(place.enrichment, ["checkedOn"]));
   const checkedSource = confirmedText(enrichmentValue(place.enrichment, ["checkedSource"]));
   const badgeText = checkedBadgeText(checked);
   const rows = [
     address ? `<div class="pd-row"><dt>주소</dt><dd>${escapeHtml(address)}</dd></div>` : "",
+    phone ? `<div class="pd-row"><dt>전화</dt><dd>${phoneLink ? `<a href="${escapeHtml(phoneLink)}">${escapeHtml(phone)}</a>` : escapeHtml(phone)}</dd></div>` : "",
     hours ? `<div class="pd-row"><dt>${isHospital ? "진료시간" : "운영시간"}</dt><dd>${escapeHtml(hours)}</dd></div>` : "",
-    source ? `<div class="pd-row"><dt>출처</dt><dd>${escapeHtml(source)}</dd></div>` : "",
+    homepage ? `<div class="pd-row"><dt>홈페이지</dt><dd><a href="${escapeHtml(homepage)}" target="_blank" rel="noopener noreferrer">업체 사이트 열기</a></dd></div>` : "",
+    source ? `<div class="pd-row"><dt>정보 출처</dt><dd>${escapeHtml(source)}</dd></div>` : "",
   ].filter(Boolean).join("\n");
   const officialPhoto = official && official.poster
     ? `<figure class="pd-official"><img src="/posters/places/${encodeURIComponent(place.id)}.webp" width="480" height="270" alt="${escapeHtml(place.name)}" loading="lazy" decoding="async"><figcaption class="pd-photo-credit">이미지 출처: ${escapeHtml(official.site || "")}</figcaption></figure>`
@@ -830,6 +840,14 @@ function makePlacePage(place, css, updatedAt) {
   const photoHtml = officialPhoto || (photo ? photoFigureHtml(photo, place.name) : "");
   const mapHtml = liveMapHtml(place);
   const overviewHtml = notice ? "" : (overview ? `<p class="pd-overview">${escapeHtml(overview)}</p>` : "");
+  const moreInfoHtml = notice ? "" : `<section class="pd-more-info" aria-labelledby="pd-more-title"><h2 id="pd-more-title">업체 정보 더 보기</h2><p>운영시간·메뉴·휴무일은 달라질 수 있어요. 지도 앱의 업체 정보를 확인하거나 방문 전에 전화해 주세요.</p><div class="pd-maplinks"><a href="${escapeHtml(search.kakao)}" target="_blank" rel="noopener noreferrer">카카오맵 업체 정보</a><a href="${escapeHtml(search.naver)}" target="_blank" rel="noopener noreferrer">네이버 지도 업체 정보</a></div></section>`;
+  const visitChecks = {
+    stay: ["반려동물 동반 가능 객실과 체중·마릿수 제한", "추가 요금과 준비물", "객실 내 동반 가능 범위"],
+    food: ["실내·야외 좌석 중 동반 가능한 공간", "목줄·이동장 등 이용 조건", "반려동물 메뉴와 매장 이용 시간"],
+    park: ["입장료·휴장일과 운영 시간", "목줄·배변 등 이용 수칙", "주차장과 출입구 위치"],
+    hospital: ["현재 진료 여부와 야간 응급 접수", "진료 가능한 동물·진료 과목", "예약·대기 및 응급 비용 안내"],
+  }[place.category] || [];
+  const visitCheckHtml = notice || !visitChecks.length ? "" : `<section class="pd-visit-check" aria-labelledby="pd-visit-title"><h2 id="pd-visit-title">방문 전 업체에 확인할 내용</h2><p>업체별로 달라질 수 있어요. 전화나 지도 앱에서 확인해 주세요.</p><ul>${visitChecks.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul></section>`;
   const enrich = notice ? "" : enrichmentHtml(place);
   const correction = enrich ? "" : `<p class="pd-correct">${correctionButton(place)}</p>`;
   const where = [REGION_SHORT[region] || region, locality].filter((part) => part && part !== "전국").join(" ");
@@ -877,11 +895,13 @@ function makePlacePage(place, css, updatedAt) {
           ${indexRule.noticeHtml(place)}
           ${catLine}
           ${photoHtml}
-          ${mapHtml}
           ${overviewHtml}
-          ${rows ? `<div class="pd-info"><dl>${rows}</dl></div>` : ""}
+          ${rows ? `<section class="pd-info" aria-labelledby="pd-info-title"><h2 id="pd-info-title">업체 기본 정보</h2><dl>${rows}</dl></section>` : ""}
           ${factSectionHtml(place)}
           <div class="pd-mact">${actionButtons(place)}</div>
+          ${visitCheckHtml}
+          ${moreInfoHtml}
+          ${mapHtml}
           ${enrich}
           ${correction}
           <!--RELATED_GUIDES-->
@@ -896,10 +916,7 @@ function makePlacePage(place, css, updatedAt) {
           <div class="pd-card pd-actions-card">
             <h2>바로 가기</h2>
             ${actionButtons(place, { stacked: true })}
-            <div class="pd-maplinks">
-              <a href="${escapeHtml(search.kakao)}" target="_blank" rel="noopener">카카오맵에서 보기</a>
-              <a href="${escapeHtml(search.naver)}" target="_blank" rel="noopener">네이버 지도에서 보기</a>
-            </div>
+
           </div>
           <div class="pd-card pd-source-card">
             <h2>정보 출처</h2>
@@ -1217,6 +1234,12 @@ async function build() {
     const contentId = tourapi.contentIdOf(place);
     const detail = contentId ? tour.byContentId[contentId] : null;
     place.tour = detail && detail.complete ? detail : null;
+    if (place.tour && place.tour.tel && !displayValue(place.tel)) {
+      place.tel = place.tour.tel;
+    }
+    if (place.tour && place.tour.address && !displayValue(place.addr)) {
+      place.addr = place.tour.address;
+    }
     if (place.tour && place.tour.homepage && !displayValue(place.homepage)) {
       place.homepage = place.tour.homepage;
       place.homepageFromTour = true;
@@ -1341,7 +1364,8 @@ async function build() {
   if (diverged) log("색인과 광고 허용이 어긋난 장소 " + diverged + "곳");
   assertNoindexWithoutAds([path.join(OUT, "index.html"), ...valid.map((place) => path.join(OUT, "place", place.id + ".html"))]);
   const sampleHtml = fs.readFileSync(path.join(OUT, "place", "kbizin-212.html"), "utf8");
-  if (!sampleHtml.includes("카카오맵에서 보기") || !sampleHtml.includes("https://map.kakao.com/link/search/") || !sampleHtml.includes("네이버 지도에서 보기") || !sampleHtml.includes("https://map.naver.com/p/search/")) {
+  if (!sampleHtml.includes("방문 전 업체에 확인할 내용")) throw new Error("업종별 방문 확인 항목이 없습니다.");
+  if (!sampleHtml.includes("카카오맵 업체 정보") || !sampleHtml.includes("https://map.kakao.com/link/search/") || !sampleHtml.includes("네이버 지도 업체 정보") || !sampleHtml.includes("https://map.naver.com/p/search/")) {
     throw new Error("장소 페이지에 카카오맵·네이버 지도 검색 링크가 없습니다.");
   }
   if (sampleHtml.includes("pd-overview") || sampleHtml.includes("pd-figure")) throw new Error("contentid가 없는 장소에 관광 개요나 사진을 넣었습니다.");

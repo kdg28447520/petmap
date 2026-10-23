@@ -247,9 +247,14 @@ function normalizeDetail(contentId, common, imageItem, petItem, size) {
     alt: picked.alt,
     imgname: picked.imgname,
   } : null;
+  const tel = plainText(commonItem.tel).replace(/^TEL\s*[:：]?\s*/i, "");
+  const address = [plainText(commonItem.addr1), plainText(commonItem.addr2)].filter(Boolean).join(" ").trim();
   return {
     contentId: String(contentId),
     overview: plainText(commonItem.overview),
+    tel,
+    address,
+    zipcode: plainText(commonItem.zipcode),
     homepage: httpUrl(commonItem.homepage),
     image: image && isUsablePhoto(image) ? image : null,
     petRules: petRulesFromItem(petItem),
@@ -359,7 +364,13 @@ async function loadOrFetch({ places, cachePath, serviceKey, refresh, log }) {
     log("TOURAPI_SERVICE_KEY가 없어 TourAPI 상세 호출을 건너뜁니다. 캐시에 있는 값만 사용합니다.");
     return { byContentId: cached, contentIds: ids.length, fetched: 0 };
   }
-  const pending = ids.filter((id) => refresh || !cached[id] || cached[id].complete !== true);
+  const pending = ids.filter((id) => {
+    const row = cached[id];
+    const hasContactFields = row
+      && Object.prototype.hasOwnProperty.call(row, "tel")
+      && Object.prototype.hasOwnProperty.call(row, "address");
+    return refresh || !row || row.complete !== true || !hasContactFields;
+  });
   log("TourAPI contentid " + ids.length + "곳 중 " + pending.length + "곳을 detailCommon2·detailImage2·detailPetTour2로 받습니다.");
   let fetched = 0;
   let failed = 0;
@@ -399,6 +410,8 @@ function summarize(places) {
 }
 
 function selfCheck() {
+  const provider = normalizeDetail("123456", { tel: "TEL : 02-1234-5678", addr1: "서울특별시 중구", addr2: "세종대로 1", zipcode: "04524" }, null, null, null);
+  if (provider.tel !== "02-1234-5678" || provider.address !== "서울특별시 중구 세종대로 1" || provider.zipcode !== "04524") throw new Error("업체 연락처·주소 정규화 실패");
   const png = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==", "base64");
   const size = imageSize(png);
   if (!size || size.width !== 1 || size.height !== 1) throw new Error("PNG 크기 파싱 실패");
