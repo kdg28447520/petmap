@@ -432,6 +432,89 @@ function enrichmentHtml(place) {
   const sub = source ? `<p class="enr-sub">${escapeHtml(source)}</p>` : "";
   return `<section class="enr" aria-labelledby="enr-title"><div class="enr-h"><h2 id="enr-title">반려동물 동반 조건</h2>${badge}</div>${sub}<ul class="conds">${items}</ul><div class="enr-f"><p>방문 전 업체에 한 번 더 확인해 주세요. 바뀐 내용은 정정 요청으로 알려 주세요.</p>${correctionButton(place)}</div></section>`;
 }
+function hasJongseong(word) {
+  const ch = String(word || "").trim().slice(-1);
+  if (!ch) return false;
+  const code = ch.charCodeAt(0);
+  if (code >= 0xAC00 && code <= 0xD7A3) return (code - 0xAC00) % 28 !== 0;
+  if (/\d/.test(ch)) return ["0", "1", "3", "6", "7", "8"].includes(ch);
+  return false;
+}
+function summaryHtml(place) {
+  const cat = CATEGORIES[place.category];
+  if (!cat) return "";
+  const region = regionOf(place.addr);
+  const locality = localityOf(place.addr);
+  const where = [REGION_SHORT[region] || region, locality].filter((part) => part && part !== "전국").join(" ");
+  const address = displayValue(place.addr);
+  const tel = displayValue(place.tel);
+  const homepage = displayValue(place.homepage);
+  const sentences = [];
+  sentences.push(`${escapeHtml(place.name)}${hasJongseong(place.name) ? "은" : "는"} ${where ? escapeHtml(where) + "에 있는 " : ""}${escapeHtml(cat.label)}${hasJongseong(cat.label) ? "이에요" : "예요"}.`);
+  if (address) sentences.push(`주소는 ${escapeHtml(address)}입니다.`);
+  if (place.category === "hospital" && place.verified24h === true) sentences.push("24시간 진료하는 동물병원으로 등록돼 있어요.");
+  if (sentences.length < 3 && tel) sentences.push(`문의 전화는 ${escapeHtml(tel)}예요.`);
+  if (sentences.length < 3 && homepage) sentences.push("공식 홈페이지도 연결돼 있어요.");
+  return `<p class="pd-summary">${sentences.join(" ")}</p>`;
+}
+function visitCheckHtml(place) {
+  const items = [];
+  const tel = displayValue(place.tel);
+  const phone = phoneHref(place.tel);
+  const hours = displayValue(place.hours);
+  const homepage = displayValue(place.homepage);
+  const checked = confirmedText(enrichmentValue(place.enrichment, ["checkedOn"]));
+  if (tel) items.push(place.category === "hospital"
+    ? `<li>전화 <a href="${escapeHtml(phone || "#")}">${escapeHtml(tel)}</a> — 야간·응급 진료가 되는지 미리 확인하세요.</li>`
+    : `<li>전화 <a href="${escapeHtml(phone || "#")}">${escapeHtml(tel)}</a> — 출발 전에 반려동물 동반이 되는지 미리 확인하세요.</li>`);
+  if (hours) items.push(`<li>${place.category === "hospital" ? "진료시간" : "운영시간"} ${escapeHtml(hours)} — 당일 운영 여부는 업체에 한 번 더 확인하세요.</li>`);
+  if (homepage) items.push(`<li><a href="${escapeHtml(homepage)}" target="_blank" rel="noopener">공식 홈페이지</a>에서 휴무와 공지를 확인하세요.</li>`);
+  if (checked) items.push(`<li>동반 조건 확인일 ${escapeHtml(checked)} — 이후 조건이 바뀌었을 수 있어요.</li>`);
+  if (!items.length) return "";
+  return `<section class="pd-check" aria-label="방문 전 체크"><h2>방문 전 체크</h2><ul>${items.join("")}</ul></section>`;
+}
+function areaContextHtml(place) {
+  if (!catalogPlaces.length) return "";
+  const region = regionOf(place.addr);
+  const locality = localityOf(place.addr);
+  const inRegion = (other) => regionOf(other.addr) === region;
+  const inLocality = (other) => inRegion(other) && locality && localityOf(other.addr) === locality;
+  let pool = catalogPlaces.filter(inLocality);
+  let scope = [REGION_SHORT[region] || region, locality].filter(Boolean).join(" ");
+  let scopeWord = "같은 동네";
+  if (pool.length < 2) {
+    pool = catalogPlaces.filter(inRegion);
+    scope = REGION_SHORT[region] || region;
+    scopeWord = "같은 지역";
+  }
+  if (pool.length < 2) return "";
+  const counts = Object.keys(CATEGORIES)
+    .map((key) => ({ label: CATEGORIES[key].label, n: pool.filter((other) => other.category === key).length }))
+    .filter((row) => row.n > 0)
+    .map((row) => `${row.label} ${row.n}곳`)
+    .join(" · ");
+  const sentence = `${scope}에는 이 사이트에 등록된 반려동물 동반 장소가 모두 ${pool.length}곳 있어요. (${counts})`;
+  const nearIds = new Set(nearestCompanions(place).map((item) => item.place.id));
+  const links = pool
+    .filter((other) => other.id !== place.id && other.category !== place.category && indexRule.includeInPetLists(other) && !nearIds.has(other.id))
+    .map((other) => ({ place: other, km: distKm(place, other) }))
+    .sort((a, b) => a.km - b.km)
+    .slice(0, 3);
+  const list = links.length
+    ? `<ul class="near">${links.map((item) => {
+        const other = item.place;
+        const category = CATEGORIES[other.category];
+        const meta = [category ? category.label : "", localityOf(other.addr)].filter(Boolean).join(" · ");
+        return `<li><a href="/place/${encodeURIComponent(other.id)}.html"><span class="dot dot--${escapeHtml(other.category)}"></span><span><b>${escapeHtml(other.name)}</b><span class="m">${escapeHtml(meta)}</span></span><span class="km">${escapeHtml(fmtKm(item.km))}</span></a></li>`;
+      }).join("")}</ul>`
+    : "";
+  return `<section class="pd-area" aria-label="${scopeWord} 더 둘러보기"><h2>${scopeWord} 더 둘러보기</h2><p class="s">${escapeHtml(sentence)}</p>${list}</section>`;
+}
+function creditFallbackHtml(place, updatedAt) {
+  const source = displayValue(sourceFor(place));
+  if (!source) return "";
+  return `<p class="place-credit">정보 출처: ${escapeHtml(source)} · 데이터 기준일 ${escapeHtml(updatedAt)} · 반려동물 동반 조건은 바뀔 수 있으니 방문 전 업체에 확인해 주세요.</p>`;
+}
 function localityOf(address) {
   return String(address || "").trim().split(/\s+/)[1] || "";
 }
@@ -832,6 +915,10 @@ function makePlacePage(place, css, updatedAt) {
   const overviewHtml = notice ? "" : (overview ? `<p class="pd-overview">${escapeHtml(overview)}</p>` : "");
   const enrich = notice ? "" : enrichmentHtml(place);
   const correction = enrich ? "" : `<p class="pd-correct">${correctionButton(place)}</p>`;
+  const summary = notice ? "" : summaryHtml(place);
+  const visitCheck = notice ? "" : visitCheckHtml(place);
+  const areaContext = notice ? "" : areaContextHtml(place);
+  const credit = placeCreditHtml(place, updatedAt) || creditFallbackHtml(place, updatedAt);
   const where = [REGION_SHORT[region] || region, locality].filter((part) => part && part !== "전국").join(" ");
   const catLine = notice
     ? `<p class="pd-cat"><span class="access-pill">${escapeHtml(notice.label)}</span></p>`
@@ -878,17 +965,20 @@ function makePlacePage(place, css, updatedAt) {
           ${catLine}
           ${photoHtml}
           ${mapHtml}
+          ${summary}
           ${overviewHtml}
           ${rows ? `<div class="pd-info"><dl>${rows}</dl></div>` : ""}
           ${factSectionHtml(place)}
           <div class="pd-mact">${actionButtons(place)}</div>
           ${enrich}
           ${correction}
+          ${visitCheck}
           <!--RELATED_GUIDES-->
           ${nearbyHtml(place)}
+          ${areaContext}
           ${allowAds ? AD_UNIT : ""}
           ${warning}
-          ${placeCreditHtml(place, updatedAt)}
+          ${credit}
           ${reportLink()}
           <p><a class="pd-back" href="/">← 목록으로 돌아가기</a></p>
         </div>
