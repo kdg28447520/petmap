@@ -1,6 +1,12 @@
 {
   "buildCommand": "node build.js && node guides.js",
   "outputDirectory": "dist",
+  "rewrites": [
+    { "source": "/about", "destination": "/about.html" },
+    { "source": "/privacy", "destination": "/privacy.html" },
+    { "source": "/terms", "destination": "/terms.html" },
+    { "source": "/contact", "destination": "/contact.html" }
+  ],
   "redirects": [
     {
       "source": "/:path((?!ads\\.txt$).*)",
