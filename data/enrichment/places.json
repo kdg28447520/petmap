@@ -50,6 +50,46 @@
       "cage": "건물 내 이동 시 이동장·유모차 필수",
       "checkedOn": "2026-10-23",
       "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-10-23 조회"
+    },
+    "tour-2603489": {
+      "petAccess": "allowed",
+      "indoorOutdoor": "야외",
+      "sizeLimit": "전 견종 동반 가능",
+      "extraFee": "추가 요금 없음",
+      "leash": "목줄 착용 필수",
+      "checkedOn": "2026-10-23",
+      "checkedSource": "인천광역시 인천대공원 안내 페이지(반려동물 놀이터 입장료) · 한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-10-23 조회"
+    },
+    "tour-138900": {
+      "petAccess": "allowed",
+      "indoorOutdoor": "실내(객실 동반)",
+      "sizeLimit": "5kg 이하 소형견",
+      "extraFee": "마리당 20,000원(1박 기준, 현장결제)",
+      "leash": "목줄 착용 필수",
+      "cat": "고양이 동반 불가",
+      "petCount": "최대 2마리",
+      "largeDog": "대형견 동반 불가",
+      "checkedOn": "2026-10-23",
+      "checkedSource": "업체 공식 홈페이지 애견동반·이용안내 페이지(요금·무게·마릿수) · 한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-10-23 조회"
+    },
+    "tour-2757631": {
+      "petAccess": "allowed",
+      "indoorOutdoor": "실내(객실 동반)",
+      "sizeLimit": "맹견 제외 30kg 이하 동반 가능",
+      "extraFee": "1마리 추가 시 30,000원",
+      "checkedOn": "2026-10-23",
+      "checkedSource": "호텔 공식 홈페이지 객실 안내(추가 요금) · 한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-10-23 조회"
+    },
+    "tour-2823571": {
+      "petAccess": "allowed",
+      "indoorOutdoor": "실내(반려견 전용 객실)",
+      "sizeLimit": "맹견 제외 10kg 이하 동반 가능",
+      "extraFee": "1마리 추가 시 30,000원",
+      "leash": "목줄 착용 필수",
+      "cat": "고양이 동반 불가",
+      "petCount": "최대 2마리",
+      "checkedOn": "2026-10-23",
+      "checkedSource": "호텔 공식 홈페이지 펫 객실 안내(실내·요금·마릿수) · 한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-10-23 조회"
     }
   }
 }
