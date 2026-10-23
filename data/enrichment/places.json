@@ -14,6 +14,42 @@
       "largeDog": "",
       "checkedOn": "2026-10-18",
       "checkedSource": "예시 행이라 페이지에 게시하지 않습니다"
+    },
+    "tour-3536383": {
+      "petAccess": "allowed",
+      "indoorOutdoor": "실내(지정 객실 301·401·501호)",
+      "sizeLimit": "15kg 미만",
+      "extraFee": "마리당 1박 30,000원",
+      "petCount": "최대 1마리",
+      "checkedOn": "2026-10-23",
+      "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2·detailCommon2 개요) 2026-10-23 조회"
+    },
+    "tour-2804347": {
+      "petAccess": "allowed",
+      "indoorOutdoor": "실내(애견 동반 객실)",
+      "sizeLimit": "5kg 이내 소형견",
+      "extraFee": "마리당 1박 20,000원(소독·청소비용)",
+      "checkedOn": "2026-10-23",
+      "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2·detailCommon2 개요) 2026-10-23 조회"
+    },
+    "tour-3536898": {
+      "petAccess": "allowed",
+      "indoorOutdoor": "실내(객실)",
+      "sizeLimit": "15kg 이상 입실 불가",
+      "extraFee": "10kg 미만 15,000원 · 10~15kg 20,000원(1박 기준)",
+      "checkedOn": "2026-10-23",
+      "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2·detailCommon2 개요) 2026-10-23 조회"
+    },
+    "tour-951444": {
+      "petAccess": "allowed",
+      "indoorOutdoor": "실내(반려견 동반 지정 객실)",
+      "sizeLimit": "15kg 이하",
+      "extraFee": "2마리째부터 마리당 35,000원",
+      "leash": "목줄 착용 필수",
+      "petCount": "최대 2마리",
+      "cage": "건물 내 이동 시 이동장·유모차 필수",
+      "checkedOn": "2026-10-23",
+      "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-10-23 조회"
     }
   }
 }
