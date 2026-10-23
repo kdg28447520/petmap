@@ -1,10 +1,4 @@
 {
-  "gocamp-109": {
-    "url": "http://phbj.cafe24.com/yeyak",
-    "image": "https://phbj.cafe24.com/files/attach/filebox/722/005/fdea7e985f1fef1e5f03aec2b2d1ddfa.jpg",
-    "site": "phbj.cafe24.com",
-    "poster": "posters/places/gocamp-109.webp"
-  },
   "gocamp-119": {
     "url": "https://mountainandcompanioncamping.co.kr/pages/history",
     "image": "https://mountainandcompanioncamping.co.kr/file/798898669",
@@ -71,12 +65,6 @@
     "site": "네이버 블로그",
     "poster": "posters/places/gocamp-185.webp"
   },
-  "gocamp-186": {
-    "url": "http://cbnuo.chungbuk.ac.kr/cbnuo/activity/act_facility.php",
-    "image": "",
-    "site": "cbnuo.chungbuk.ac.kr",
-    "poster": ""
-  },
   "gocamp-188": {
     "url": "https://astromars.letsnowgo.com/v2/deploy?group_key=1",
     "image": "https://s3.ap-northeast-2.amazonaws.com/seize.kr.booking/deploy/162/5e27f88349f04bd9b1abbf34a28c00b6.jpg",
@@ -88,12 +76,6 @@
     "image": "https://campvillage.co.kr/assets/ui/img/common/g0.jpg",
     "site": "campvillage.co.kr",
     "poster": "posters/places/gocamp-196.webp"
-  },
-  "gocamp-208": {
-    "url": "https://cafe.naver.com/betsocamp",
-    "image": "https://cafeptthumb-phinf.pstatic.net/20160512_193/27982239_1463022941893_knmibK_png/27982239_121541893.png",
-    "site": "네이버 카페",
-    "poster": "posters/places/gocamp-208.webp"
   },
   "gocamp-213": {
     "url": "https://cafe.naver.com/campdaon",
@@ -131,12 +113,6 @@
     "site": "네이버 카페",
     "poster": "posters/places/gocamp-260.webp"
   },
-  "gocamp-262": {
-    "url": "https://cafe.naver.com/yongbau",
-    "image": "https://cafeptthumb-phinf.pstatic.net/MjAyMjEyMTZfNTIg/MDAxNjcxMTY4OTEwNTk3.3sgtqyOwyeFVbEs80HLgPYZWV1DSjEifjnJUwN6fgFIg.z64ixLj8kPzZq4X-HidGHbHmqKd7Q6lw7KZm0p5cMcYg.JPEG/tit.jpg",
-    "site": "네이버 카페",
-    "poster": "posters/places/gocamp-262.webp"
-  },
   "gocamp-266": {
     "url": "https://blog.naver.com/holidaycamp1",
     "image": "https://mblogthumb-phinf.pstatic.net/20130626_61/holidaycamp1_1372239322266SMhTT_JPEG/croppedImage_VERSION2.JPG?type=w800",
@@ -153,18 +129,6 @@
     "url": "https://www.starlightcamp.kr/",
     "image": "",
     "site": "starlightcamp.kr",
-    "poster": ""
-  },
-  "gocamp-279": {
-    "url": "https://www.foresttrip.go.kr/pot/rm/fa/selectCmpgrArmpListView.do?hmpgId=ID02030039&menuId=002002002",
-    "image": "",
-    "site": "foresttrip.go.kr",
-    "poster": ""
-  },
-  "gocamp-296": {
-    "url": "http://www.xn--6e0b3jw2e9se8plc8r9ocp2uqrgbkk1ka.com/",
-    "image": "",
-    "site": "xn--6e0b3jw2e9se8plc8r9ocp2uqrgbkk1ka.com",
     "poster": ""
   },
   "gocamp-40": {
@@ -220,12 +184,6 @@
     "image": "https://cafeptthumb-phinf.pstatic.net/MjAyMDA0MjBfMjE3/MDAxNTg3MzcwNzU3OTUz.5qu6cR4xSk0XeWGJtSCJgTvDEsngtVkCR3njug7_F0Mg.eQMf7dWd-h4wkQU0jngi-mPKSNRxeAiE1LkqQxArsBgg.JPEG/2.jpg",
     "site": "네이버 카페",
     "poster": "posters/places/gocamp-67.webp"
-  },
-  "gocamp-85": {
-    "url": "https://blog.naver.com/stay_gogasu",
-    "image": "https://mblogthumb-phinf.pstatic.net/MjAyNjAyMDVfNTgg/MDAxNzcwMjg0MTQxNzEw.PuNnnkUppVzqnR1cqEE-qUKR4vg0vMmMDEGM1kyYJWsg.6yQfetS-sjD647i8yby603ulhzK6EKNq19zcKadXxecg.JPEG/croppedImage_VERSION2.jpg?type=w800",
-    "site": "네이버 블로그",
-    "poster": "posters/places/gocamp-85.webp"
   },
   "gocamp-89": {
     "url": "https://sj.go.kr/gayasan/camping/main.do",

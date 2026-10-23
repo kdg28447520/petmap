@@ -474,7 +474,7 @@ function assertPublished(){
   return list;
  }
  const places=loadPlaces();
- if(places.length!==1443)problems.push("장소 수가 1443이 아니어서 가이드 집계를 다시 세야 합니다: "+places.length);
+ if(places.length!==1390)problems.push("장소 수가 1390이 아니어서 가이드 집계를 다시 세야 합니다: "+places.length); // 2026-10-23 A안: 동반 불가능 53곳 제외로 1443→1390
  const indexablePlacePages=[...fs.readdirSync(path.join(OUT,"place")).filter(name=>name.endsWith(".html"))].filter(name=>!fs.readFileSync(path.join(OUT,"place",name),"utf8").includes('content="noindex, follow"'));
  if(placeLocs.length!==indexablePlacePages.length)problems.push("사이트맵 장소 URL "+placeLocs.length+"/"+indexablePlacePages.length);
  const hospitals=places.filter(place=>place.category==="hospital");
@@ -576,8 +576,8 @@ function assertPublished(){
  const flagged=places.filter(place=>indexRule.accessNotice(place));
  const restrictedNames=flagged.filter(place=>indexRule.petAccessStatus(place)==="restricted").map(place=>place.name);
  const unverifiedNames=flagged.filter(place=>indexRule.petAccessStatus(place)==="unverified").map(place=>place.name);
- if(restrictedNames.length!==4)problems.push("출입 제한 장소 "+restrictedNames.join(","));
- if(unverifiedNames.length!==6)problems.push("출입 미확인 장소 "+unverifiedNames.join(","));
+ if(restrictedNames.length!==2)problems.push("출입 제한 장소 "+restrictedNames.join(",")); // 2026-10-23 A안: 월악산 야영장 2곳 제외로 4→2
+ if(unverifiedNames.length!==2)problems.push("출입 미확인 장소 "+unverifiedNames.join(",")); // 2026-10-23 A안: 자연휴양림 4곳 제외로 6→2
  for(const place of flagged){
   const page=fs.readFileSync(path.join(OUT,"place",place.id+".html"),"utf8");
   const notice=indexRule.accessNotice(place);

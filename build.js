@@ -1461,8 +1461,9 @@ async function build() {
   const flagged = valid.filter((place) => indexRule.accessNotice(place));
   const restricted = flagged.filter((place) => indexRule.petAccessStatus(place) === "restricted");
   const unverifiedNamed = flagged.filter((place) => indexRule.petAccessStatus(place) === "unverified");
-  if (restricted.length !== 4) throw new Error("출입 제한 장소가 4곳이 아닙니다: " + restricted.map((place) => place.name).join(", "));
-  if (unverifiedNamed.length !== 6) throw new Error("출입 미확인 공원·휴양림이 6곳이 아닙니다: " + unverifiedNamed.map((place) => place.name).join(", "));
+  // 2026-10-23 A안: 출입 불가능 확정 6곳(월악산 야영장 2·자연휴양림 4) 제외로 기대값 4→2, 6→2로 조정.
+  if (restricted.length !== 2) throw new Error("출입 제한 장소가 2곳이 아닙니다: " + restricted.map((place) => place.name).join(", "));
+  if (unverifiedNamed.length !== 2) throw new Error("출입 미확인 공원·휴양림이 2곳이 아닙니다: " + unverifiedNamed.map((place) => place.name).join(", "));
   for (const place of flagged) {
     const page = fs.readFileSync(path.join(OUT, "place", place.id + ".html"), "utf8");
     const notice = indexRule.accessNotice(place);
@@ -1484,12 +1485,8 @@ async function build() {
       throw new Error("북한산 정릉 카드가 허용 구간으로 안내됩니다: " + id);
     }
   }
-  for (const id of ["gocamp-22", "gocamp-165"]) {
-    const page = fs.readFileSync(path.join(OUT, "place", id + ".html"), "utf8");
-    if (!page.includes("월악산국립공원은 반려견 동반 시범사업 대상이 아니에요.") || page.includes("동반 가능 구역")) {
-      throw new Error("월악산 야영장이 시범 구간으로 안내됩니다: " + id);
-    }
-  }
+  // gocamp-22·gocamp-165(월악산국립공원 야영장 2곳)는 고캠핑 공식 정보 '반려동물 출입 불가능' 확정으로
+  // 2026-10-23 A안 실행에서 데이터에서 제외되어, 전용 단언을 함께 제거함.
   const samplePet = fs.readFileSync(path.join(OUT, "place", "kbizin-212.html"), "utf8");
   const samplePetFacts = (samplePet.match(/<section class="facts"[\s\S]*?<\/section>/) || [""])[0];
   if (samplePetFacts.includes(placeFacts.PET_EMPTY) || samplePetFacts.includes("<dd>확인 필요</dd>") || (!samplePetFacts.includes("<dt>") && !samplePetFacts.includes(placeFacts.EMPTY_LINE))) {
