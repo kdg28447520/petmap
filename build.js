@@ -825,35 +825,35 @@ function crawlCatalogHtml(places) {
   const guideItems = homeGuideLinks().map((guide) => `<li><a href="/guides/${encodeURIComponent(guide.id)}.html">${escapeHtml(guide.title)}</a></li>`).join("");
   return `<div class="crawl-catalog-inner"><h2>시·도별 장소 수</h2><ul class="region-counts">${regionItems}</ul><h2>시·도별 대표 장소</h2><p class="crawl-note">지도가 열리지 않아도 상세 페이지로 이동할 수 있어요. 수록 ${places.length.toLocaleString("ko-KR")}곳 가운데 시·도마다 고른 ${reps.length}곳입니다.</p>${placeItems}<h2>여행 가이드</h2><ul class="guide-links">${guideItems}</ul></div>`;
 }
-const STORY_IDS = ["tour-2706354", "tour-3540230", "tour-3536570", "tour-2807380", "tour-2615225"];
-const STORY_KIND = { stay: "숙박", food: "음식점·카페", park: "산책·놀이터", hospital: "24시 병원" };
-function homeStoryHtml(places) {
-  const byId = new Map(places.map((place) => [place.id, place]));
-  const gangwon = places.filter((place) => regionOf(place.addr) === "강원특별자치도");
-  const picked = STORY_IDS.map((id) => byId.get(id)).filter((place) => place && indexRule.includeInPetLists(place));
-  if (picked.length !== STORY_IDS.length) {
-    throw new Error("강원 이야기 장소가 빠졌습니다: " + picked.map((place) => place.id).join(", "));
+function homeRegionsHtml(places) {
+  const counts = new Map();
+  for (const place of places) {
+    const region = regionOf(place.addr);
+    counts.set(region, (counts.get(region) || 0) + 1);
   }
-  const items = picked.map((place) => {
-    const addr = String(place.addr || "").trim().split(/\s+/).slice(1).join(" ");
-    const kind = STORY_KIND[place.category] || CATEGORIES[place.category].label;
-    return `<li><a href="/place/${encodeURIComponent(place.id)}.html"><b>${escapeHtml(place.name)}</b><em>${escapeHtml(kind)}</em><span>${escapeHtml(addr)}</span></a></li>`;
+  const ordered = REGION_ORDER.filter((region) => counts.has(region));
+  for (const region of counts.keys()) if (!ordered.includes(region) && region !== "전국") ordered.push(region);
+  const cards = ordered.map((region) => {
+    const short = REGION_SHORT[region] || region;
+    const href = "/?region=" + encodeURIComponent(short);
+    const count = counts.get(region).toLocaleString("ko-KR");
+    return `<li><a class="rg-card" href="${href}"><b>${escapeHtml(short)}</b><span>${escapeHtml(region)}</span><span>${count}곳 동반 장소</span></a></li>`;
   }).join("");
-  const count = gangwon.length.toLocaleString("ko-KR");
-  return `<h2 id="st-h">강원, 지도에 담긴 곳</h2><p class="sub">지역 이야기 · 강원 ${count}곳 중 ${picked.length}곳</p><ul>${items}</ul><p class="src">출처: 한국관광공사·고캠핑·식품안전나라. 동반 범위·무게·추가요금은 방문 전 업체 확인.</p>`;
+  return `<p class="rg-label">전국 지역 선택</p><h2 id="rg-h">${ordered.length}개 시·도</h2><p class="rg-desc">지역을 선택하면 해당 지역의 반려동물 동반 장소 목록으로 이동합니다.</p><ul class="rg-grid">${cards}</ul><p class="src">출처: 한국관광공사·고캠핑·식품안전나라. 동반 범위·무게·추가요금은 방문 전 업체 확인.</p>`;
 }
-function injectHomeStory(html, places) {
-  if (!html.includes("<!--HOME_STORY-->")) throw new Error("홈 HTML에 지역 이야기 위치가 없습니다.");
-  const story = homeStoryHtml(places);
-  const next = html.replace("<!--HOME_STORY-->", story);
-  for (const name of ["강릉 안목해맞이공원", "고심스테이", "강릉 한우타운", "감자밭", "고석정"]) {
-    if (!next.includes(name)) throw new Error("홈 지역 이야기에 장소가 없습니다: " + name);
+function injectHomeRegions(html, places) {
+  if (!html.includes("<!--HOME_REGIONS-->")) throw new Error("홈 HTML에 지역 선택 위치가 없습니다.");
+  const regions = homeRegionsHtml(places);
+  const next = html.replace("<!--HOME_REGIONS-->", regions);
+  const cardCount = (regions.match(/class="rg-card"/g) || []).length;
+  if (cardCount < 10) throw new Error("홈 지역 카드가 너무 적습니다: " + cardCount);
+  for (const region of REGION_ORDER) {
+    if (!next.includes(`<span>${region}</span>`)) throw new Error("홈 지역 선택에 빠진 시·도가 있습니다: " + region);
   }
   for (const banned of ["관리자 메모", "직접 찍은", "YYYY.MM.DD", "운영자 직접 작성", "운영자가 다녀온"]) {
     if (next.includes(banned)) throw new Error("운영자 메모 자리가 홈에 남아 있습니다: " + banned);
   }
-  const counted = (story.match(/강원 ([0-9,]+)곳/) || [])[1] || "?";
-  log("홈 지역 이야기: 강원 " + counted + "곳 중 5곳");
+  log(`홈 지역 선택: 시·도 ${cardCount}개 카드, 수록 ${places.length.toLocaleString("ko-KR")}곳`);
   return next;
 }
 function injectCrawlCatalog(html, places) {
@@ -1323,7 +1323,7 @@ async function build() {
   copyAssets();
   if (fs.existsSync(path.join(OUT, "data", "enrichment"))) throw new Error("보강 예시 파일이 배포 폴더에 복사되었습니다.");
   let main = makeMainMeta(rawIndex).replace(/데이터 기준일: \d{4}-\d{2}-\d{2}/, "데이터 기준일: " + updatedAt);
-  main = injectHomeStory(main, valid);
+  main = injectHomeRegions(main, valid);
   main = injectCrawlCatalog(main, valid);
   if (USE_SRI) main = await withSri(main);
   fs.writeFileSync(path.join(OUT, "index.html"), main, "utf8");

@@ -987,15 +987,15 @@
       }
       .site-bar, .pm-hero, .pm-find, .pm-local, main, footer { min-width: 0; max-width: 100%; }
       .pm-hero h1 { min-width: 0; }
-      .pm-story { padding: 16px 16px 8px; max-width: 720px; }
-      .pm-story h2 { margin: 0; font-family: "DoHyeon", sans-serif; font-weight: 400; font-size: 26px; line-height: 32px; }
-      .pm-story .sub { margin: 0; font-size: 13px; line-height: 20px; color: var(--ink-2); }
-      .pm-story ul { list-style: none; margin: 8px 0 0; padding: 0; border-top: 1px solid var(--ink); }
-      .pm-story li a { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 0 8px; padding: 8px 0; border-bottom: 1px solid var(--line); min-height: 44px; color: inherit; text-decoration: none; }
-      .pm-story li b { font-size: 15px; line-height: 22px; font-weight: 700; }
-      .pm-story li em { font-style: normal; font-size: 13px; line-height: 22px; color: var(--brand-text); font-weight: 700; }
-      .pm-story li span { grid-column: 1 / 3; font-size: 13px; line-height: 20px; color: var(--ink-2); overflow-wrap: anywhere; }
-      .pm-story .src { font-size: 13px; line-height: 20px; color: var(--ink-2); margin: 8px 0 0; }
+      .pm-regions { padding: 20px 16px 8px; max-width: 720px; }
+      .pm-regions .rg-label { margin: 0; font-size: 13px; line-height: 20px; font-weight: 700; color: var(--ink-2); }
+      .pm-regions h2 { margin: 4px 0 0; font-family: "DoHyeon", sans-serif; font-weight: 400; font-size: 28px; line-height: 36px; }
+      .pm-regions .rg-desc { margin: 6px 0 0; font-size: 14px; line-height: 21px; color: var(--ink-2); }
+      .pm-regions .rg-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; list-style: none; margin: 16px 0 0; padding: 0; }
+      .pm-regions .rg-card { display: block; box-sizing: border-box; min-height: 44px; padding: 16px; border: 1px solid var(--line); border-radius: 18px; background: var(--surface); color: inherit; text-decoration: none; }
+      .pm-regions .rg-card b { display: block; font-size: 20px; line-height: 28px; font-weight: 800; }
+      .pm-regions .rg-card span { display: block; margin-top: 2px; font-size: 13px; line-height: 20px; color: var(--ink-2); }
+      .pm-regions .src { font-size: 13px; line-height: 20px; color: var(--ink-2); margin: 12px 0 0; }
       body.view-detail .home-only { display: none; }
       aside { width: auto; border-left: 0; }
 
@@ -1427,8 +1427,8 @@
         <div class="map-fallback" id="mapFallback" aria-live="polite"></div>
       </section>
 
-      <section class="pm-story home-only" id="homeStory" aria-labelledby="st-h">
-        <!--HOME_STORY-->
+      <section class="pm-regions home-only" id="homeRegions" aria-labelledby="rg-h">
+        <!--HOME_REGIONS-->
       </section>
 
       <aside aria-label="장소 목록">
