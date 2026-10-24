@@ -964,6 +964,19 @@
 
       .pm-hero { display: flex; align-items: flex-end; gap: 12px; padding: 12px 16px 4px; max-width: 100%; }
       .pm-hero .big { font-family: "DoHyeon", sans-serif; font-size: clamp(3.5rem, 17vw, 4.5rem); line-height: 0.95; letter-spacing: -0.02em; color: var(--ink); font-weight: 400; }
+      .pm-hero-slide { position: relative; margin: 12px 16px 0; border-radius: 24px; overflow: hidden; background: var(--surface-2); }
+      .pm-hero-slide .hero-slides { position: relative; height: clamp(210px, 38vw, 360px); }
+      .pm-hero-slide .hero-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; animation: heroFade 24s ease-in-out infinite; }
+      .pm-hero-slide .hero-img:nth-child(2) { animation-delay: 8s; }
+      .pm-hero-slide .hero-img:nth-child(3) { animation-delay: 16s; }
+      @keyframes heroFade { 0% { opacity: 0; } 4% { opacity: 1; } 33% { opacity: 1; } 41% { opacity: 0; } 100% { opacity: 0; } }
+      .pm-hero-slide .hero-copy { position: absolute; left: 0; right: 0; bottom: 0; padding: 44px 20px 16px; background: linear-gradient(transparent, rgba(24, 16, 8, .55)); color: #FFF7EA; pointer-events: none; }
+      .pm-hero-slide .hero-title { margin: 0; font-size: 22px; line-height: 30px; font-weight: 800; letter-spacing: -0.01em; }
+      .pm-hero-slide .hero-sub { margin: 4px 0 0; font-size: 13.5px; line-height: 20px; opacity: .94; }
+      @media (prefers-reduced-motion: reduce) {
+        .pm-hero-slide .hero-img { animation: none; }
+        .pm-hero-slide .hero-img.is-first { opacity: 1; }
+      }
       .pm-hero h1 { margin: 0; font-weight: 700; font-size: 16px; line-height: 22px; padding-bottom: 6px; }
       .pm-hero h1 small { display: block; font-weight: 400; font-size: 13px; line-height: 20px; color: var(--ink-2); }
       .pm-find { display: grid; grid-template-columns: minmax(0, 1fr) 96px 44px; gap: 8px; padding: 8px 16px 0; max-width: 100%; }
@@ -1390,6 +1403,17 @@
         <a href="/about.html">소개</a>
       </nav>
     </div>
+    <section class="pm-hero-slide home-only" aria-label="반려동물과 함께하는 여행 사진">
+      <div class="hero-slides">
+        <img class="hero-img is-first" src="/posters/hero-1.jpg" alt="반려동물 동반 카페 테라스에서 골든 리트리버와 함께 보내는 오후" fetchpriority="high" />
+        <img class="hero-img" src="/posters/hero-2.jpg" alt="캠핑장 텐트 앞에서 캠핑 의자에 앉은 비숑과 보호자" loading="lazy" />
+        <img class="hero-img" src="/posters/hero-3.jpg" alt="공원 산책로를 걷는 웰시 코기와 이동장 속 고양이" loading="lazy" />
+      </div>
+      <div class="hero-copy">
+        <p class="hero-title">우리 아이와 함께, 어디든</p>
+        <p class="hero-sub">동반 카페부터 숙소, 산책길까지 — 함께 갈 수 있는 곳을 모았어요</p>
+      </div>
+    </section>
     <div class="pm-hero home-only">
       <span class="big" id="statTotal">1,390</span>
       <h1>곳 · 지도에 담은 동반 장소<small>17개 시·도 · 공개 자료 3곳 합계</small></h1>

@@ -1224,7 +1224,16 @@ function copyAssets() {
     fs.mkdirSync(path.join(OUT, "fonts"), { recursive: true });
     fs.copyFileSync(from, path.join(OUT, "fonts", file));
   }
-  if (fs.existsSync(path.join(ROOT, "posters"))) fs.cpSync(path.join(ROOT, "posters"), path.join(OUT, "posters"), { recursive: true });
+  /* 히어로 사진처럼 이진 파일은 GitHub 커넥터로 직접 못 올려서 .b64 텍스트로 보관하고 빌드 때 복원한다 */
+  const postersSrc = path.join(ROOT, "posters");
+  if (fs.existsSync(postersSrc)) {
+    for (const file of fs.readdirSync(postersSrc)) {
+      if (!file.endsWith(".b64")) continue;
+      const target = path.join(postersSrc, file.slice(0, -4));
+      if (!fs.existsSync(target)) fs.writeFileSync(target, Buffer.from(fs.readFileSync(path.join(postersSrc, file), "utf8").trim(), "base64"));
+    }
+    fs.cpSync(postersSrc, path.join(OUT, "posters"), { recursive: true, filter: (src) => !src.endsWith(".b64") });
+  }
 }
 function mainCss(html) {
   const blocks = [...html.matchAll(/<style\b[^>]*>([\s\S]*?)<\/style>/gi)];
