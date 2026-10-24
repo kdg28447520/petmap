@@ -1773,6 +1773,44 @@
             if (scroll && on) scrollChipIntoView(b);
           }
         }
+        /* 지역 선택 카드 숫자·링크를 현재 유형(칩)과 검색어에 맞춘다.
+           카드 자체가 지역 전환 수단이라 지역·시군구 선택은 세지 않는다. */
+        function syncRegionCards() {
+          var section = document.getElementById("homeRegions");
+          if (!section || !dataReady) return;
+          var counts = {};
+          var toks = [];
+          if (state.q) {
+            toks = state.q.split(/\s+/).map(normText).filter(function (t) { return t.length > 0; });
+          }
+          for (var i = 0; i < PLACES.length; i++) {
+            var p = PLACES[i];
+            if (state.type && p.cat !== state.type) continue;
+            if (toks.length) {
+              var hay = normText(p.name + p.address + p.region + p.locality + CATS[p.cat].label);
+              var ok = toks.every(function (tok) { return hay.indexOf(tok) !== -1; });
+              if (!ok) continue;
+            }
+            counts[p.region] = (counts[p.region] || 0) + 1;
+          }
+          var label = state.type ? TYPE_COUNT_LABEL[state.type] : "동반 장소";
+          var cards = section.querySelectorAll(".rg-card");
+          for (var j = 0; j < cards.length; j++) {
+            var card = cards[j];
+            var full = card.getAttribute("data-region") || "";
+            var cnt = card.querySelector(".rg-count");
+            if (cnt) cnt.textContent = fmt(counts[full] || 0) + "곳 " + label;
+            var href = "/?region=" + encodeURIComponent(shortRegion(full));
+            if (state.type) href += "&type=" + (TYPE_SLUG[state.type] || state.type);
+            card.setAttribute("href", href);
+          }
+          var desc = section.querySelector(".rg-desc");
+          if (desc) {
+            desc.textContent = state.type
+              ? "지역을 선택하면 해당 지역의 " + label + " 목록으로 이동합니다."
+              : "지역을 선택하면 해당 지역의 반려동물 동반 장소 목록으로 이동합니다.";
+          }
+        }
         function scrollChipIntoView(b) {
           var edge = b.getBoundingClientRect();
           var box = chipsEl.getBoundingClientRect();
@@ -2709,6 +2747,7 @@
           }
           currentPage = 1; /* 필터·검색이 바뀌면 1페이지로 리셋 */
           syncChips(!!opts.scrollChip);
+          syncRegionCards();
           renderList();
           if (document.body.classList.contains("no-map")) {
             fallbackShown = 20;

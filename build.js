@@ -837,7 +837,7 @@ function homeRegionsHtml(places) {
     const short = REGION_SHORT[region] || region;
     const href = "/?region=" + encodeURIComponent(short);
     const count = counts.get(region).toLocaleString("ko-KR");
-    return `<li><a class="rg-card" href="${href}"><b>${escapeHtml(short)}</b><span>${escapeHtml(region)}</span><span>${count}곳 동반 장소</span></a></li>`;
+    return `<li><a class="rg-card" data-region="${escapeHtml(region)}" href="${href}"><b>${escapeHtml(short)}</b><span>${escapeHtml(region)}</span><span class="rg-count">${count}곳 동반 장소</span></a></li>`;
   }).join("");
   return `<p class="rg-label">전국 지역 선택</p><h2 id="rg-h">${ordered.length}개 시·도</h2><p class="rg-desc">지역을 선택하면 해당 지역의 반려동물 동반 장소 목록으로 이동합니다.</p><ul class="rg-grid">${cards}</ul><p class="src">출처: 한국관광공사·고캠핑·식품안전나라. 동반 범위·무게·추가요금은 방문 전 업체 확인.</p>`;
 }
