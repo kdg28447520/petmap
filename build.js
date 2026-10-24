@@ -167,7 +167,7 @@ const HOME_GUIDE_IDS = [
   "gangwon-overnight-with-dog",
   "jeju-pet-flight-guide",
   "busan-pet-beach-cafe",
-  "korea-pet-map-counts",
+  "pet-travel-packing-list",
 ];
 const ENRICHMENT_FILE = path.join(ROOT, "data", "enrichment", "places.json");
 const OPTIONAL_ENRICHMENT_KEYS = [
@@ -450,11 +450,8 @@ function summaryHtml(place) {
   const tel = displayValue(place.tel);
   const homepage = displayValue(place.homepage);
   const sentences = [];
-  sentences.push(`${escapeHtml(place.name)}${hasJongseong(place.name) ? "은" : "는"} ${where ? escapeHtml(where) + "에 있는 " : ""}${escapeHtml(cat.label)}${hasJongseong(cat.label) ? "이에요" : "예요"}.`);
-  if (address) sentences.push(`주소는 ${escapeHtml(address)}입니다.`);
   if (place.category === "hospital" && place.verified24h === true) sentences.push("24시간 진료하는 동물병원으로 등록돼 있어요.");
-  if (sentences.length < 3 && tel) sentences.push(`문의 전화는 ${escapeHtml(tel)}예요.`);
-  if (sentences.length < 3 && homepage) sentences.push("공식 홈페이지도 연결돼 있어요.");
+  if (!sentences.length) return "";
   return `<p class="pd-summary">${sentences.join(" ")}</p>`;
 }
 function visitCheckHtml(place) {
@@ -771,23 +768,14 @@ function pickRepresentatives(places) {
       const found = list.find((place) => place.category === category && !seen.has(place.id) && indexRule.includeInPetLists(place));
       if (!found) continue;
       chosen.push(found);
-      if (chosen.length >= 2) break;
+      if (chosen.length >= 1) break;
     }
     for (const place of list) {
-      if (chosen.length >= 2) break;
+      if (chosen.length >= 1) break;
       if (!indexRule.includeInPetLists(place)) continue;
       if (!chosen.includes(place)) chosen.push(place);
     }
     for (const place of chosen) {
-      seen.add(place.id);
-      picked.push(place);
-    }
-  }
-  if (picked.length < 30) {
-    for (const place of places.slice().sort((a, b) => (a.id < b.id ? -1 : 1))) {
-      if (picked.length >= 30) break;
-      if (!indexRule.includeInPetLists(place)) continue;
-      if (seen.has(place.id)) continue;
       seen.add(place.id);
       picked.push(place);
     }
@@ -841,6 +829,14 @@ function homeRegionsHtml(places) {
   }).join("");
   return `<p class="rg-label">전국 지역 선택</p><h2 id="rg-h">${ordered.length}개 시·도</h2><p class="rg-desc">지역을 선택하면 해당 지역의 반려동물 동반 장소 목록으로 이동합니다.</p><ul class="rg-grid">${cards}</ul><p class="src">출처: 한국관광공사·고캠핑·식품안전나라. 동반 범위·무게·추가요금은 방문 전 업체 확인.</p>`;
 }
+function injectHomeGuides(html) {
+  if (!html.includes("<!--HOME_GUIDES-->")) throw new Error("홈 HTML에 가이드 위치가 없습니다.");
+  const guides = homeGuideLinks();
+  const cards = guides.map((guide) => `<li><a href="/guides/${encodeURIComponent(guide.id)}.html">${escapeHtml(guide.title)}</a></li>`).join("");
+  const section = `<h2>여행 가이드</h2><p>지역별 동반 여행 코스와 준비물·교통 규정을 모았습니다. 전체 가이드는 <a href="/guides/">가이드 목록</a>에서 볼 수 있습니다.</p><ul class="pm-guide-links">${cards}</ul>`;
+  log(`홈 가이드 섹션: ${guides.length}편을 지도 위에 배치`);
+  return html.replace("<!--HOME_GUIDES-->", section);
+}
 function injectHomeRegions(html, places) {
   if (!html.includes("<!--HOME_REGIONS-->")) throw new Error("홈 HTML에 지역 선택 위치가 없습니다.");
   const regions = homeRegionsHtml(places);
@@ -862,7 +858,7 @@ function injectCrawlCatalog(html, places) {
   if (forbidden) throw new Error("홈 서버 HTML에 빈 상태 문구가 있습니다: " + forbidden);
   const placeLinks = (next.match(/href="\/place\/[^"]+\.html"/g) || []).length;
   const guideLinks = (next.match(/href="\/guides\/[^"]+\.html"/g) || []).length;
-  if (placeLinks < 30) throw new Error("홈 장소 링크가 30개 미만입니다: " + placeLinks);
+  if (placeLinks < 17) throw new Error("홈 장소 링크가 17개 미만입니다: " + placeLinks);
   if (guideLinks < 6) throw new Error("홈 가이드 링크가 6개 미만입니다: " + guideLinks);
   if (!next.includes("시·도별 장소 수")) throw new Error("홈에 시·도별 장소 수가 없습니다.");
   log(`홈 정적 목록: 시·도 ${new Set(places.map((place) => regionOf(place.addr))).size}곳, 장소 링크 ${placeLinks}, 가이드 링크 ${guideLinks}`);
@@ -1331,6 +1327,7 @@ async function build() {
   copyAssets();
   if (fs.existsSync(path.join(OUT, "data", "enrichment"))) throw new Error("보강 예시 파일이 배포 폴더에 복사되었습니다.");
   let main = makeMainMeta(rawIndex).replace(/데이터 기준일: \d{4}-\d{2}-\d{2}/, "데이터 기준일: " + updatedAt);
+  main = injectHomeGuides(main);
   main = injectHomeRegions(main, valid);
   main = injectCrawlCatalog(main, valid);
   if (USE_SRI) main = await withSri(main);

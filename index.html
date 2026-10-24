@@ -979,6 +979,12 @@
       }
       .pm-hero h1 { margin: 0; font-weight: 700; font-size: 16px; line-height: 22px; padding-bottom: 6px; }
       .pm-hero h1 small { display: block; font-weight: 400; font-size: 13px; line-height: 20px; color: var(--ink-2); }
+      .pm-intro { padding: 10px 16px 0; color: var(--ink-2); font-size: 14.5px; line-height: 1.65; }
+      .pm-guides { padding: 14px 16px 2px; }
+      .pm-guides h2 { font-size: 19px; margin: 0 0 6px; }
+      .pm-guides p { margin: 0 0 10px; color: var(--ink-2); font-size: 14px; }
+      .pm-guide-links { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 8px; }
+      .pm-guide-links a { display: flex; align-items: center; min-height: 44px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); font-weight: 700; color: var(--ink); text-decoration: none; font-size: 14px; }
       .pm-find { display: grid; grid-template-columns: minmax(0, 1fr) 96px 44px; gap: 8px; padding: 8px 16px 0; max-width: 100%; }
       .pm-find .search-box { position: relative; height: 44px; min-width: 0; padding: 0; border: 0; box-shadow: inset 0 0 0 1px var(--line-strong); }
       .pm-find .search-box:focus-within { box-shadow: inset 0 0 0 2px var(--ink); }
@@ -1415,9 +1421,10 @@
       </div>
     </section>
     <div class="pm-hero home-only">
-      <span class="big" id="statTotal">1,390</span>
+      <span class="big" id="statTotal">1,389</span>
       <h1>곳 · 지도에 담은 동반 장소<small>17개 시·도 · 공개 자료 3곳 합계</small></h1>
     </div>
+    <p class="pm-intro home-only">댕냥이와 함께는 전국의 반려동물 동반 장소 1,389곳을 지도에 모은 안내 사이트입니다. 공개 자료와 공식 안내로 확인한 주소와 동반 조건만 적고, 확인되지 않은 내용은 비워 둡니다. 방문 전에는 각 장소 페이지에 적힌 출처와 확인일을 함께 봐 주세요.</p>
     <form class="pm-find home-only" id="homeFind" action="/" method="get" role="search">
       <label class="sr" for="search">장소 검색</label>
       <div class="search-box">
@@ -1431,9 +1438,9 @@
       <button type="submit" aria-label="검색"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg></button>
     </form>
     <div class="chips home-only" id="chips" role="group" aria-label="장소 종류">
-      <button type="button" class="chip" data-cat="" aria-pressed="true">전체 <span class="cnt">1,390</span></button>
+      <button type="button" class="chip" data-cat="" aria-pressed="true">전체 <span class="cnt">1,389</span></button>
       <button type="button" class="chip" data-cat="stay" aria-pressed="false">숙박 <span class="cnt">353</span></button>
-      <button type="button" class="chip" data-cat="food" aria-pressed="false">식당·카페 <span class="cnt">604</span></button>
+      <button type="button" class="chip" data-cat="food" aria-pressed="false">식당·카페 <span class="cnt">603</span></button>
       <button type="button" class="chip" data-cat="park" aria-pressed="false">산책 <span class="cnt">153</span></button>
       <button type="button" class="chip" data-cat="hospital" aria-pressed="false">24시 병원 <span class="cnt">280</span></button>
     </div>
@@ -1445,6 +1452,9 @@
     </div>
 
     <main>
+      <section class="pm-guides home-only" aria-label="여행 가이드">
+        <!--HOME_GUIDES-->
+      </section>
       <section class="map-wrap" aria-label="전국 지도, 숫자는 장소 수">
         <div id="map"></div>
         <p class="map-placeholder" id="mapPlaceholder">지도 타일은 화면을 움직이면 불러옵니다.</p>

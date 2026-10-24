@@ -9,6 +9,16 @@
   ],
   "redirects": [
     {
+      "source": "/place/tour-2820641",
+      "destination": "/place/tour-3537624",
+      "statusCode": 301
+    },
+    {
+      "source": "/place/tour-2820641.html",
+      "destination": "/place/tour-3537624.html",
+      "statusCode": 301
+    },
+    {
       "source": "/:path((?!ads\\.txt$).*)",
       "has": [{ "type": "host", "value": "^petmap\\.kr$" }],
       "destination": "https://www.petmap.kr/:path*",
