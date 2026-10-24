@@ -1431,7 +1431,7 @@
         <!--HOME_REGIONS-->
       </section>
 
-      <aside aria-label="장소 목록">
+      <aside id="placeResults" aria-label="장소 목록">
         <div class="list-head"><b>장소 목록</b><span id="resultCount"></span></div>
         <div class="list" id="list"></div>
         <div class="empty" id="empty"></div>
@@ -1697,6 +1697,18 @@
             buildChips();
             fillStats();
             applyFilters({ url: "replace", scrollChip: true, fitMap: true });
+            /* 지역 카드 등 필터 파라미터(?region=·?locality=·?type=·?q=)를 달고
+               들어오면 업체 목록 자리로 내려가기. 카드를 눌렀을 때 지도가 바뀐
+               것만 보이고 목록이 안 보여 "업체가 안 뜨네"라는 제보 대응.
+               (aside#placeResults 앵커는 이미 적용됨) */
+            if (state.region || state.locality || state.type || state.q) {
+              setTimeout(function () {
+                var target = document.getElementById("placeResults");
+                if (target && target.scrollIntoView) {
+                  target.scrollIntoView({ block: "start" });
+                }
+              }, 80);
+            }
             route();
           })
           .catch(function () {
