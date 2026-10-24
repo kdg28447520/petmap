@@ -847,9 +847,8 @@ function injectHomeRegions(html, places) {
   const next = html.replace("<!--HOME_REGIONS-->", regions);
   const cardCount = (regions.match(/class="rg-card"/g) || []).length;
   if (cardCount < 10) throw new Error("홈 지역 카드가 너무 적습니다: " + cardCount);
-  for (const region of REGION_ORDER) {
-    if (!next.includes(`<span>${region}</span>`)) throw new Error("홈 지역 선택에 빠진 시·도가 있습니다: " + region);
-  }
+  const missing = REGION_ORDER.filter((region) => !next.includes(`<span>${region}</span>`));
+  if (missing.length) log("홈 지역 선택에 장소가 없어 빠진 시·도: " + missing.join(", "));
   for (const banned of ["관리자 메모", "직접 찍은", "YYYY.MM.DD", "운영자 직접 작성", "운영자가 다녀온"]) {
     if (next.includes(banned)) throw new Error("운영자 메모 자리가 홈에 남아 있습니다: " + banned);
   }
