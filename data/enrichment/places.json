@@ -1,157 +1,224 @@
 {
-  "places": {
-    "EXAMPLE-DO-NOT-PUBLISH": {
-      "example": true,
-      "petAccess": "allowed",
-      "indoorOutdoor": "실내·실외",
-      "sizeLimit": "소형견 10kg 이하",
-      "extraFee": "추가 요금 없음",
-      "leash": "목줄 착용 필수",
-      "cat": "고양이 동반 불가",
-      "petCount": "최대 2마리",
-      "cage": "",
-      "petMenu": "",
-      "largeDog": "",
-      "checkedOn": "2026-10-18",
-      "checkedSource": "예시 행이라 페이지에 게시하지 않습니다"
-    },
-    "tour-3536383": {
-      "petAccess": "allowed",
-      "indoorOutdoor": "실내(지정 객실 301·401·501호)",
-      "sizeLimit": "15kg 미만",
-      "extraFee": "마리당 1박 30,000원",
-      "petCount": "최대 1마리",
-      "checkedOn": "2026-10-23",
-      "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2·detailCommon2 개요) 2026-10-23 조회"
-    },
-    "tour-2804347": {
-      "petAccess": "allowed",
-      "indoorOutdoor": "실내(애견 동반 객실)",
-      "sizeLimit": "5kg 이내 소형견",
-      "extraFee": "마리당 1박 20,000원(소독·청소비용)",
-      "checkedOn": "2026-10-23",
-      "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2·detailCommon2 개요) 2026-10-23 조회"
-    },
-    "tour-3536898": {
-      "petAccess": "allowed",
-      "indoorOutdoor": "실내(객실)",
-      "sizeLimit": "15kg 이상 입실 불가",
-      "extraFee": "10kg 미만 15,000원 · 10~15kg 20,000원(1박 기준)",
-      "checkedOn": "2026-10-23",
-      "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2·detailCommon2 개요) 2026-10-23 조회"
-    },
-    "tour-951444": {
-      "petAccess": "allowed",
-      "indoorOutdoor": "실내(반려견 동반 지정 객실)",
-      "sizeLimit": "15kg 이하",
-      "extraFee": "2마리째부터 마리당 35,000원",
-      "leash": "목줄 착용 필수",
-      "petCount": "최대 2마리",
-      "cage": "건물 내 이동 시 이동장·유모차 필수",
-      "checkedOn": "2026-10-23",
-      "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-10-23 조회"
-    },
-    "tour-2603489": {
-      "petAccess": "allowed",
-      "indoorOutdoor": "야외",
-      "sizeLimit": "전 견종 동반 가능",
-      "extraFee": "추가 요금 없음",
-      "leash": "목줄 착용 필수",
-      "checkedOn": "2026-10-23",
-      "checkedSource": "인천광역시 인천대공원 안내 페이지(반려동물 놀이터 입장료) · 한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-10-23 조회"
-    },
-    "tour-138900": {
-      "petAccess": "allowed",
-      "indoorOutdoor": "실내(객실 동반)",
-      "sizeLimit": "5kg 이하 소형견",
-      "extraFee": "마리당 20,000원(1박 기준, 현장결제)",
-      "leash": "목줄 착용 필수",
-      "cat": "고양이 동반 불가",
-      "petCount": "최대 2마리",
-      "largeDog": "대형견 동반 불가",
-      "checkedOn": "2026-10-23",
-      "checkedSource": "업체 공식 홈페이지 애견동반·이용안내 페이지(요금·무게·마릿수) · 한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-10-23 조회"
-    },
-    "tour-2757631": {
-      "petAccess": "allowed",
-      "indoorOutdoor": "실내(객실 동반)",
-      "sizeLimit": "맹견 제외 30kg 이하 동반 가능",
-      "extraFee": "1마리 추가 시 30,000원",
-      "checkedOn": "2026-10-23",
-      "checkedSource": "호텔 공식 홈페이지 객실 안내(추가 요금) · 한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-10-23 조회"
-    },
-    "tour-2823571": {
-      "petAccess": "allowed",
-      "indoorOutdoor": "실내(반려견 전용 객실)",
-      "sizeLimit": "맹견 제외 10kg 이하 동반 가능",
-      "extraFee": "1마리 추가 시 30,000원",
-      "leash": "목줄 착용 필수",
-      "cat": "고양이 동반 불가",
-      "petCount": "최대 2마리",
-      "checkedOn": "2026-10-23",
-      "checkedSource": "호텔 공식 홈페이지 펫 객실 안내(실내·요금·마릿수) · 한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-10-23 조회"
-    },
-    "gocamp-17": {
-      "petAccess": "allowed",
-      "indoorOutdoor": "야외(반려견 전용 사이트)",
-      "sizeLimit": "소형견만 가능",
-      "extraFee": "애견 동반 가능 존 1마리 무료 · 애견 추가 금액 10,000원",
-      "petCount": "최대 3마리",
-      "checkedOn": "2026-10-23",
-      "checkedSource": "한국관광공사 고캠핑 공식 상세 페이지(반려동물 출입·캠핑장 소개·이용요금표) 2026-10-23 조회"
-    },
-    "gocamp-19": {
-      "petAccess": "allowed",
-      "indoorOutdoor": "실내(객실 동반)",
-      "sizeLimit": "소형견 10kg 미만",
-      "extraFee": "1마리당 30,000원",
-      "petCount": "최대 2마리",
-      "checkedOn": "2026-10-23",
-      "checkedSource": "한국관광공사 고캠핑 공식 상세 페이지(반려동물 출입) · 업체 공식 홈페이지 예약 안내(반려견 동반 요금) 2026-10-23 조회"
-    },
-    "gocamp-90": {
-      "petAccess": "allowed",
-      "indoorOutdoor": "야외(개별 정원·야영 사이트)",
-      "sizeLimit": "10kg 이하 중소형견만 가능",
-      "extraFee": "추가 시 견당 10,000원(5kg 미만)~20,000원(10kg 미만)",
-      "petCount": "최대 4마리",
-      "checkedOn": "2026-10-23",
-      "checkedSource": "한국관광공사 고캠핑 공식 상세 페이지(반려동물 출입) · 업체 공식 홈페이지 이용안내(반려견 동반·추가요금 안내) 2026-10-23 조회"
-    },
-    "gocamp-167": {
-      "petAccess": "allowed",
-      "indoorOutdoor": "실내(애견 동반 글램핑 객실)",
-      "sizeLimit": "8kg 이상 동반 불가",
-      "extraFee": "1마리당 10,000원(1박)",
-      "checkedOn": "2026-10-23",
-      "checkedSource": "한국관광공사 고캠핑 공식 상세 페이지(반려동물 출입) · 업체 공식 홈페이지 이용안내(GUIDE) 2026-10-23 조회"
-    },
-    "gocamp-173": {
-      "petAccess": "allowed",
-      "indoorOutdoor": "실내(애견 동반 글램핑 객실)",
-      "sizeLimit": "5kg 미만",
-      "extraFee": "1마리 30,000원",
-      "petCount": "최대 1마리",
-      "checkedOn": "2026-10-23",
-      "checkedSource": "한국관광공사 고캠핑 공식 상세 페이지(반려동물 출입) · 업체 공식 홈페이지 예약 안내(애견 동반 글램핑 객실) 2026-10-23 조회"
-    },
-    "gocamp-219": {
-      "petAccess": "allowed",
-      "indoorOutdoor": "실내(카라반 객실)",
-      "sizeLimit": "5kg 미만",
-      "extraFee": "1마리 30,000원(현장결제)",
-      "checkedOn": "2026-10-23",
-      "checkedSource": "한국관광공사 고캠핑 공식 상세 페이지(반려동물 출입) · 업체 공식 홈페이지 예약 안내(반려동물안내) 2026-10-23 조회"
-    },
-    "gocamp-239": {
-      "petAccess": "allowed",
-      "indoorOutdoor": "야외(애견 캠핑 사이트)",
-      "sizeLimit": "전 견종 동반 가능(대형견 전용 사이트 있음)",
-      "extraFee": "애견캠핑 시 10,000원 추가",
-      "petCount": "최대 3마리",
-      "largeDog": "대형견 동반 가능(전용 사이트 있음)",
-      "checkedOn": "2026-10-23",
-      "checkedSource": "한국관광공사 고캠핑 공식 상세 페이지(반려동물 출입·캠핑장 소개·이용요금표) · 업체 공식 홈페이지 애견캠핑 안내 2026-10-23 조회"
-    }
+ "places": {
+  "EXAMPLE-DO-NOT-PUBLISH": {
+   "example": true,
+   "petAccess": "allowed",
+   "indoorOutdoor": "실내·실외",
+   "sizeLimit": "소형견 10kg 이하",
+   "extraFee": "추가 요금 없음",
+   "leash": "목줄 착용 필수",
+   "cat": "고양이 동반 불가",
+   "petCount": "최대 2마리",
+   "cage": "",
+   "petMenu": "",
+   "largeDog": "",
+   "checkedOn": "2026-10-18",
+   "checkedSource": "예시 행이라 페이지에 게시하지 않습니다"
+  },
+  "tour-3536383": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "실내(지정 객실 301·401·501호)",
+   "sizeLimit": "15kg 미만",
+   "extraFee": "마리당 1박 30,000원",
+   "petCount": "최대 1마리",
+   "checkedOn": "2026-10-23",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2·detailCommon2 개요) 2026-10-23 조회"
+  },
+  "tour-2804347": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "실내(애견 동반 객실)",
+   "sizeLimit": "5kg 이내 소형견",
+   "extraFee": "마리당 1박 20,000원(소독·청소비용)",
+   "checkedOn": "2026-10-23",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2·detailCommon2 개요) 2026-10-23 조회"
+  },
+  "tour-3536898": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "실내(객실)",
+   "sizeLimit": "15kg 이상 입실 불가",
+   "extraFee": "10kg 미만 15,000원 · 10~15kg 20,000원(1박 기준)",
+   "checkedOn": "2026-10-23",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2·detailCommon2 개요) 2026-10-23 조회"
+  },
+  "tour-951444": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "실내(반려견 동반 지정 객실)",
+   "sizeLimit": "15kg 이하",
+   "extraFee": "2마리째부터 마리당 35,000원",
+   "leash": "목줄 착용 필수",
+   "petCount": "최대 2마리",
+   "cage": "건물 내 이동 시 이동장·유모차 필수",
+   "checkedOn": "2026-10-23",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-10-23 조회"
+  },
+  "tour-2603489": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음",
+   "leash": "목줄 착용 필수",
+   "checkedOn": "2026-10-23",
+   "checkedSource": "인천광역시 인천대공원 안내 페이지(반려동물 놀이터 입장료) · 한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-10-23 조회"
+  },
+  "tour-138900": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "실내(객실 동반)",
+   "sizeLimit": "5kg 이하 소형견",
+   "extraFee": "마리당 20,000원(1박 기준, 현장결제)",
+   "leash": "목줄 착용 필수",
+   "cat": "고양이 동반 불가",
+   "petCount": "최대 2마리",
+   "largeDog": "대형견 동반 불가",
+   "checkedOn": "2026-10-23",
+   "checkedSource": "업체 공식 홈페이지 애견동반·이용안내 페이지(요금·무게·마릿수) · 한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-10-23 조회"
+  },
+  "tour-2757631": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "실내(객실 동반)",
+   "sizeLimit": "맹견 제외 30kg 이하 동반 가능",
+   "extraFee": "1마리 추가 시 30,000원",
+   "checkedOn": "2026-10-23",
+   "checkedSource": "호텔 공식 홈페이지 객실 안내(추가 요금) · 한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-10-23 조회"
+  },
+  "tour-2823571": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "실내(반려견 전용 객실)",
+   "sizeLimit": "맹견 제외 10kg 이하 동반 가능",
+   "extraFee": "1마리 추가 시 30,000원",
+   "leash": "목줄 착용 필수",
+   "cat": "고양이 동반 불가",
+   "petCount": "최대 2마리",
+   "checkedOn": "2026-10-23",
+   "checkedSource": "호텔 공식 홈페이지 펫 객실 안내(실내·요금·마릿수) · 한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-10-23 조회"
+  },
+  "gocamp-17": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(반려견 전용 사이트)",
+   "sizeLimit": "소형견만 가능",
+   "extraFee": "애견 동반 가능 존 1마리 무료 · 애견 추가 금액 10,000원",
+   "petCount": "최대 3마리",
+   "checkedOn": "2026-10-23",
+   "checkedSource": "한국관광공사 고캠핑 공식 상세 페이지(반려동물 출입·캠핑장 소개·이용요금표) 2026-10-23 조회"
+  },
+  "gocamp-19": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "실내(객실 동반)",
+   "sizeLimit": "소형견 10kg 미만",
+   "extraFee": "1마리당 30,000원",
+   "petCount": "최대 2마리",
+   "checkedOn": "2026-10-23",
+   "checkedSource": "한국관광공사 고캠핑 공식 상세 페이지(반려동물 출입) · 업체 공식 홈페이지 예약 안내(반려견 동반 요금) 2026-10-23 조회"
+  },
+  "gocamp-90": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(개별 정원·야영 사이트)",
+   "sizeLimit": "10kg 이하 중소형견만 가능",
+   "extraFee": "추가 시 견당 10,000원(5kg 미만)~20,000원(10kg 미만)",
+   "petCount": "최대 4마리",
+   "checkedOn": "2026-10-23",
+   "checkedSource": "한국관광공사 고캠핑 공식 상세 페이지(반려동물 출입) · 업체 공식 홈페이지 이용안내(반려견 동반·추가요금 안내) 2026-10-23 조회"
+  },
+  "gocamp-167": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "실내(애견 동반 글램핑 객실)",
+   "sizeLimit": "8kg 이상 동반 불가",
+   "extraFee": "1마리당 10,000원(1박)",
+   "checkedOn": "2026-10-23",
+   "checkedSource": "한국관광공사 고캠핑 공식 상세 페이지(반려동물 출입) · 업체 공식 홈페이지 이용안내(GUIDE) 2026-10-23 조회"
+  },
+  "gocamp-173": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "실내(애견 동반 글램핑 객실)",
+   "sizeLimit": "5kg 미만",
+   "extraFee": "1마리 30,000원",
+   "petCount": "최대 1마리",
+   "checkedOn": "2026-10-23",
+   "checkedSource": "한국관광공사 고캠핑 공식 상세 페이지(반려동물 출입) · 업체 공식 홈페이지 예약 안내(애견 동반 글램핑 객실) 2026-10-23 조회"
+  },
+  "gocamp-219": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "실내(카라반 객실)",
+   "sizeLimit": "5kg 미만",
+   "extraFee": "1마리 30,000원(현장결제)",
+   "checkedOn": "2026-10-23",
+   "checkedSource": "한국관광공사 고캠핑 공식 상세 페이지(반려동물 출입) · 업체 공식 홈페이지 예약 안내(반려동물안내) 2026-10-23 조회"
+  },
+  "gocamp-239": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(애견 캠핑 사이트)",
+   "sizeLimit": "전 견종 동반 가능(대형견 전용 사이트 있음)",
+   "extraFee": "애견캠핑 시 10,000원 추가",
+   "petCount": "최대 3마리",
+   "largeDog": "대형견 동반 가능(전용 사이트 있음)",
+   "checkedOn": "2026-10-23",
+   "checkedSource": "한국관광공사 고캠핑 공식 상세 페이지(반려동물 출입·캠핑장 소개·이용요금표) · 업체 공식 홈페이지 애견캠핑 안내 2026-10-23 조회"
+  },
+  "tour-2621735": {
+   "checkedOn": "2026-10-25",
+   "checkedSource": "업체 공식 홈페이지",
+   "extraFee": "1마리당 추가요금 15,000원 (페이지 상단에는 애견입실 1일 10,000원으로 표기)",
+   "indoorOutdoor": "실내",
+   "petAccess": "restricted",
+   "petCount": "객실당 최대 2마리",
+   "sizeLimit": "10kg 미만 소형견만 가능 (단, 홈페이지 안내문상 5kg 이상 애견 및 단모종 등 일부 견종은 입실 제한)"
+  },
+  "tour-3438052": {
+   "checkedOn": "2026-10-25",
+   "checkedSource": "업체 공식 홈페이지",
+   "extraFee": "반려동물 동반 입실 시 청소비 20,000원",
+   "indoorOutdoor": "실내",
+   "petAccess": "allowed",
+   "sizeLimit": "7kg 이하 (7kg 초과 시 입실 불가)"
+  },
+  "gocamp-20": {
+   "checkedOn": "2026-10-25",
+   "checkedSource": "업체 공식 홈페이지",
+   "petAccess": "allowed"
+  },
+  "gocamp-260": {
+   "checkedOn": "2026-10-25",
+   "checkedSource": "업체 공식 홈페이지",
+   "leash": "목줄 착용 필수",
+   "petAccess": "allowed"
+  },
+  "gocamp-6": {
+   "checkedOn": "2026-10-25",
+   "checkedSource": "업체 공식 홈페이지",
+   "petAccess": "restricted",
+   "sizeLimit": "소형견만 가능 (오토캠핑 사이트에 한함, 카라반 동반 불가)"
+  },
+  "gocamp-66": {
+   "checkedOn": "2026-10-25",
+   "checkedSource": "업체 공식 홈페이지",
+   "indoorOutdoor": "야외",
+   "largeDog": "대형견 동반 가능",
+   "petAccess": "allowed"
+  },
+  "tour-138661": {
+   "checkedOn": "2026-10-25",
+   "checkedSource": "업체 공식 홈페이지",
+   "indoorOutdoor": "실내",
+   "petAccess": "restricted"
+  },
+  "tour-2603352": {
+   "cage": "호텔 내 업장 이용 시 케이지 또는 반려견 유모차 필수",
+   "checkedOn": "2026-10-25",
+   "checkedSource": "업체 공식 홈페이지",
+   "leash": "호텔 내 이동 시 목줄·케이지·반려견 유모차 또는 가방 이용",
+   "petAccess": "restricted"
+  },
+  "tour-3532734": {
+   "checkedOn": "2026-10-25",
+   "checkedSource": "업체 공식 홈페이지",
+   "petAccess": "allowed"
+  },
+  "tour-3533003": {
+   "checkedOn": "2026-10-25",
+   "checkedSource": "업체 공식 홈페이지",
+   "indoorOutdoor": "실내",
+   "petAccess": "restricted",
+   "petCount": "최대 1마리",
+   "sizeLimit": "10kg 이하"
   }
+ }
 }
