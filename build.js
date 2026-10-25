@@ -448,9 +448,21 @@ function summaryHtml(place) {
   const where = [REGION_SHORT[region] || region, locality].filter((part) => part && part !== "전국").join(" ");
   const address = displayValue(place.addr);
   const tel = displayValue(place.tel);
+  const hours = displayValue(place.hours);
   const homepage = displayValue(place.homepage);
+  const isHospital = place.category === "hospital";
   const sentences = [];
-  if (place.category === "hospital" && place.verified24h === true) sentences.push("24시간 진료하는 동물병원으로 등록돼 있어요.");
+  if (isHospital && place.verified24h === true) sentences.push("24시간 진료하는 동물병원으로 등록돼 있어요.");
+  const josa = hasJongseong(place.name) ? "은" : "는";
+  if (address) sentences.push(`${escapeHtml(place.name)}${josa} ${escapeHtml(address)}에 있는 ${escapeHtml(cat.label)}예요.`);
+  else if (where) sentences.push(`${escapeHtml(place.name)}${josa} ${escapeHtml(where)}에 있는 ${escapeHtml(cat.label)}예요.`);
+  if (hours) sentences.push(`${isHospital ? "진료시간" : "운영시간"}은 ${escapeHtml(hours)}로 안내돼 있어요.`);
+  if (homepage) sentences.push("휴무와 최신 공지는 공식 홈페이지에서 확인하는 게 가장 정확해요.");
+  else if (tel) sentences.push(`방문 전에 전화 ${escapeHtml(tel)}로 반려동물 동반이 되는지 확인해 주세요.`);
+  if (place.category === "stay") sentences.push("동반 조건(크기·마릿수·추가 요금)은 숙소마다 달라서 예약 전에 확인이 필요해요.");
+  else if (place.category === "food") sentences.push("동반 가능한 좌석과 조건은 매장마다 달라서 방문 전에 확인해 주세요.");
+  else if (place.category === "park") sentences.push("목줄 착용과 배변 봉투 지참은 기본 예절이에요.");
+  else if (isHospital && place.verified24h !== true) sentences.push("진료 과목과 야간 진료 여부는 병원에 직접 확인해 주세요.");
   if (!sentences.length) return "";
   return `<p class="pd-summary">${sentences.join(" ")}</p>`;
 }
