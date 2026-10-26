@@ -630,3 +630,4 @@ function assertPublished(){
  console.log("[petmap check] html",htmlCount,"noindex",noindex,"sitemap",locs.size,"place in sitemap",placeLocs.length,"home place links",homePlaceLinks,"home guide links",homeGuideLinks,"guide place-name links",linkStats.linked+"/"+linkStats.total,"guides with /place/",linkStats.guidesWithPlaceLink+"/"+linkStats.guidePages,"footer miss",footerMiss,"broken links",brokenLinks,"status phrases",phraseHits,"ad pages",adPages,"max ad units",maxAds);
 }
 assertPublished();
+fs.writeFileSync(path.join(OUT, "naverebbe134aa39474015c28a41a735eee7b.html"), "naver-site-verification: naverebbe134aa39474015c28a41a735eee7b.html", "utf8");
