@@ -1103,7 +1103,7 @@ function makeMainMeta(html) {
   const title = titleMatch ? titleMatch[1].trim() : DEFAULT_TITLE;
   if (title !== DEFAULT_TITLE) throw new Error("메인 <title>이 고정 문구와 다릅니다: " + title);
   const desc = DEFAULT_DESCRIPTION;
-  const tags = makeMeta({ title, description: desc, url: BASE_URL + "/", image: BASE_URL + "/og/default.png", alt: "댕냥이와 함께", type: "website" }).replace(/<title>[\s\S]*?<\/title>\n\s*/, "");
+  const tags = makeMeta({ title, description: desc, url: BASE_URL + "/", image: BASE_URL + "/og/default-v2.jpg", alt: "댕냥이와 함께", type: "website" }).replace(/<title>[\s\S]*?<\/title>\n\s*/, "");
   html = html.replace(/\s*<meta name="description"[^>]*>/i, "").replace(/\s*<link rel="canonical"[^>]*>/i, "");
   html = html.replace(/\s*<meta (?:property="og:[^"]+"|name="twitter:[^"]+")[^>]*>/gi, "");
   html = html.replace(titleMatch ? titleMatch[0] : "</head>", (match) => match + "\n    " + tags);
