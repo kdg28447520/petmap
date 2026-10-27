@@ -233,7 +233,7 @@ function makeGuide(g){
  const secondHeading=body.indexOf("<h2>",body.indexOf("<h2>")+4);
  if(secondHeading>0)body=body.slice(0,secondHeading)+adSlot+body.slice(secondHeading);
  else body+=adSlot;
- const desc=firstParagraph(src.md)||g.description||src.title;
+ const desc=g.description||firstParagraph(src.md)||src.title;
  const html='<div class="crumb"><a href="/guides/">여행 가이드</a> / '+esc(g.group)+'</div><article class="article"><h1>'+esc(src.title)+'</h1><p class="meta">작성 2026-10-18 · 갱신 2026-10-18</p>'+image+body+'<p><a href="/">전국 지도</a></p></article>';
  const structured={"@context":"https://schema.org","@type":"Article",headline:src.title,description:desc,datePublished:LONG_DATE,dateModified:LONG_DATE,inLanguage:"ko-KR",author:{"@type":"Organization",name:"댕냥이와 함께"},publisher:{"@type":"Organization",name:"댕냥이와 함께"},mainEntityOfPage:BASE+url};
  return layout(src.title,desc,url,html,structured);
