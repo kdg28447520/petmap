@@ -443,7 +443,7 @@ function assertPublished(){
  if(!privacy.includes("Google을 포함한 제3자 업체")||!privacy.includes("다른 웹사이트를 이전에 방문한 기록")||!privacy.includes("https://policies.google.com/technologies/ads")||!privacy.includes("https://www.aboutads.info/choices/"))problems.push("개인정보처리방침에 제3자 업체 쿠키 고지가 없습니다.");
  if(privacy.includes("송출이 확인된 상태는 아닙니다"))problems.push("개인정보처리방침이 아직 광고 미사용으로 적혀 있습니다.");
  if(privacy.includes("코드 기반의 안내"))problems.push("개인정보처리방침에 임시 안내 문장이 남아 있습니다.");
- for(const phrase of ["처리하는 개인정보","제3자에게 제공하지 않습니다","국외 이전","Vercel Inc.","파기 절차","열람","처리정지","개인정보 보호책임자","1833-6972","privacy.kisa.or.kr","만 14세","youronlinechoices.eu","2026년 10월 17일","현재 위치 정보를 사용하지 않습니다.","GitHub, Inc.","OpenStreetMap France","OpenStreetMap Foundation","[상호]"]){
+ for(const phrase of ["처리하는 개인정보","제3자에게 제공하지 않습니다","국외 이전","Vercel Inc.","파기 절차","열람","처리정지","개인정보 보호책임자","1833-6972","privacy.kisa.or.kr","만 14세","youronlinechoices.eu","2026년 10월 17일","현재 위치 정보를 사용하지 않습니다.","GitHub, Inc.","OpenStreetMap France","OpenStreetMap Foundation","김동곤 (운영자)"]){
   if(!privacy.includes(phrase))problems.push("개인정보처리방침 항목 누락: "+phrase);
  }
  if(privacy.includes("T맵")||privacy.includes("이용자 기기 안에서만"))problems.push("쓰지 않는 T맵 또는 위치 기능 안내가 남아 있습니다.");

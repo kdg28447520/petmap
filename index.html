@@ -1424,10 +1424,10 @@
       </div>
     </section>
     <div class="pm-hero home-only">
-      <span class="big" id="statTotal">1,389</span>
+      <span class="big" id="statTotal">1,109</span>
       <h1>곳 · 지도에 담은 동반 장소<small>17개 시·도 · 공개 자료 3곳 합계</small></h1>
     </div>
-    <p class="pm-intro home-only">댕냥이와 함께는 전국의 반려동물 동반 장소 1,389곳을 지도에 모은 안내 사이트입니다. 공개 자료와 공식 안내로 확인한 주소와 동반 조건만 적고, 확인되지 않은 내용은 비워 둡니다. 방문 전에는 각 장소 페이지에 적힌 출처와 확인일을 함께 봐 주세요.</p>
+    <p class="pm-intro home-only">댕냥이와 함께는 전국의 반려동물 동반 장소 1,109곳을 지도에 모은 안내 사이트입니다. 24시 동물병원 280곳은 급할 때 찾도록 따로 모아 뒀습니다. 공개 자료와 공식 안내로 확인한 주소와 동반 조건만 적고, 확인되지 않은 내용은 비워 둡니다. 방문 전에는 각 장소 페이지에 적힌 출처와 확인일을 함께 봐 주세요.</p>
     <form class="pm-find home-only" id="homeFind" action="/" method="get" role="search">
       <label class="sr" for="search">장소 검색</label>
       <div class="search-box">
@@ -1760,7 +1760,7 @@
 
         function fillStats() {
           var total = document.getElementById("statTotal");
-          if (total) total.textContent = fmt(PLACES.length);
+          if (total) total.textContent = fmt(PLACES.filter(function (p) { return p.cat !== "hospital"; }).length);
         }
 
         /* ---------- 지역·유형 필터 ---------- */
