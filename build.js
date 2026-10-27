@@ -27,7 +27,7 @@ const CATEGORIES = {
   hospital: { label: "24시 동물병원", color: "#C62F3B", image: "hospital.png" },
 };
 const DEFAULT_TITLE = "댕냥이와 함께 — 반려동물 동반 전국 지도";
-const DEFAULT_DESCRIPTION = "서울부터 제주까지 전국의 애견 숙박, 동반 음식점·카페, 반려견 공원과 산책로, 24시간 동물병원 정보를 모은 지도예요. 방문 전 해당 업체에 확인하세요.";
+const DEFAULT_DESCRIPTION = "서울부터 제주까지 전국의 애견 숙박, 동반 음식점·카페, 반려견 공원과 산책로 정보를 모은 지도예요. 24시 동물병원은 급할 때 찾도록 따로 모아뒀어요.";
 const DEFAULT_DATE = new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Seoul", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date());
 const REPORT_EMAIL = process.env.REPORT_EMAIL || "";
 

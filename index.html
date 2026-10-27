@@ -8,12 +8,12 @@
     <link rel="icon" href="data:," />
     <link rel="stylesheet" href="/ad-slot.css" />
     <title>댕냥이와 함께 — 반려동물 동반 전국 지도</title>
-    <meta name="description" content="서울부터 제주까지 전국의 애견 숙박, 동반 음식점·카페, 반려견 공원과 산책로, 24시간 동물병원 정보를 모은 지도예요. 방문 전 해당 업체에 확인하세요." />
+    <meta name="description" content="서울부터 제주까지 전국의 애견 숙박, 동반 음식점·카페, 반려견 공원과 산책로 정보를 모은 지도예요. 24시 동물병원은 급할 때 찾도록 따로 모아뒀어요." />
     <link rel="canonical" href="https://www.petmap.kr/" />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="댕냥이와 함께" />
     <meta property="og:title" content="댕냥이와 함께 — 반려동물 동반 전국 지도" />
-    <meta property="og:description" content="서울부터 제주까지 전국의 애견 숙박, 동반 음식점·카페, 반려견 공원과 산책로, 24시간 동물병원 정보를 모은 지도예요. 방문 전 해당 업체에 확인하세요." />
+    <meta property="og:description" content="서울부터 제주까지 전국의 애견 숙박, 동반 음식점·카페, 반려견 공원과 산책로 정보를 모은 지도예요. 24시 동물병원은 급할 때 찾도록 따로 모아뒀어요." />
     <meta property="og:url" content="https://www.petmap.kr/" />
     <meta property="og:image" content="https://www.petmap.kr/og/default.png" />
     <meta property="og:image:width" content="1200" />
@@ -22,7 +22,7 @@
     <meta property="og:locale" content="ko_KR" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="댕냥이와 함께 — 반려동물 동반 전국 지도" />
-    <meta name="twitter:description" content="서울부터 제주까지 전국의 애견 숙박, 동반 음식점·카페, 반려견 공원과 산책로, 24시간 동물병원 정보를 모은 지도예요. 방문 전 해당 업체에 확인하세요." />
+    <meta name="twitter:description" content="서울부터 제주까지 전국의 애견 숙박, 동반 음식점·카페, 반려견 공원과 산책로 정보를 모은 지도예요. 24시 동물병원은 급할 때 찾도록 따로 모아뒀어요." />
     <meta name="twitter:image" content="https://www.petmap.kr/og/default.png" />
     <style>
       :root {
@@ -456,6 +456,9 @@
         color: var(--bg);
       }
       .chip[aria-pressed="true"] .cnt { color: inherit; opacity: 1; }
+      .emg-row { margin: 0; padding: 0 16px 8px; font-size: 13.5px; }
+      .emg-row a { color: var(--emg); text-decoration: none; font-weight: 600; }
+      .emg-row a:hover { text-decoration: underline; }
 
       /* ---------- main split ---------- */
       main {
@@ -1438,12 +1441,12 @@
       <button type="submit" aria-label="검색"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg></button>
     </form>
     <div class="chips home-only" id="chips" role="group" aria-label="장소 종류">
-      <button type="button" class="chip" data-cat="" aria-pressed="true">전체 <span class="cnt">1,389</span></button>
+      <button type="button" class="chip" data-cat="" aria-pressed="true">전체 <span class="cnt">1,109</span></button>
       <button type="button" class="chip" data-cat="stay" aria-pressed="false">숙박 <span class="cnt">353</span></button>
       <button type="button" class="chip" data-cat="food" aria-pressed="false">식당·카페 <span class="cnt">603</span></button>
       <button type="button" class="chip" data-cat="park" aria-pressed="false">산책 <span class="cnt">153</span></button>
-      <button type="button" class="chip" data-cat="hospital" aria-pressed="false">24시 병원 <span class="cnt">280</span></button>
     </div>
+    <p class="emg-row home-only" id="emgRow"><a href="/?type=vet">🚑 급할 때 — 24시 동물병원만 보기</a></p>
     <div class="pm-local home-only">
       <label class="sr" for="localityFilter">시·군·구</label>
       <select id="localityFilter" name="locality" aria-label="시·군·구" disabled>
@@ -1801,6 +1804,8 @@
           return n;
         }
         function syncChips(scroll) {
+          var emgRow = document.getElementById("emgRow");
+          if (emgRow) emgRow.style.display = state.type === "hospital" ? "none" : "";
           var buttons = chipsEl.querySelectorAll(".chip");
           for (var i = 0; i < buttons.length; i++) {
             var b = buttons[i];
@@ -1825,6 +1830,7 @@
           for (var i = 0; i < PLACES.length; i++) {
             var p = PLACES[i];
             if (state.type && p.cat !== state.type) continue;
+            if (state.type !== "hospital" && p.cat === "hospital") continue;
             if (toks.length) {
               var hay = normText(p.name + p.address + p.region + p.locality + CATS[p.cat].label);
               var ok = toks.every(function (tok) { return hay.indexOf(tok) !== -1; });
@@ -1860,8 +1866,7 @@
           { key: "", label: "전체" },
           { key: "stay", label: "숙박" },
           { key: "food", label: "식당·카페" },
-          { key: "park", label: "산책" },
-          { key: "hospital", label: "24시 병원" }
+          { key: "park", label: "산책" }
         ];
         function buildChips() {
           chipsEl.innerHTML = "";
@@ -1921,9 +1926,11 @@
           });
         }
 
-        /* catKey가 빈 문자열이면 유형을 가리지 않는다. 칩 숫자는 지역·검색만 반영한다. */
+        /* catKey가 빈 문자열이면 유형을 가리지 않는다. 칩 숫자는 지역·검색만 반영한다.
+           병원은 카테고리에서 빼고 응급 보기(catKey==="hospital")에서만 포함한다. */
         function inScope(p, catKey) {
           if (catKey && p.cat !== catKey) return false;
+          if (catKey !== "hospital" && p.cat === "hospital") return false;
           if (state.region && p.region !== state.region) return false;
           if (state.locality && p.locality !== state.locality) return false;
           if (!state.q) return true;
