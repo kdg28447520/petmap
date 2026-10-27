@@ -1218,6 +1218,11 @@ function copyAssets() {
   for (const file of ["index.html", "index-rule.js", "leaflet.css", "ad-slot.css", "places_park.json"]) {
     if (fs.existsSync(path.join(ROOT, file))) fs.copyFileSync(path.join(ROOT, file), path.join(OUT, file));
   }
+  /* 파비콘도 포스터와 같은 방식: 이진 파일은 .b64 텍스트로 보관하고 빌드 때 복원한다 */
+  for (const file of ["favicon.ico", "favicon.png", "apple-touch-icon.png"]) {
+    const b64Path = path.join(ROOT, file + ".b64");
+    if (fs.existsSync(b64Path)) fs.writeFileSync(path.join(OUT, file), Buffer.from(fs.readFileSync(b64Path, "utf8").trim(), "base64"));
+  }
   const dataSrc = path.join(ROOT, "data");
   if (fs.existsSync(dataSrc)) {
     fs.cpSync(dataSrc, path.join(OUT, "data"), {
