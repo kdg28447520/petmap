@@ -452,7 +452,7 @@ function summaryHtml(place) {
   const homepage = displayValue(place.homepage);
   const isHospital = place.category === "hospital";
   const sentences = [];
-  if (isHospital && place.verified24h === true) sentences.push("24시간 진료하는 동물병원으로 등록돼 있어요.");
+  if (isHospital && place.verified24h === true) sentences.push("24시간 진료하는 동물병원이에요.");
   const josa = hasJongseong(place.name) ? "은" : "는";
   if (address) sentences.push(`${escapeHtml(place.name)}${josa} ${escapeHtml(address)}에 있는 ${escapeHtml(cat.label)}예요.`);
   else if (where) sentences.push(`${escapeHtml(place.name)}${josa} ${escapeHtml(where)}에 있는 ${escapeHtml(cat.label)}예요.`);
@@ -1017,11 +1017,6 @@ function makePlacePage(place, css, updatedAt) {
     <p class="data-credit">장소·반려동물 동반 정보 출처: <a href="https://api.visitkorea.or.kr" target="_blank" rel="noopener">한국관광공사 TourAPI</a> 「반려동물 동반여행 서비스」(<a href="https://www.data.go.kr/data/15135102/openapi.do" target="_blank" rel="noopener">공공데이터포털</a>). 사진은 공공누리 제1유형(출처표시)·제3유형(출처표시+변경금지) 조건에 따라 한국관광공사의 공공저작물을 이용했습니다 (<a href="https://contest.visitkorea.or.kr/kor/helpDesk/copyrightGuide.kto" target="_blank" rel="noopener">한국관광공사 저작권정책</a>). 댕냥이와 함께는 한국관광공사와 제휴하거나 후원받는 사이트가 아닙니다.</p>
     <p>© 2026 댕냥이와 함께 · 운영 김동곤 · <a href="mailto:kdg2844@gmail.com">kdg2844@gmail.com</a> · 공공데이터 기반 안내 · 방문 전 해당 업체에 직접 확인해 주세요.</p>
     <p>데이터 기준일: ${escapeHtml(updatedAt)}</p>
-    <div class="footer-contact">
-      <p><strong>광고 및 제휴 문의</strong></p>
-      <p>댕냥이와 함께에 광고 게재나 제휴를 원하시면 아래 메일로 문의해 주세요. 업체명과 문의 내용을 보내주시면 확인 후 회신드리겠습니다.</p>
-      <p><a href="mailto:kdg2844@gmail.com">kdg2844@gmail.com</a></p>
-    </div>
   </footer>
   ${AD_WATCH}
 </body>

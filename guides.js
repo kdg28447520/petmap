@@ -52,7 +52,7 @@ function getPlaces(g){
 }
 function itemTable(places){
  const rows=places.map(p=>'<tr><td><a href="/place/'+encodeURIComponent(p.id)+'.html">'+esc(p.name)+'</a></td><td>'+esc(p.addr||"주소 재확인")+'</td><td>'+esc(({stay:"숙박",food:"음식점·카페",park:"산책·놀이터",hospital:"동물병원"})[p.category]||"장소")+'</td><td>'+esc(PET_EMPTY)+'</td></tr>').join("");
- return '<div class="table-scroll"><table><thead><tr><th>장소명</th><th>주소</th><th>유형</th><th>동반 조건·요금</th></tr></thead><tbody>'+rows+'</tbody></table></div><p class="subtle">표의 장소는 사이트 수록 데이터에서 지역·카테고리 기준으로 추린 목록이며, 추천 순위나 최신 운영 보증이 아닙니다. 국립공원은 출입 제한, 도립공원·군립공원·자연휴양림은 출입 미확인이라 이 표에 넣지 않습니다. 자세한 사항은 각 시설에 확인하세요.</p>';
+ return '<div class="table-scroll"><table><thead><tr><th>장소명</th><th>주소</th><th>유형</th><th>동반 조건·요금</th></tr></thead><tbody>'+rows+'</tbody></table></div><p class="subtle">표의 장소는 지역·카테고리 기준으로 추린 목록이에요. 국립공원은 출입 제한, 도립공원·군립공원·자연휴양림은 출입이 확인되지 않아 넣지 않았습니다. 방문 전에 각 시설에 확인하세요.</p>';
 }
 function compareTable(g){
  const opts=[
