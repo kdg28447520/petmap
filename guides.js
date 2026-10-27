@@ -15,7 +15,7 @@ const esc=(x)=>String(x==null?"":x).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt
 const plain=x=>String(x||"").replace(/<[^>]+>/g,"").trim();
 const data=JSON.parse(fs.readFileSync(path.join(ROOT,"content","guides.json"),"utf8"));
 const longGuides=JSON.parse(fs.readFileSync(path.join(ROOT,"content","long-guides.json"),"utf8"));
-const EXCLUDED_FROM_LISTS=new Set(["korea-pet-map-counts"]);
+const EXCLUDED_FROM_LISTS=new Set(["korea-pet-map-counts","capital-pet-place-pattern","chungcheong-pet-place-pattern","yeongnam-pet-place-pattern","sparse-region-hospital-map","travel-24h-hospital-counts","how-to-read-petmap-records"]);
 const LONG_DATE="2026-10-18";
 const all=JSON.parse(fs.readFileSync(path.join(OUT,"places.json"),"utf8")).places;
 const sec=(head,body)=>'<section class="section"><h2>'+esc(head)+'</h2>'+body+'</section>';
@@ -428,7 +428,7 @@ function assertPublished(){
      if(locs.has(url))problems.push("noindex인데 사이트맵에 있음: "+url);
      if(adUnit)problems.push("noindex 페이지에 광고 단위: "+rel);
     }else if(!locs.has(url))problems.push("색인 대상인데 사이트맵에 없음: "+url);
-    if(blocked && !rel.startsWith("/place/") && rel!=="/404.html" && rel!=="/guides/korea-pet-map-counts.html")problems.push("장소가 아닌 페이지가 noindex: "+rel);
+    if(blocked && !rel.startsWith("/place/") && rel!=="/404.html" && !EXCLUDED_FROM_LISTS.has(rel.startsWith("/guides/")?rel.slice("/guides/".length,-".html".length):""))problems.push("장소가 아닌 페이지가 noindex: "+rel);
     if(barePage && adUnit)problems.push("얇거나 오류 페이지에 광고 단위: "+rel);
     if(rel.startsWith("/place/") && !html.includes("정보 정정 요청"))problems.push("정정 요청 링크 없음: "+rel);
     if(!blocked && rel.startsWith("/place/") && !adUnit)problems.push("색인 장소 페이지에 광고 단위가 없습니다: "+rel);

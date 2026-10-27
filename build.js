@@ -797,6 +797,7 @@ function pickRepresentatives(places) {
 function crawlCatalogHtml(places) {
   const counts = new Map();
   for (const place of places) {
+    if (place.category === "hospital") continue;
     const region = regionOf(place.addr);
     counts.set(region, (counts.get(region) || 0) + 1);
   }
@@ -823,11 +824,14 @@ function crawlCatalogHtml(places) {
     return `<section><h3>${escapeHtml(region)}</h3><ul class="rep-places">${items}</ul></section>`;
   }).join("");
   const guideItems = homeGuideLinks().map((guide) => `<li><a href="/guides/${encodeURIComponent(guide.id)}.html">${escapeHtml(guide.title)}</a></li>`).join("");
-  return `<div class="crawl-catalog-inner"><h2>시·도별 장소 수</h2><ul class="region-counts">${regionItems}</ul><h2>시·도별 대표 장소</h2><p class="crawl-note">지도가 열리지 않아도 상세 페이지로 이동할 수 있어요. 수록 ${places.length.toLocaleString("ko-KR")}곳 가운데 시·도마다 고른 ${reps.length}곳입니다.</p>${placeItems}<h2>여행 가이드</h2><ul class="guide-links">${guideItems}</ul></div>`;
+  const petCount = places.filter((place) => place.category !== "hospital").length;
+  const hospCount = places.length - petCount;
+  return `<div class="crawl-catalog-inner"><h2>시·도별 장소 수</h2><ul class="region-counts">${regionItems}</ul><h2>시·도별 대표 장소</h2><p class="crawl-note">지도가 열리지 않아도 상세 페이지로 이동할 수 있어요. 수록 동반 장소 ${petCount.toLocaleString("ko-KR")}곳(동물병원 ${hospCount.toLocaleString("ko-KR")}곳은 별도) 가운데 시·도마다 고른 ${reps.length}곳입니다.</p>${placeItems}<h2>여행 가이드</h2><ul class="guide-links">${guideItems}</ul></div>`;
 }
 function homeRegionsHtml(places) {
   const counts = new Map();
   for (const place of places) {
+    if (place.category === "hospital") continue;
     const region = regionOf(place.addr);
     counts.set(region, (counts.get(region) || 0) + 1);
   }
