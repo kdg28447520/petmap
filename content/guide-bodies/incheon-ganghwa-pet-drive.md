@@ -39,6 +39,6 @@
 강화도 장소는 이번 표(지역 키 「인천」 기준 8곳)에 들어 있지 않아 다루지 않았습니다.
 
 ## 출처
-- 한국관광공사 TourAPI 4.0 KorService2 `detailPetTour2` (반려동물 동반 여행 정보), 조회 2026-10-18(KST)
-- 펫맵(댕냥이와 함께) 장소 데이터 `places.json`
+- 한국관광공사 반려동물 동반 여행 정보 공공데이터
+- 한국관광공사 반려동물 동반 공식 여행지 안내 데이터
 - 인천시설공단 송도 달빛축제공원 https://www.insiseol.or.kr/park/songdo/facility/moonlight.jsp
