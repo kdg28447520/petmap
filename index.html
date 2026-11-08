@@ -1405,6 +1405,30 @@
         body.place-doc .pd-btn.pri { background: var(--brand); border-color: var(--brand); color: #1A1A1A; }
         body.place-doc .pd-map-addr { background: rgba(32, 29, 24, .94); }
       }
+      .pm-share-pill{display:inline-flex;align-items:center;gap:4px;background:rgba(194,68,31,0.08);border:1px solid rgba(194,68,31,0.25);border-radius:999px;padding:5px 12px;font-size:13px;font-weight:700;color:#B83A17;cursor:pointer;transition:transform 0.15s cubic-bezier(0.16,1,0.3,1),background 0.15s ease}
+      .pm-share-pill:hover{background:rgba(194,68,31,0.15)}
+      .pm-share-pill:active{transform:scale(0.96)}
+      .pm-fab-share{position:fixed;right:20px;bottom:24px;z-index:999}
+      .pm-fab-share button{display:flex;align-items:center;gap:6px;background:#C2441F;color:#FFF;border:1px solid rgba(255,255,255,0.2);border-radius:999px;padding:12px 18px;font-size:14px;font-weight:700;box-shadow:0 6px 20px rgba(194,68,31,0.4);cursor:pointer;transition:transform 0.15s cubic-bezier(0.16,1,0.3,1),box-shadow 0.15s ease}
+      .pm-fab-share button:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(194,68,31,0.5)}
+      .pm-fab-share button:active{transform:scale(0.96)}
+      .pm-share-modal{position:fixed;top:0;left:0;right:0;bottom:0;z-index:9999;display:flex;align-items:flex-end;justify-content:center}
+      .pm-share-backdrop{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.55);backdrop-filter:blur(4px)}
+      .pm-share-sheet{position:relative;background:#FFF;width:100%;max-width:480px;border-radius:24px 24px 0 0;padding:20px 20px 36px;box-shadow:0 -8px 30px rgba(0,0,0,0.25);animation:pmSlideUp 0.25s cubic-bezier(0.16,1,0.3,1)}
+      @keyframes pmSlideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+      .pm-share-handle{width:40px;height:4px;background:#DDD;border-radius:2px;margin:0 auto 16px}
+      .pm-share-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:12px}
+      .pm-share-item{display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 6px;border-radius:14px;background:#F8F9FA;cursor:pointer;border:1px solid #E2E8F0;transition:transform 0.15s ease,background 0.15s ease}
+      .pm-share-item:hover{background:#EDF2F7}
+      .pm-share-item:active{transform:scale(0.95)}
+      .pm-share-icon{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;box-shadow:0 2px 8px rgba(0,0,0,0.08)}
+      .pm-share-label{font-size:12px;font-weight:700;color:#2D3748}
+      .pm-toast{position:absolute;bottom:90px;left:50%;transform:translateX(-50%);background:rgba(194,68,31,0.95);color:#FFF;padding:10px 22px;border-radius:999px;font-size:13px;font-weight:700;box-shadow:0 4px 16px rgba(0,0,0,0.25);pointer-events:none}
+      @media (prefers-color-scheme: dark) {
+        .pm-share-sheet{background:#201D18;color:#FFF}
+        .pm-share-item{background:#2D2822;border-color:#3E372F}
+        .pm-share-label{color:#E2E8F0}
+      }
     </style>
     <!-- [SEO & Rich Snippets JSON-LD Schema] -->
   <script type="application/ld+json">
@@ -1430,7 +1454,8 @@
         </span>
         <span>댕냥이와 함께</span>
       </a>
-      <nav class="site-nav" aria-label="주요 메뉴">
+      <nav class="site-nav" aria-label="주요 메뉴" style="display:flex;align-items:center;gap:6px;">
+        <button type="button" class="pm-share-pill" onclick="openShareModal()" aria-label="공유하기"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>공유</button>
         <a href="/guides/">여행 가이드</a>
         <a href="/about.html">소개</a>
       </nav>
@@ -1579,11 +1604,55 @@
       <a class="ad-contact-btn" href="mailto:kdg2844@gmail.com">kdg2844@gmail.com</a>
     </section>
 
+    <!-- [플로팅 공유하기 버튼] -->
+    <div class="pm-fab-share"><button type="button" onclick="openShareModal()" aria-label="반려동물 지도 공유하기"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg> <span>공유하기</span></button></div>
+
+    <!-- [바이럴 공유 모달 & 캔버스 카드 생성기] -->
+    <div id="shareModal" class="pm-share-modal" hidden aria-modal="true" role="dialog">
+      <div class="pm-share-backdrop" onclick="closeShareModal()"></div>
+      <div class="pm-share-sheet">
+        <div class="pm-share-handle"></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+          <h3 style="font-size:18px;font-weight:700;color:#C2441F;margin:0;">🐾 댕냥이와 함께 지도 공유</h3>
+          <button type="button" onclick="closeShareModal()" style="font-size:22px;color:#888;padding:4px;cursor:pointer;background:none;border:none;" aria-label="닫기">✕</button>
+        </div>
+        <p style="font-size:13px;color:#666;margin:0 0 18px;">반려동물 동반 여행 지도와 24시 동물병원 정보를 공유해 보세요.</p>
+        
+        <div class="pm-share-grid">
+          <button type="button" class="pm-share-item" onclick="shareKakao()">
+            <span class="pm-share-icon" style="background:#FEE500;color:#3C1E1E;">💬</span>
+            <span class="pm-share-label">카카오톡</span>
+          </button>
+          <button type="button" class="pm-share-item" onclick="shareThreads()">
+            <span class="pm-share-icon" style="background:#000;color:#FFF;">🧵</span>
+            <span class="pm-share-label">스레드</span>
+          </button>
+          <button type="button" class="pm-share-item" onclick="shareTwitter()">
+            <span class="pm-share-icon" style="background:#111;color:#FFF;">𝕏</span>
+            <span class="pm-share-label">X(트위터)</span>
+          </button>
+          <button type="button" class="pm-share-item" onclick="copyShareLink()">
+            <span class="pm-share-icon" style="background:#FFF3E0;color:#C2441F;">🔗</span>
+            <span class="pm-share-label">링크 복사</span>
+          </button>
+          <button type="button" class="pm-share-item" onclick="generateAndSaveCard()">
+            <span class="pm-share-icon" style="background:#E8F5E9;color:#2E7D32;">🖼️</span>
+            <span class="pm-share-label">카드 저장</span>
+          </button>
+          <button type="button" class="pm-share-item" onclick="nativeShare()">
+            <span class="pm-share-icon" style="background:#E3F2FD;color:#1565C0;">📱</span>
+            <span class="pm-share-label">더보기</span>
+          </button>
+        </div>
+        <div id="shareToast" class="pm-toast" hidden>링크가 복사되었습니다!</div>
+      </div>
+    </div>
+
     <footer>
       <nav class="trust-nav" aria-label="안내">
         <a href="/about.html">소개</a>
         <a href="/privacy.html">개인정보처리방침</a>
-        <a href="/contact.html">문의</a>
+        <a href="/contact.html">문의·의견 보내기</a>
         <a href="/terms.html">이용안내</a>
       </nav>
       <p>장소 정보는 한국관광공사 TourAPI 공공데이터(반려동물 동반 여행 정보)와 한국문화정보원 공공데이터(애견동반 카페), 고캠핑 반려견동반 캠핑장 정보를 기반으로 하고, 24시간 동물병원은 maruvet·vet24 24시 목록 등재 정보를 2026년 10월에 확인해 반영했습니다. 실제 운영 정보와 다를 수 있으니 방문 전 해당 업체에 확인하세요. <span id="dataUpdatedAt">데이터 기준일: 2026-10-13</span></p>
@@ -2946,6 +3015,130 @@
           });
         }
       });
+      function openShareModal() {
+        var m = document.getElementById('shareModal');
+        if (m) m.hidden = false;
+      }
+      function closeShareModal() {
+        var m = document.getElementById('shareModal');
+        if (m) m.hidden = true;
+      }
+      function showToast(msg) {
+        var t = document.getElementById('shareToast');
+        if (!t) return;
+        t.innerText = msg;
+        t.hidden = false;
+        setTimeout(function() { t.hidden = true; }, 2200);
+      }
+      function copyShareLink() {
+        var url = window.location.href;
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(url).then(function() {
+            showToast('링크가 클립보드에 복사되었습니다!');
+          }).catch(function() {
+            showToast('링크 복사 완료: ' + url);
+          });
+        } else {
+          var ta = document.createElement('textarea');
+          ta.value = url;
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          document.body.removeChild(ta);
+          showToast('링크가 복사되었습니다!');
+        }
+      }
+      function nativeShare() {
+        var title = document.title || '댕냥이와 함께';
+        var text = '전국 반려동물 동반 지도 & 24시 동물병원 검색! 🐾';
+        var url = window.location.href;
+        if (navigator.share) {
+          navigator.share({ title: title, text: text, url: url }).catch(function() {});
+        } else {
+          copyShareLink();
+        }
+      }
+      function shareKakao() {
+        var url = encodeURIComponent(window.location.href);
+        var title = encodeURIComponent(document.title || '댕냥이와 함께 — 반려동물 동반 전국 지도');
+        var kakaoUrl = 'https://sharer.kakao.com/talk/friends/picker/link?url=' + url + '&text=' + title;
+        window.open(kakaoUrl, '_blank', 'width=520,height=640');
+      }
+      function shareThreads() {
+        var text = encodeURIComponent((document.title || '댕냥이와 함께') + '\n반려동물 동반 여행지 & 24시 동물병원 지도 🐾\n' + window.location.href);
+        window.open('https://threads.net/intent/post?text=' + text, '_blank');
+      }
+      function shareTwitter() {
+        var text = encodeURIComponent(document.title || '댕냥이와 함께 — 반려동물 동반 전국 지도');
+        var url = encodeURIComponent(window.location.href);
+        window.open('https://twitter.com/intent/tweet?text=' + text + '&url=' + url, '_blank');
+      }
+      function generateAndSaveCard() {
+        try {
+          var canvas = document.createElement('canvas');
+          canvas.width = 1080;
+          canvas.height = 1350;
+          var ctx = canvas.getContext('2d');
+          
+          var grad = ctx.createLinearGradient(0, 0, 0, 1350);
+          grad.addColorStop(0, '#C2441F');
+          grad.addColorStop(1, '#661A05');
+          ctx.fillStyle = grad;
+          ctx.fillRect(0, 0, 1080, 1350);
+          
+          ctx.strokeStyle = 'rgba(255,255,255,0.18)';
+          ctx.lineWidth = 4;
+          ctx.strokeRect(40, 40, 1000, 1270);
+          
+          ctx.fillStyle = '#FED7AA';
+          ctx.font = 'bold 36px sans-serif';
+          ctx.fillText('PETMAP · 댕냥이와 함께', 80, 130);
+          
+          ctx.fillStyle = '#FFFFFF';
+          ctx.font = 'bold 60px sans-serif';
+          ctx.fillText('댕댕이와 떠나는 전국 여행 🐾', 80, 230);
+          
+          ctx.fillStyle = 'rgba(255,255,255,0.75)';
+          ctx.font = '32px sans-serif';
+          ctx.fillText('반려동물 동반 카페·식당·숙소 & 24시 동물병원', 80, 290);
+          
+          ctx.fillStyle = 'rgba(255,255,255,0.08)';
+          if (ctx.roundRect) {
+            ctx.roundRect(80, 360, 920, 680, 28);
+            ctx.fill();
+          } else {
+            ctx.fillRect(80, 360, 920, 680);
+          }
+          
+          ctx.fillStyle = '#FDBA74';
+          ctx.font = 'bold 38px sans-serif';
+          ctx.fillText('🐶 댕냥이와 함께 핵심 안내', 130, 440);
+          
+          ctx.fillStyle = '#FFFFFF';
+          ctx.font = '34px sans-serif';
+          ctx.fillText('• 댕댕이 뛰어노는 전국의 오프리시 운동장', 130, 530);
+          ctx.fillText('• 테라스 동반 카페 & 맛집 실시간 위치 지도', 130, 610);
+          ctx.fillText('• 가을 낭만 가득 반려견 동반 글램핑·펜션', 130, 690);
+          ctx.fillText('• 위급할 때 바로 찾는 전국 24시 응급 동물병원', 130, 770);
+          ctx.fillText('• 견종별 출입 조건 및 무게 제한 한눈에 확인', 130, 850);
+          
+          ctx.fillStyle = '#FDBA74';
+          ctx.font = 'bold 36px sans-serif';
+          ctx.fillText('petmap.kr 에서 내 주변 동반 장소 찾기 ➔', 130, 980);
+          
+          ctx.fillStyle = 'rgba(255,255,255,0.5)';
+          ctx.font = '28px sans-serif';
+          ctx.fillText('포털 검색창에 [댕냥이와 함께] 를 검색하세요', 80, 1220);
+          
+          var a = document.createElement('a');
+          a.download = '댕냥이와함께_반려동물지도카드.png';
+          a.href = canvas.toDataURL('image/png');
+          a.click();
+          showToast('지도가 이미지 카드로 저장되었습니다!');
+        } catch (err) {
+          showToast('카드 생성 중 오류가 발생했습니다.');
+        }
+      }
     </script>
   </body>
 </html>
