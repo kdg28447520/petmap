@@ -374,14 +374,16 @@ connectAdsense();
 function injectAnalytics(){
  const id="G-18XXSL2NNJ";
  const snippet='<!-- Google tag (gtag.js) --><script async src="https://www.googletagmanager.com/gtag/js?id='+id+'"></script><script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag(\'js\',new Date());gtag(\'config\',\''+id+'\');</script>';
- const present=/googletagmanager\.com\/gtag\/js|google-analytics\.com\/(?:analytics|ga)\.js|googletagmanager\.com\/gtm\.js|\bgtag\s*\(/;
+ const present=/googletagmanager\.com\/gtag\/js\?id=G-18XXSL2NNJ/;
  function walk(dir){
   for(const ent of fs.readdirSync(dir,{withFileTypes:true})){
    const filename=path.join(dir,ent.name);
    if(ent.isDirectory())walk(filename);
    else if(ent.name.endsWith(".html")){
     const html=fs.readFileSync(filename,"utf8");
-    if(present.test(html))continue;
+    const headEnd=html.search(/<\/head>/i);
+    const head=headEnd>=0?html.slice(0,headEnd):"";
+    if(present.test(head))continue;
     if(!/<head\b/i.test(html))throw new Error("GA를 넣을 head가 없습니다: "+filename);
     fs.writeFileSync(filename,html.replace(/<head\b[^>]*>/i,function(open){return open+snippet;}),"utf8");
    }
