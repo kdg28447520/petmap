@@ -1412,7 +1412,8 @@
       .pm-fab-share button{display:flex;align-items:center;gap:6px;background:#C2441F;color:#FFF;border:1px solid rgba(255,255,255,0.2);border-radius:999px;padding:12px 18px;font-size:14px;font-weight:700;box-shadow:0 6px 20px rgba(194,68,31,0.4);cursor:pointer;transition:transform 0.15s cubic-bezier(0.16,1,0.3,1),box-shadow 0.15s ease}
       .pm-fab-share button:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(194,68,31,0.5)}
       .pm-fab-share button:active{transform:scale(0.96)}
-      .pm-share-modal{position:fixed;top:0;left:0;right:0;bottom:0;z-index:9999;display:flex;align-items:flex-end;justify-content:center}
+      .pm-share-modal[hidden]{display:none !important}
+      .pm-share-modal{position:fixed;top:0;left:0;right:0;bottom:0;z-index:9999;display:none;align-items:flex-end;justify-content:center}
       .pm-share-backdrop{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.55);backdrop-filter:blur(4px)}
       .pm-share-sheet{position:relative;background:#FFF;width:100%;max-width:480px;border-radius:24px 24px 0 0;padding:20px 20px 36px;box-shadow:0 -8px 30px rgba(0,0,0,0.25);animation:pmSlideUp 0.25s cubic-bezier(0.16,1,0.3,1)}
       @keyframes pmSlideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
@@ -3017,11 +3018,17 @@
       });
       function openShareModal() {
         var m = document.getElementById('shareModal');
-        if (m) m.hidden = false;
+        if (m) {
+          m.hidden = false;
+          m.style.display = 'flex';
+        }
       }
       function closeShareModal() {
         var m = document.getElementById('shareModal');
-        if (m) m.hidden = true;
+        if (m) {
+          m.hidden = true;
+          m.style.display = 'none';
+        }
       }
       function showToast(msg) {
         var t = document.getElementById('shareToast');
