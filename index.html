@@ -1406,7 +1406,22 @@
         body.place-doc .pd-map-addr { background: rgba(32, 29, 24, .94); }
       }
     </style>
-  </head>
+    <!-- [SEO & Rich Snippets JSON-LD Schema] -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "펫맵",
+    "url": "https://www.petmap.kr/",
+    "description": "반려동물 동반 가능 식당, 카페, 오프리시 운동장 및 숙소 실시간 지도 검색",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "https://www.petmap.kr/?q={search_term_string}",
+      "query-input": "required name=search_term_string"
+    }
+  }
+  </script>
+</head>
   <body>
     <div class="site-bar">
       <a class="brand" href="/">
