@@ -2,10 +2,22 @@
   "buildCommand": "node build.js && node guides.js",
   "outputDirectory": "dist",
   "rewrites": [
-    { "source": "/about", "destination": "/about.html" },
-    { "source": "/privacy", "destination": "/privacy.html" },
-    { "source": "/terms", "destination": "/terms.html" },
-    { "source": "/contact", "destination": "/contact.html" }
+    {
+      "source": "/about",
+      "destination": "/about.html"
+    },
+    {
+      "source": "/privacy",
+      "destination": "/privacy.html"
+    },
+    {
+      "source": "/terms",
+      "destination": "/terms.html"
+    },
+    {
+      "source": "/contact",
+      "destination": "/contact.html"
+    }
   ],
   "redirects": [
     {
@@ -19,16 +31,28 @@
       "statusCode": 301
     },
     {
-      "source": "/:path((?!ads\\.txt$).*)",
-      "has": [{ "type": "host", "value": "^petmap\\.kr$" }],
+      "source": "/:path((?!(ads\\.txt|llms\\.txt|robots\\.txt)$).*)",
+      "has": [
+        {
+          "type": "host",
+          "value": "^petmap\\.kr$"
+        }
+      ],
       "destination": "https://www.petmap.kr/:path*",
       "statusCode": 301
     },
     {
-      "source": "/:path((?!ads\\.txt$).*)",
+      "source": "/:path((?!(ads\\.txt|llms\\.txt|robots\\.txt)$).*)",
       "has": [
-        { "type": "host", "value": "^www\\.petmap\\.kr$" },
-        { "type": "header", "key": "x-forwarded-proto", "value": "http" }
+        {
+          "type": "host",
+          "value": "^www\\.petmap\\.kr$"
+        },
+        {
+          "type": "header",
+          "key": "x-forwarded-proto",
+          "value": "http"
+        }
       ],
       "destination": "https://www.petmap.kr/:path*",
       "statusCode": 301
