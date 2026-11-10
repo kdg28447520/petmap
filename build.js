@@ -1382,7 +1382,8 @@ async function build() {
   const pageUrls = indexablePlaces.map((p) => `${BASE_URL}/place/${encodeURIComponent(p.id)}.html`);
   const sitemapUrls = [BASE_URL + "/", ...pageUrls];
   fs.writeFileSync(path.join(OUT, "sitemap.xml"), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${sitemapUrls.map((url) => `  <url><loc>${escapeXml(url)}</loc><lastmod>${todayDate()}</lastmod></url>`).join("\n")}\n</urlset>\n`, "utf8");
-  fs.writeFileSync(path.join(OUT, "robots.txt"), `User-agent: *\nAllow: /\nSitemap: ${BASE_URL}/sitemap.xml\n`, "utf8");
+  fs.writeFileSync(path.join(OUT, "robots.txt"), fs.readFileSync(path.join(ROOT, "robots.txt"), "utf8"), "utf8");
+  fs.writeFileSync(path.join(OUT, "llms.txt"), fs.readFileSync(path.join(ROOT, "llms.txt"), "utf8"), "utf8");
   generateOgImages();
   // 미리 만든 OG 이미지가 저장소 og/ 폴더에 있으면 자동 생성본 대신 사용 (자동 생성 시 한글이 깨지는 문제 방지)
   if (fs.existsSync(path.join(ROOT, "og"))) fs.cpSync(path.join(ROOT, "og"), path.join(OUT, "og"), { recursive: true });
