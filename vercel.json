@@ -31,7 +31,7 @@
       "statusCode": 301
     },
     {
-      "source": "/:path((?!(ads\\.txt|llms\\.txt|robots\\.txt)$).*)",
+      "source": "/:path((?!ads\\.txt|llms\\.txt|robots\\.txt$).*)",
       "has": [
         {
           "type": "host",
@@ -42,7 +42,7 @@
       "statusCode": 301
     },
     {
-      "source": "/:path((?!(ads\\.txt|llms\\.txt|robots\\.txt)$).*)",
+      "source": "/:path((?!ads\\.txt|llms\\.txt|robots\\.txt$).*)",
       "has": [
         {
           "type": "host",

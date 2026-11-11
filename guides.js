@@ -633,3 +633,5 @@ function assertPublished(){
 }
 assertPublished();
 fs.writeFileSync(path.join(OUT, "naverebbe134aa39474015c28a41a735eee7b.html"), "naver-site-verification: naverebbe134aa39474015c28a41a735eee7b.html", "utf8");
+fs.writeFileSync(path.join(OUT, "llms.txt"), fs.readFileSync(path.join(ROOT, "llms.txt"), "utf8"), "utf8");
+fs.writeFileSync(path.join(OUT, "robots.txt"), fs.readFileSync(path.join(ROOT, "robots.txt"), "utf8"), "utf8");
