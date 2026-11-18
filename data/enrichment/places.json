@@ -219,6 +219,1258 @@
    "petAccess": "allowed",
    "petCount": "최대 1마리",
    "sizeLimit": "10kg 이하"
+  },
+  "tour-2706354": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(전구역 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-129439": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(일부 구역만 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-126133": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(전구역 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-127487": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(일부 구역만 동반가능)",
+   "sizeLimit": "일부 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-2756567": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(전구역 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-2914808": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(전구역 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-125875": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(전구역 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-2615225": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(전구역 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-2784124": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(전구역 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-2930334": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(일부 구역만 동반가능)",
+   "sizeLimit": "맹견 제외 동물 등록 완료한 전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-228874": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(전구역 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-651687": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(전구역 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-2606117": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(일부 구역만 동반가능)",
+   "sizeLimit": "동물 등록 완료한 전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회"
+  },
+  "tour-2822473": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(전구역 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-2795458": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(일부 구역만 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-2795448": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(일부 구역만 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-2734948": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(전구역 동반가능)",
+   "sizeLimit": "맹견 제외 동물 등록 완료한 전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-2661435": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(일부 구역만 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-129501": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(전구역 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-2704456": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(일부 구역만 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-2570207": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(전구역 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-2500687": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(전구역 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-2767888": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(전구역 동반가능)",
+   "sizeLimit": "동물보호법 시행규칙 제1조 2항에 근거한 맹견품종 제외(도사견, 아메리칸 핏불 테리어, 아메리칸 스태퍼드셔 테리어, 스태퍼드셔 불 테리어, 로트와일러 및 그 잡종의 개)",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-2872004": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(일부 구역만 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-2778200": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(일부 구역만 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-126132": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(전구역 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-2612261": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(전구역 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-127515": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(전구역 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-2728939": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(전구역 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회"
+  },
+  "tour-2930677": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(전구역 동반가능)",
+   "sizeLimit": "맹견 제외 필수 예방접종 및 동물등록 완료한 전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회"
+  },
+  "tour-128755": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(전구역 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-1906334": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "실내·야외(일부 구역만 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회"
+  },
+  "tour-1119452": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(일부 구역만 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회"
+  },
+  "tour-2734944": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(전구역 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-2654624": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(전구역 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-3006915": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(전구역 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-128721": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(일부 구역만 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-753981": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(전구역 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-2714557": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(일부 구역만 동반가능)",
+   "sizeLimit": "맹견 제외 전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회"
+  },
+  "tour-126799": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(일부 구역만 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-125492": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(일부 구역만 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-3487521": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(전구역 동반가능)",
+   "sizeLimit": "전 견종 동반가능(맹견 제외)",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-2930667": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(전구역 동반가능)",
+   "sizeLimit": "맹견 제외 동물등록 완료한 전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회"
+  },
+  "tour-128829": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(전구역 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-126119": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(일부 구역만 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회"
+  },
+  "tour-2569476": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(일부 구역만 동반가능)",
+   "sizeLimit": "15kg 이하 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-127965": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(전구역 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-126838": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(전구역 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-126325": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(전구역 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-1338947": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(전구역 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-2738106": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(전구역 동반가능)",
+   "sizeLimit": "동물 등록된 전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-126143": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(전구역 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-3487550": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(일부 구역만 동반가능)",
+   "sizeLimit": "전 견종 동반가능(맹견 제외)",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회"
+  },
+  "tour-2613673": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(일부 구역만 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회"
+  },
+  "tour-3006983": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(전구역 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-1315472": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(전구역 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-125984": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(전구역 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-2743349": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(일부 구역만 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회"
+  },
+  "tour-126887": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(일부 구역만 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회"
+  },
+  "tour-1824216": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(일부 구역만 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-2768107": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(전구역 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-1624755": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(전구역 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-128571": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(일부 구역만 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-127372": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(전구역 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-129417": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(일부 구역만 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회"
+  },
+  "tour-1946955": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(일부 구역만 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회"
+  },
+  "tour-129585": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(일부 구역만 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-1618031": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(전구역 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-2557807": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(전구역 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-2675086": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(일부 구역만 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-127570": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(전구역 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-2752336": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(일부 구역만 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-126317": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(전구역 동반가능)",
+   "sizeLimit": "일부 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-756625": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(일부 구역만 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-1083960": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(전구역 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-2744501": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(전구역 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-3026041": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(일부 구역만 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-2661446": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(전구역 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-2663204": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(전구역 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-125514": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(전구역 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-2733851": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(일부 구역만 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-2661447": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(전구역 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-1059479": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(전구역 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-127710": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(전구역 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-2733063": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(전구역 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-1590210": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(전구역 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-2606236": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(일부 구역만 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-3487508": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(전구역 동반가능)",
+   "sizeLimit": "전 견종 동반가능(맹견 입마개 착용 시 입장 가능)",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회"
+  },
+  "tour-2774854": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(전구역 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-2591824": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(전구역 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-126532": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(일부 구역만 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-1019041": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(전구역 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-126627": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(전구역 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-2616104": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(일부 구역만 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회"
+  },
+  "tour-2712734": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(일부 구역만 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-126499": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(일부 구역만 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회"
+  },
+  "tour-2729918": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(전구역 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-945477": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(전구역 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-127644": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(일부 구역만 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-2778109": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(일부 구역만 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회"
+  },
+  "tour-129453": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(일부 구역만 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-3487535": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(일부 구역만 동반가능)",
+   "sizeLimit": "전 견종 동반가능(맹견 제외)",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회"
+  },
+  "tour-128021": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(일부 구역만 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-879086": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(일부 구역만 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-2674960": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(일부 구역만 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-2752414": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(전구역 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-126322": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(전구역 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-2764307": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(전구역 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-970636": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(일부 구역만 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-127197": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(전구역 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-2733847": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(일부 구역만 동반가능)",
+   "sizeLimit": "맹견 제외 전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-125519": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(전구역 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-125496": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(일부 구역만 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-252561": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(전구역 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-2407328": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(전구역 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-2737298": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(일부 구역만 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-126330": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(일부 구역만 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-3035114": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(일부 구역만 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회"
+  },
+  "tour-3056221": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(전구역 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-126324": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(일부 구역만 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-125653": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(일부 구역만 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회"
+  },
+  "tour-2930674": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(전구역 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-2776859": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(일부 구역만 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-2714850": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(일부 구역만 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-2609813": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(전구역 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-2464201": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(일부 구역만 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회"
+  },
+  "tour-2744494": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(전구역 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-2654607": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(전구역 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-128211": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(전구역 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-126455": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(전구역 동반가능)",
+   "sizeLimit": "7kg 이하 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-779594": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(일부 구역만 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회"
+  },
+  "tour-2756585": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(전구역 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-2714653": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(일부 구역만 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회"
+  },
+  "tour-2661736": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(전구역 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-603727": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(전구역 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-2778214": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(일부 구역만 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-2654601": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(일부 구역만 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-3022743": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(일부 구역만 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-129142": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(일부 구역만 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-127619": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(일부 구역만 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회",
+   "leash": "목줄 착용 필수"
+  },
+  "tour-322836": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(일부 구역만 동반가능)",
+   "sizeLimit": "7kg 이하 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회"
+  },
+  "tour-2712753": {
+   "petAccess": "allowed",
+   "indoorOutdoor": "야외(일부 구역만 동반가능)",
+   "sizeLimit": "전 견종 동반 가능",
+   "extraFee": "추가 요금 없음(동반 정보에 별도 기재 없음)",
+   "checkedOn": "2026-11-18",
+   "checkedSource": "한국관광공사 TourAPI 반려동물 동반 정보(detailPetTour2) 2026-11-18 조회"
   }
  }
 }
