@@ -970,7 +970,7 @@
       .ad-contact-banner { margin: 24px 16px 28px; padding: 26px 20px; border: 1.5px solid #EE6C3D; border-radius: 16px; background: #FBEDE7; text-align: center; }
       .ad-contact-banner h2 { margin: 0 0 8px; font-size: 21px; font-weight: 800; color: #C2441F; }
       .ad-contact-banner p { margin: 0 0 16px; font-size: 16px; line-height: 1.55; color: #3E2A20; }
-      .ad-contact-btn { display: inline-block; padding: 13px 26px; border-radius: 999px; background: #EE6C3D; color: #ffffff; font-size: 17px; font-weight: 700; text-decoration: none; }
+      .ad-contact-btn { display: inline-block; padding: 13px 26px; border-radius: 10px; background: #EE6C3D; color: #ffffff; font-size: 17px; font-weight: 700; text-decoration: none; }
       .ad-contact-btn:hover { background: #C2441F; }
 
       .pm-hero { display: flex; align-items: flex-end; gap: 12px; padding: 12px 16px 4px; max-width: 100%; }
@@ -990,6 +990,10 @@
       }
       .pm-hero h1 { margin: 0; font-weight: 700; font-size: 16px; line-height: 22px; padding-bottom: 6px; }
       .pm-hero h1 small { display: block; font-weight: 400; font-size: 13px; line-height: 20px; color: var(--ink-2); }
+      .pm-about { margin: 10px 16px 0; padding: 14px 16px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; }
+      .pm-about h2 { margin: 0 0 8px; font-size: 16px; line-height: 24px; font-weight: 800; }
+      .pm-about p { margin: 0 0 8px; font-size: 14px; line-height: 1.7; color: var(--ink-2); }
+      .pm-about p:last-child { margin-bottom: 0; }
       .pm-intro { padding: 10px 16px 0; color: var(--ink-2); font-size: 14.5px; line-height: 1.65; }
       .pm-guides { padding: 14px 16px 2px; }
       .pm-guides h2 { font-size: 19px; margin: 0 0 6px; }
@@ -1405,26 +1409,26 @@
         body.place-doc .pd-btn.pri { background: var(--brand); border-color: var(--brand); color: #1A1A1A; }
         body.place-doc .pd-map-addr { background: rgba(32, 29, 24, .94); }
       }
-      .pm-share-pill{display:inline-flex;align-items:center;gap:4px;background:rgba(194,68,31,0.08);border:1px solid rgba(194,68,31,0.25);border-radius:999px;padding:5px 12px;font-size:13px;font-weight:700;color:#B83A17;cursor:pointer;transition:transform 0.15s cubic-bezier(0.16,1,0.3,1),background 0.15s ease}
+      .pm-share-pill{display:inline-flex;align-items:center;gap:4px;background:rgba(194,68,31,0.08);border:1px solid rgba(194,68,31,0.25);border-radius:8px;padding:5px 12px;font-size:13px;font-weight:700;color:#B83A17;cursor:pointer;transition:transform 0.15s cubic-bezier(0.16,1,0.3,1),background 0.15s ease}
       .pm-share-pill:hover{background:rgba(194,68,31,0.15)}
       .pm-share-pill:active{transform:scale(0.96)}
       .pm-fab-share{position:fixed;right:20px;bottom:24px;z-index:999}
-      .pm-fab-share button{display:flex;align-items:center;gap:6px;background:#C2441F;color:#FFF;border:1px solid rgba(255,255,255,0.2);border-radius:999px;padding:12px 18px;font-size:14px;font-weight:700;box-shadow:0 6px 20px rgba(194,68,31,0.4);cursor:pointer;transition:transform 0.15s cubic-bezier(0.16,1,0.3,1),box-shadow 0.15s ease}
+      .pm-fab-share button{display:flex;align-items:center;gap:6px;background:#C2441F;color:#FFF;border:1px solid rgba(255,255,255,0.2);border-radius:8px;padding:12px 18px;font-size:14px;font-weight:700;box-shadow:0 2px 8px rgba(194,68,31,0.2);cursor:pointer;transition:transform 0.15s cubic-bezier(0.16,1,0.3,1),box-shadow 0.15s ease}
       .pm-fab-share button:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(194,68,31,0.5)}
       .pm-fab-share button:active{transform:scale(0.96)}
       .pm-share-modal[hidden]{display:none !important}
       .pm-share-modal{position:fixed;top:0;left:0;right:0;bottom:0;z-index:9999;display:none;align-items:flex-end;justify-content:center}
       .pm-share-backdrop{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.55);backdrop-filter:blur(4px)}
-      .pm-share-sheet{position:relative;background:#FFF;width:100%;max-width:480px;border-radius:24px 24px 0 0;padding:20px 20px 36px;box-shadow:0 -8px 30px rgba(0,0,0,0.25);animation:pmSlideUp 0.25s cubic-bezier(0.16,1,0.3,1)}
+      .pm-share-sheet{position:relative;background:#FFF;width:100%;max-width:480px;border-radius:16px 16px 0 0;padding:20px 20px 36px;box-shadow:0 -2px 12px rgba(0,0,0,0.16);animation:pmSlideUp 0.25s cubic-bezier(0.16,1,0.3,1)}
       @keyframes pmSlideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
       .pm-share-handle{width:40px;height:4px;background:#DDD;border-radius:2px;margin:0 auto 16px}
       .pm-share-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:12px}
       .pm-share-item{display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 6px;border-radius:14px;background:#F8F9FA;cursor:pointer;border:1px solid #E2E8F0;transition:transform 0.15s ease,background 0.15s ease}
       .pm-share-item:hover{background:#EDF2F7}
       .pm-share-item:active{transform:scale(0.95)}
-      .pm-share-icon{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;box-shadow:0 2px 8px rgba(0,0,0,0.08)}
+      .pm-share-icon{width:48px;height:48px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700}
       .pm-share-label{font-size:12px;font-weight:700;color:#2D3748}
-      .pm-toast{position:absolute;bottom:90px;left:50%;transform:translateX(-50%);background:rgba(194,68,31,0.95);color:#FFF;padding:10px 22px;border-radius:999px;font-size:13px;font-weight:700;box-shadow:0 4px 16px rgba(0,0,0,0.25);pointer-events:none}
+      .pm-toast{position:absolute;bottom:90px;left:50%;transform:translateX(-50%);background:rgba(194,68,31,0.95);color:#FFF;padding:10px 22px;border-radius:8px;font-size:13px;font-weight:700;box-shadow:0 2px 8px rgba(0,0,0,0.18);pointer-events:none}
       @media (prefers-color-scheme: dark) {
         .pm-share-sheet{background:#201D18;color:#FFF}
         .pm-share-item{background:#2D2822;border-color:#3E372F}
@@ -1477,6 +1481,11 @@
       <h1>곳 · 지도에 담은 동반 장소<small>17개 시·도 · 공개 자료 3곳 합계</small></h1>
     </div>
     <p class="pm-intro home-only">댕냥이와 함께는 전국의 반려동물 동반 장소 1,109곳을 지도에 모은 안내 사이트입니다. 24시 동물병원 280곳은 급할 때 찾도록 따로 모아 뒀습니다. 공개 자료와 공식 안내로 확인한 주소와 동반 조건만 적고, 확인되지 않은 내용은 비워 둡니다. 방문 전에는 각 장소 페이지에 적힌 출처와 확인일을 함께 봐 주세요.</p>
+    <section class="pm-about home-only" aria-labelledby="pmAboutTitle">
+      <h2 id="pmAboutTitle">장소 정보를 확인하는 방법</h2>
+      <p>동반 장소는 한국관광공사 TourAPI의 반려동물 동반 데이터, 지자체 공개 자료, 각 시설의 공식 안내를 대조해 정리했습니다. 주소·운영 시간·동반 조건처럼 확인된 항목만 싣고, 자료가 서로 다른 경우에는 공식 안내를 기준으로 삼았습니다.</p>
+      <p>"동반 가능" 표시는 소형견 기준인지, 실내·야외 구역이 나뉘는지에 따라 뜻이 달라집니다. 상세 페이지에서 조건과 확인일을 먼저 보고, 방문 예정일의 운영 여부는 시설에 한 번 더 확인하시길 권합니다. 정보가 바뀌었거나 잘못된 곳을 발견하셨다면 문의 페이지로 알려 주세요.</p>
+    </section>
     <form class="pm-find home-only" id="homeFind" action="/" method="get" role="search">
       <label class="sr" for="search">장소 검색</label>
       <div class="search-box">
@@ -1495,7 +1504,7 @@
       <button type="button" class="chip" data-cat="food" aria-pressed="false">식당·카페 <span class="cnt">603</span></button>
       <button type="button" class="chip" data-cat="park" aria-pressed="false">산책 <span class="cnt">153</span></button>
     </div>
-    <p class="emg-row home-only" id="emgRow"><a href="/?type=vet">🚑 급할 때 — 24시 동물병원만 보기</a></p>
+    <p class="emg-row home-only" id="emgRow"><a href="/?type=vet"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" style="margin-right:5px"><path d="M12 5v14M5 12h14"/></svg>급할 때 — 24시 동물병원만 보기</a></p>
     <div class="pm-local home-only">
       <label class="sr" for="localityFilter">시·군·구</label>
       <select id="localityFilter" name="locality" aria-label="시·군·구" disabled>
@@ -1503,24 +1512,22 @@
       </select>
     </div>
 
-    <!-- [펫맵 상단 제휴: 솔루션디 신차 장기렌트&리스 패밀리카 견적비교 (단가 12,000원)] -->
+    <!-- [상단 제휴: 신차 장기렌트·리스 견적 비교 (단가 12,000원)] -->
     <div style="max-width:1200px;margin:16px auto 14px;padding:0 16px;box-sizing:border-box;">
-      <div style="background:linear-gradient(135deg, #1e293b 0%, #0f172a 100%);border-radius:16px;padding:16px 20px;color:#fff;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;box-shadow:0 4px 12px rgba(15,23,42,0.2);">
-        <div style="display:flex;align-items:center;gap:12px;min-width:0;flex:1 1 260px;">
-          <span style="font-size:26px;">🚗</span>
-          <div>
-            <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px;">
-              <span style="background:#38bdf8;color:#0f172a;font-size:11px;font-weight:800;padding:2px 6px;border-radius:4px;">반려동물 차박·드라이브</span>
-              <span style="color:#cbd5e1;font-size:11px;font-weight:700;">신차 장기렌트카 제휴</span>
-            </div>
-            <div style="font-size:15px;font-weight:800;line-height:1.35;color:#fff;">댕댕이와 함께 떠나는 안락한 드라이브! 패밀리카 신차 장기렌트·리스</div>
-            <div style="font-size:12px;color:#94a3b8;margin-top:2px;">초기비용 0원 · 취등록세/보험료 포함 · AI 실시간 다이렉트 견적비교</div>
+      <div style="background:#FFFDF8;border:1px solid #E7E3DA;border-radius:12px;padding:16px 18px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:14px;color:#C2441F;">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink:0;opacity:.8"><path d="M4 15.5V12l1.9-4.4A1.5 1.5 0 0 1 7.3 6.7h9.4a1.5 1.5 0 0 1 1.4.9L20 12v3.5"/><path d="M4 12h16"/><path d="M4 15.5h16v2.5H4z"/><circle cx="7.5" cy="16" r="1.3"/><circle cx="16.5" cy="16" r="1.3"/></svg>
+        <div style="flex:1 1 260px;min-width:0;">
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;flex-wrap:wrap;">
+            <span style="background:#F5EFE6;color:#8A4B2A;font-size:11px;font-weight:700;padding:2px 7px;border-radius:4px;">제휴</span>
+            <span style="color:#7A6F5F;font-size:11px;font-weight:700;">신차 장기렌트 제휴</span>
           </div>
+          <div style="font-size:15px;font-weight:700;line-height:1.45;color:#201D18;">반려동물과 함께 타는 차, 장기렌트·리스 견적을 한 번에 비교</div>
+          <div style="font-size:12.5px;color:#6B6357;margin-top:3px;line-height:1.55;">초기 비용과 보험료 포함 여부는 업체별로 다르니 견적서에서 확인하세요.</div>
         </div>
-        <a href="https://iryan.kr/t8hcqudjnr" target="_blank" rel="noopener noreferrer" style="background:#38bdf8;color:#0f172a;padding:9px 18px;border-radius:8px;font-size:13px;font-weight:800;text-decoration:none;white-space:nowrap;">패밀리카 견적비교 ↗</a>
+        <a href="https://iryan.kr/t8hcqudjnr" target="_blank" rel="noopener noreferrer" style="background:#C2441F;color:#fff;padding:9px 16px;border-radius:8px;font-size:13px;font-weight:700;text-decoration:none;white-space:nowrap;">견적 비교하기</a>
       </div>
+      <div style="text-align:right;margin-top:6px;font-size:11px;color:#8A8274;">* 제휴 마케팅 활동의 일환으로 일정액의 수수료를 제공받을 수 있습니다.</div>
     </div>
-
     <main>
       <section class="pm-guides home-only" aria-label="여행 가이드">
         <!--HOME_GUIDES-->
@@ -1549,38 +1556,35 @@
 
     <section class="page-detail" id="pageDetail" aria-label="장소 상세"></section>
 
-    <!-- [펫맵 중간 제휴: 폰가비 산책용 세컨폰 S급 중고기기 (단가 10,000원)] -->
+    <!-- [중간 제휴: 자급제 중고폰 (단가 10,000원)] -->
     <div style="max-width:1200px;margin:24px auto 16px;padding:0 16px;box-sizing:border-box;">
-      <div style="background:#ffffff;border:1.5px solid #e2e8f0;border-radius:16px;padding:18px 22px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:14px;box-shadow:0 3px 10px rgba(0,0,0,0.03);">
-        <div style="display:flex;align-items:center;gap:12px;min-width:0;flex:1 1 260px;">
-          <span style="font-size:28px;">📱</span>
-          <div>
-            <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px;">
-              <span style="background:#0f172a;color:#fff;font-size:11px;font-weight:800;padding:2px 6px;border-radius:4px;">견주 추천 필수템</span>
-              <span style="color:#64748b;font-size:11px;font-weight:700;">폰가비 단독 제휴</span>
-            </div>
-            <div style="font-size:15px;font-weight:800;color:#0f172a;line-height:1.35;">댕댕이 산책 전용 세컨폰 & 고화질 견생샷 촬영폰! S급 최저가</div>
-            <div style="font-size:12px;color:#64748b;margin-top:2px;">파손 걱정 없는 산책용 세컨폰 자급제 특가 · 안 쓰는 폰 최고가 매입</div>
+      <div style="background:#FFFDF8;border:1px solid #E7E3DA;border-radius:12px;padding:16px 18px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:14px;color:#C2441F;">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink:0;opacity:.8"><rect x="7" y="3" width="10" height="18" rx="2.2"/><path d="M10.5 18h3"/></svg>
+        <div style="flex:1 1 260px;min-width:0;">
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;flex-wrap:wrap;">
+            <span style="background:#F5EFE6;color:#8A4B2A;font-size:11px;font-weight:700;padding:2px 7px;border-radius:4px;">제휴</span>
+            <span style="color:#7A6F5F;font-size:11px;font-weight:700;">폰가비 단독 제휴</span>
           </div>
+          <div style="font-size:15px;font-weight:700;line-height:1.45;color:#201D18;">산책·촬영용 세컨폰, 자급제 공기계와 중고 매입 시세 확인</div>
+          <div style="font-size:12.5px;color:#6B6357;margin-top:3px;line-height:1.55;">약정 없는 자급제 구매와 쓰던 기기의 매입가를 함께 볼 수 있습니다.</div>
         </div>
-        <a href="https://iryan.kr/t8hcque9eh" target="_blank" rel="noopener noreferrer" style="background:#0f172a;color:#fff;padding:10px 18px;border-radius:8px;font-size:13px;font-weight:800;text-decoration:none;white-space:nowrap;">폰가비 특가 ↗</a>
+        <a href="https://iryan.kr/t8hcque9eh" target="_blank" rel="noopener noreferrer" style="background:#C2441F;color:#fff;padding:9px 16px;border-radius:8px;font-size:13px;font-weight:700;text-decoration:none;white-space:nowrap;">시세 보기</a>
       </div>
-      <div style="text-align: right; margin-top: 6px; font-size: 11px; color: #94a3b8;">* 제휴 마케팅 활동의 일환으로 일정액의 수수료를 제공받을 수 있습니다.</div>
+      <div style="text-align:right;margin-top:6px;font-size:11px;color:#8A8274;">* 제휴 마케팅 활동의 일환으로 일정액의 수수료를 제공받을 수 있습니다.</div>
     </div>
-
-    <!-- [네이버 크리에이터샵 '생활 꿀금고' 반려견 컬렉션 (쇼핑커넥트)] -->
+<!-- [네이버 크리에이터샵 '생활 꿀금고' 반려견 컬렉션 (쇼핑커넥트)] -->
     <div style="max-width:1200px;margin:24px auto 8px;padding:0 16px;box-sizing:border-box;">
       <div style="background:#FFFDF8;border:1px solid #E7E3DA;border-radius:14px;padding:16px 20px;display:flex;flex-wrap:wrap;align-items:center;gap:14px;">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#C2441F" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink:0;"><path d="M5 8h14l-1.2 12H6.2L5 8z"/><path d="M9 8V6.2a3 3 0 0 1 6 0V8"/></svg>
         <div style="flex:1 1 280px;min-width:0;">
           <div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:4px;">
             <span style="background:#C2441F;color:#fff;font-size:11px;font-weight:800;padding:2px 7px;border-radius:4px;">네이버 크리에이터샵</span>
-            <span style="font-size:12px;font-weight:700;color:#7A6F5F;">생활 꿀금고 · 반려견 컬렉션</span>
+            <span style="font-size:12px;font-weight:700;color:#7A6F5F;">생활 꿀금고 · 반려견 용품</span>
           </div>
-          <div style="font-size:15px;font-weight:800;color:#201D18;line-height:1.4;">못산템 | 반려견 간식·산책·케어 꿀템 20선</div>
-          <div style="font-size:12.5px;color:#6B6357;margin-top:3px;line-height:1.55;">산책·목욕·집사 필수품을 한 번에 정리했습니다. 강아지와 사는 집에서 실제로 쓰는 물건만 골랐어요.</div>
+          <div style="font-size:15px;font-weight:700;color:#201D18;line-height:1.4;">반려견 간식·산책·케어 용품 20선</div>
+          <div style="font-size:12.5px;color:#6B6357;margin-top:3px;line-height:1.55;">산책·목욕·집사 때 쓰는 물건을 한 목록으로 정리했습니다.</div>
         </div>
-        <a href="https://cshop.naver.com/lifevault?c=1017438200544928" target="_blank" rel="noopener noreferrer nofollow sponsored" style="background:#C2441F;color:#fff;padding:10px 18px;border-radius:8px;font-size:13px;font-weight:800;text-decoration:none;white-space:nowrap;">꿀템 20선 보기 ↗</a>
+        <a href="https://cshop.naver.com/lifevault?c=1017438200544928" target="_blank" rel="noopener noreferrer nofollow sponsored" style="background:#C2441F;color:#fff;padding:10px 18px;border-radius:8px;font-size:13px;font-weight:800;text-decoration:none;white-space:nowrap;">20선 보기</a>
       </div>
       <div style="text-align:right;margin-top:6px;font-size:11px;color:#8A8274;">※ 네이버 쇼핑 커넥트 활동의 일환으로 수수료를 지급받습니다.</div>
     </div>
@@ -1595,27 +1599,22 @@
 
     
 
-<!-- [펫맵 하단 제휴: 청소대장 두식이 반려동물 입주/거주 친환경 전문 청소 (단가 16,500원)] -->
-<div style="max-width:1200px;margin:32px auto 20px;padding:0 16px;box-sizing:border-box;">
-  <div style="background:linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);border:1.5px solid #86efac;border-radius:18px;padding:20px 24px;box-shadow:0 4px 14px rgba(22, 101, 52, 0.08);display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px;">
-    <div style="display:flex;align-items:center;gap:14px;min-width:0;flex:1 1 280px;">
-      <div style="width:50px;height:50px;border-radius:14px;background:#16a34a;color:#fff;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0;box-shadow:0 3px 8px rgba(22,163,74,0.3);">🧹</div>
-      <div style="min-width:0;">
-        <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;flex-wrap:wrap;">
-          <span style="background:#16a34a;color:#fff;font-size:11px;font-weight:800;padding:3px 8px;border-radius:6px;">반려동물 홈케어 필수</span>
-          <span style="color:#15803d;font-size:12px;font-weight:700;">청소대장 두식이 제휴</span>
+<!-- [하단 제휴: 반려동물 가구 전문 청소 (단가 16,500원)] -->
+    <div style="max-width:1200px;margin:32px auto 20px;padding:0 16px;box-sizing:border-box;">
+      <div style="background:#FFFDF8;border:1px solid #E7E3DA;border-radius:12px;padding:16px 18px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:14px;color:#C2441F;">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink:0;opacity:.8"><path d="M9 3.5h4l.7 6.2h-5.4L9 3.5z"/><path d="M8.6 9.7 6 20.5h12L15.4 9.7"/><path d="M9.5 14h5"/></svg>
+        <div style="flex:1 1 260px;min-width:0;">
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;flex-wrap:wrap;">
+            <span style="background:#F5EFE6;color:#8A4B2A;font-size:11px;font-weight:700;padding:2px 7px;border-radius:4px;">제휴</span>
+            <span style="color:#7A6F5F;font-size:11px;font-weight:700;">청소대장 두식이 제휴</span>
+          </div>
+          <div style="font-size:15px;font-weight:700;line-height:1.45;color:#201D18;">반려동물과 사는 집의 정기 청소, 견적과 범위 확인</div>
+          <div style="font-size:12.5px;color:#6B6357;margin-top:3px;line-height:1.55;">털과 냄새 청소 범위, 사용하는 세제는 상담에서 확인할 수 있습니다.</div>
         </div>
-        <div style="font-size:16px;font-weight:800;color:#14532d;line-height:1.35;margin-bottom:3px;">반려견 털·냄새·알레르기 싹! 입주·이사 & 거주 친환경 전문 청소</div>
-        <div style="font-size:12px;color:#166534;line-height:1.4;">반려동물 안심 친환경 세제 & 고온 피톤치드 살균 케어 · 정찰제 무료 비교견적</div>
+        <a href="https://iryan.kr/t8hcquq1ru" target="_blank" rel="noopener noreferrer" style="background:#C2441F;color:#fff;padding:9px 16px;border-radius:8px;font-size:13px;font-weight:700;text-decoration:none;white-space:nowrap;">견적 문의</a>
       </div>
+      <div style="text-align:right;margin-top:6px;font-size:11px;color:#8A8274;">* 제휴 마케팅 활동의 일환으로 일정액의 수수료를 제공받을 수 있습니다.</div>
     </div>
-    <a href="https://iryan.kr/t8hcquq1ru" target="_blank" rel="noopener noreferrer" style="background:#16a34a;color:#fff;padding:12px 22px;border-radius:12px;font-size:14px;font-weight:800;text-decoration:none;display:inline-flex;align-items:center;gap:6px;box-shadow:0 4px 10px rgba(22,163,74,0.3);white-space:nowrap;flex-shrink:0;">
-      무료 청소 견적 받기 ↗
-    </a>
-  <div style="text-align: right; margin-top: 6px; font-size: 11px; color: #15803d;">* 제휴 마케팅 활동의 일환으로 일정액의 수수료를 제공받을 수 있습니다.</div>
-  </div>
-</div>
-
 <section class="ad-contact-banner" aria-label="광고·제휴 문의">
       <h2>광고·제휴 문의</h2>
       <p>이 사이트에 광고 게재나 제휴를 원하시면 아래 메일로 문의해 주세요. 업체명과 문의 내용을 보내주시면 확인 후 회신드리겠습니다.</p>
@@ -1631,18 +1630,18 @@
       <div class="pm-share-sheet">
         <div class="pm-share-handle"></div>
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
-          <h3 style="font-size:18px;font-weight:700;color:#C2441F;margin:0;">🐾 댕냥이와 함께 지도 공유</h3>
-          <button type="button" onclick="closeShareModal()" style="font-size:22px;color:#888;padding:4px;cursor:pointer;background:none;border:none;" aria-label="닫기">✕</button>
+          <h3 style="font-size:18px;font-weight:700;color:#C2441F;margin:0;">댕냥이와 함께 지도 공유</h3>
+          <button type="button" onclick="closeShareModal()" style="font-size:22px;color:#888;padding:4px;cursor:pointer;background:none;border:none;" aria-label="닫기">×</button>
         </div>
         <p style="font-size:13px;color:#666;margin:0 0 18px;">반려동물 동반 여행 지도와 24시 동물병원 정보를 공유해 보세요.</p>
         
         <div class="pm-share-grid">
           <button type="button" class="pm-share-item" onclick="shareKakao()">
-            <span class="pm-share-icon" style="background:#FEE500;color:#3C1E1E;">💬</span>
+            <span class="pm-share-icon" style="background:#F7F1E6;color:#3C1E1E;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12.2c0 3.7-3.6 6.7-8 6.7-1 0-2-.2-2.9-.5L5 20l1.1-3.1A6.4 6.4 0 0 1 4 12.2C4 8.5 7.6 5.5 12 5.5s8 3 8 6.7z"/></svg></span>
             <span class="pm-share-label">카카오톡</span>
           </button>
           <button type="button" class="pm-share-item" onclick="shareThreads()">
-            <span class="pm-share-icon" style="background:#000;color:#FFF;">🧵</span>
+            <span class="pm-share-icon" style="background:#F2F2F2;color:#111;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4c4.4 0 8 2.6 8 6 0 3.4-3.6 6-8 6-.8 0-1.6-.1-2.3-.3L6 18l.9-2.7C5.1 14.2 4 12.2 4 10c0-3.4 3.6-6 8-6z"/><path d="M9 10h.01M12 10h.01M15 10h.01"/></svg></span>
             <span class="pm-share-label">스레드</span>
           </button>
           <button type="button" class="pm-share-item" onclick="shareTwitter()">
@@ -1650,15 +1649,15 @@
             <span class="pm-share-label">X(트위터)</span>
           </button>
           <button type="button" class="pm-share-item" onclick="copyShareLink()">
-            <span class="pm-share-icon" style="background:#FFF3E0;color:#C2441F;">🔗</span>
+            <span class="pm-share-icon" style="background:#F2F2F2;color:#111;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.5 13.5a3.5 3.5 0 0 0 5 0l2.5-2.5a3.5 3.5 0 0 0-5-5L11.8 7"/><path d="M13.5 10.5a3.5 3.5 0 0 0-5 0L6 13a3.5 3.5 0 0 0 5 5l1.2-1.2"/></svg></span>
             <span class="pm-share-label">링크 복사</span>
           </button>
           <button type="button" class="pm-share-item" onclick="generateAndSaveCard()">
-            <span class="pm-share-icon" style="background:#E8F5E9;color:#2E7D32;">🖼️</span>
+            <span class="pm-share-icon" style="background:#F7F1E6;color:#6B4A1E;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="5" width="16" height="14" rx="2"/><path d="M8 15l3-3 2.5 2.5L16 12l2 3"/><circle cx="9" cy="9" r="1.2"/></svg></span>
             <span class="pm-share-label">카드 저장</span>
           </button>
           <button type="button" class="pm-share-item" onclick="nativeShare()">
-            <span class="pm-share-icon" style="background:#E3F2FD;color:#1565C0;">📱</span>
+            <span class="pm-share-icon" style="background:#F2F2F2;color:#111;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V5"/><path d="M8 9l4-4 4 4"/><path d="M5 15v3.5h14V15"/></svg></span>
             <span class="pm-share-label">더보기</span>
           </button>
         </div>
@@ -3074,7 +3073,7 @@
       }
       function nativeShare() {
         var title = document.title || '댕냥이와 함께';
-        var text = '전국 반려동물 동반 지도 & 24시 동물병원 검색! 🐾';
+        var text = '전국 반려동물 동반 장소 지도와 24시 동물병원';
         var url = window.location.href;
         if (navigator.share) {
           navigator.share({ title: title, text: text, url: url }).catch(function() {});
@@ -3089,7 +3088,7 @@
         window.open(kakaoUrl, '_blank', 'width=520,height=640');
       }
       function shareThreads() {
-        var text = encodeURIComponent((document.title || '댕냥이와 함께') + '\n반려동물 동반 여행지 & 24시 동물병원 지도 🐾\n' + window.location.href);
+        var text = encodeURIComponent((document.title || '댕냥이와 함께') + '\n반려동물 동반 장소와 24시 동물병원 지도\n' + window.location.href);
         window.open('https://threads.net/intent/post?text=' + text, '_blank');
       }
       function shareTwitter() {
@@ -3120,7 +3119,7 @@
           
           ctx.fillStyle = '#FFFFFF';
           ctx.font = 'bold 60px sans-serif';
-          ctx.fillText('댕댕이와 떠나는 전국 여행 🐾', 80, 230);
+          ctx.fillText('반려동물과 떠나는 전국 여행', 80, 230);
           
           ctx.fillStyle = 'rgba(255,255,255,0.75)';
           ctx.font = '32px sans-serif';
@@ -3136,7 +3135,7 @@
           
           ctx.fillStyle = '#FDBA74';
           ctx.font = 'bold 38px sans-serif';
-          ctx.fillText('🐶 댕냥이와 함께 핵심 안내', 130, 440);
+          ctx.fillText('함께 가는 곳, 핵심 안내', 130, 440);
           
           ctx.fillStyle = '#FFFFFF';
           ctx.font = '34px sans-serif';
@@ -3148,7 +3147,7 @@
           
           ctx.fillStyle = '#FDBA74';
           ctx.font = 'bold 36px sans-serif';
-          ctx.fillText('petmap.kr 에서 내 주변 동반 장소 찾기 ➔', 130, 980);
+          ctx.fillText('www.petmap.kr · 동반 장소 지도', 130, 980);
           
           ctx.fillStyle = 'rgba(255,255,255,0.5)';
           ctx.font = '28px sans-serif';
